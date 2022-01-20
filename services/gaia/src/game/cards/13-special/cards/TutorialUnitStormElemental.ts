@@ -4,6 +4,7 @@ import CardTribe from '@shared/enums/CardTribe'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
+import UnitStormElemental from '@src/game/cards/01-arcane/common/UnitStormElemental'
 
 import Keywords from '../../../../utils/Keywords'
 import ServerCard from '../../../models/ServerCard'
@@ -21,6 +22,7 @@ export default class TutorialUnitStormElemental extends ServerCard {
 			stats: {
 				power: 12,
 			},
+			sharedArtwork: UnitStormElemental,
 			expansionSet: ExpansionSet.TUTORIAL,
 		})
 		this.dynamicTextVariables = {

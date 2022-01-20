@@ -1,44 +1,22 @@
 {
 	"compilerOptions": {
-		"target": "esnext",
-		"module": "esnext",
 		"strict": true,
+		"module": "esnext",
+		"target": "esnext",
 		"jsx": "preserve",
-		"importHelpers": true,
-		"noEmit": true,
+		"lib": ["es2020", "dom", "dom.iterable", "scripthost"],
 		"moduleResolution": "node",
+		"noEmit": true,
 		"esModuleInterop": true,
-		"allowSyntheticDefaultImports": true,
-		"resolveJsonModule": true,
 		"sourceMap": true,
 		"baseUrl": ".",
-		"types": [
-			"webpack-env",
-			"gapi.auth2"
-		],
+		"resolveJsonModule": true,
+		"types": ["webpack-env", "gapi.auth2", "jest"],
 		"paths": {
-			"@/*": [
-				"src/*"
-			],
-			"@shared/*": [
-				"../shared/src/*"
-			]
-		},
-		"lib": [
-			"es2020",
-			"dom",
-			"dom.iterable",
-			"scripthost"
-		]
+			"@/*": ["src/*"],
+			"@shared/*": ["../shared/src/*"]
+		}
 	},
-	"include": [
-		"src/**/*.ts",
-		"src/**/*.tsx",
-		"src/**/*.vue",
-		"tests/**/*.ts",
-		"tests/**/*.tsx"
-	],
-	"exclude": [
-		"node_modules"
-	]
+	"include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue", "tests/**/*.ts", "tests/**/*.tsx"],
+	"exclude": ["node_modules"]
 }

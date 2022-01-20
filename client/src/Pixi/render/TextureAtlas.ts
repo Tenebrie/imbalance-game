@@ -18,6 +18,10 @@ export default class TextureAtlas {
 	static assetsAlreadyLoaded = 0
 
 	public static async preloadComponents(): Promise<void> {
+		if (process.env.JEST_WORKER_ID !== undefined) {
+			return
+		}
+
 		return new Promise((resolve) => {
 			if (TextureAtlas.hasPreloadedComponents) {
 				resolve()

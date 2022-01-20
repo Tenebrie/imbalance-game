@@ -8,8 +8,8 @@ import {
 import PlayerInGame from '@shared/models/PlayerInGame'
 import { enumToArray } from '@shared/Utils'
 import GameHistoryDatabase from '@src/database/GameHistoryDatabase'
+import GameCloseReason from '@src/enums/GameCloseReason'
 import DiscordIntegration from '@src/game/integrations/DiscordIntegration'
-import EventContext from '@src/game/models/EventContext'
 import ServerEditorDeck from '@src/game/models/ServerEditorDeck'
 import { genericError } from '@src/middleware/GenericErrorMiddleware'
 import RequirePlayerTokenMiddleware from '@src/middleware/RequirePlayerTokenMiddleware'
@@ -116,7 +116,6 @@ router.ws('/:gameId', async (ws: ws, req: express.Request) => {
 	currentPlayer.registerGameConnection(ws, currentGame)
 
 	ws.on('message', (rawMsg: string) => {
-		EventContext.setGame(currentGame)
 		const msg = JSON.parse(restoreObjectIDs(currentGame, rawMsg)) as ClientToServerGameMessage
 		const messageType = msg.type
 		const handler = IncomingMessageHandlers[messageType] as (
@@ -145,10 +144,9 @@ router.ws('/:gameId', async (ws: ws, req: express.Request) => {
 				.forEach((playerInGame) => {
 					OutgoingMessageHandlers.notifyAboutGameCollapsed(playerInGame.player, currentGame)
 				})
-			GameHistoryDatabase.closeGame(currentGame, 'Unhandled error (Player action)', null)
-			GameLibrary.destroyGame(currentGame, 'Unhandled error (Player action)')
+			GameHistoryDatabase.closeGame(currentGame, GameCloseReason.PLAYER_ACTION_ERROR, null)
+			GameLibrary.destroyGame(currentGame, GameCloseReason.PLAYER_ACTION_ERROR)
 		}
-		EventContext.clear()
 	})
 
 	ws.on('close', () => {
@@ -212,8 +210,8 @@ router.ws('/:gameId/spectate/:playerId', async (ws: ws, req: express.Request) =>
 				.forEach((playerInGame) => {
 					OutgoingMessageHandlers.notifyAboutGameCollapsed(playerInGame.player, currentGame)
 				})
-			GameHistoryDatabase.closeGame(currentGame, 'Unhandled error (Spectator action)', null)
-			GameLibrary.destroyGame(currentGame, 'Unhandled error (Spectator action)')
+			GameHistoryDatabase.closeGame(currentGame, GameCloseReason.SPECTATOR_ACTION_ERROR, null)
+			GameLibrary.destroyGame(currentGame, GameCloseReason.SPECTATOR_ACTION_ERROR)
 		}
 	})
 
@@ -235,7 +233,7 @@ router.get(
 			})
 		}
 
-		const currentPlayerInGame = currentPlayer.playerInGame
+		const currentPlayerInGame = currentPlayer.playerInGame || currentPlayer.playerSpectator?.spectatedPlayer.playerInGame
 		if (!currentPlayerInGame) {
 			throw genericError({
 				status: 403,
@@ -262,7 +260,7 @@ router.get(
 			})
 		}
 
-		const currentPlayerInGame = currentPlayer.playerInGame
+		const currentPlayerInGame = currentPlayer.playerInGame || currentPlayer.playerSpectator?.spectatedPlayer.playerInGame
 		if (!currentPlayerInGame) {
 			throw genericError({
 				status: 403,
@@ -286,7 +284,7 @@ router.get(
 			})
 		}
 
-		const currentPlayerInGame = currentPlayer.playerInGame
+		const currentPlayerInGame = currentPlayer.playerInGame || currentPlayer.playerSpectator?.spectatedPlayer.playerInGame
 		if (!currentPlayerInGame) {
 			throw genericError({
 				status: 403,

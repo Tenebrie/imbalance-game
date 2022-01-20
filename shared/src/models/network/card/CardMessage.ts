@@ -15,6 +15,7 @@ export default interface CardMessage {
 	class: string
 	color: CardColor
 	faction: CardFaction
+	artworkClass: string
 
 	stats: CardStatsMessage
 	buffs: BuffContainerMessage

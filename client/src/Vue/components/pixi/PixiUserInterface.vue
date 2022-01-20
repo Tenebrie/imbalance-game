@@ -17,6 +17,30 @@
 		<div class="opponent-graveyard-button-container" @click="onOpponentGraveyardClicked">
 			<img src="../../assets/icons/icon-graveyard.svg" />
 		</div>
+		<div class="game-objective-button-container" @click="onGameObjectiveClicked">
+			<img src="../../assets/icons/icon-objective.svg" />
+		</div>
+		<div class="objective-container" :class="objectiveContainerClass" v-if="currentObjective">
+			<div class="objective-content">
+				<div>
+					<div class="objective-title">{{ currentObjective.title }}:</div>
+					<div class="objective-description">{{ currentObjective.description }}</div>
+				</div>
+				<div class="objective-modifiers" v-if="currentObjective.modifiers && currentObjective.modifiers.length > 0">
+					<div class="objective-title">Modifiers:</div>
+					<div v-for="(modifier, index) in currentObjective.modifiers" :key="index">
+						-
+						<span v-if="Array.isArray(modifier)">
+							<span class="objective-title">{{ modifier[0] }}: </span>
+							<span class="objective-description">{{ modifier[1] }}</span>
+						</span>
+						<span v-if="!Array.isArray(modifier)">
+							<span class="objective-description">{{ modifier }} </span>
+						</span>
+					</div>
+				</div>
+			</div>
+		</div>
 		<div class="end-turn-button-container" v-if="isEndTurnButtonVisible">
 			<div class="player-name">
 				<span v-if="opponent">{{ opponent.username }}</span
@@ -103,6 +127,7 @@ import TheInGamePlayerDeckPopup from '@/Vue/components/popup/inGameDeckView/TheI
 import TheInGamePlayerGraveyardPopup from '@/Vue/components/popup/inGameDeckView/TheInGamePlayerGraveyardPopup.vue'
 import ThePopupView from '@/Vue/components/popup/ThePopupView.vue'
 import store from '@/Vue/store'
+import GameObjectiveStore from '@/Vue/store/GameObjectiveStore'
 import InspectedCardStore from '@/Vue/store/InspectedCardStore'
 
 export default defineComponent({
@@ -121,8 +146,17 @@ export default defineComponent({
 				return
 			}
 			if (event.key === 'Escape') {
+				if (store.state.novel.isActive && !store.state.novel.isMuted) {
+					onShowEscapeMenu()
+					return
+				}
+
 				if (isConfirmTargetsButtonVisible.value && !mulliganMode.value) {
 					onConfirmTargets()
+					return
+				}
+				if (GameObjectiveStore.state.popupVisible) {
+					GameObjectiveStore.commit.hide()
 					return
 				}
 				if (InspectedCardStore.getters.card) {
@@ -172,7 +206,7 @@ export default defineComponent({
 			return store.state.gameStateModule.endScreenSuppressed
 		})
 		const isChainingGameMode = computed(() => {
-			return store.state.gameStateModule.ruleset && store.state.gameStateModule.ruleset.category === RulesetCategory.LABYRINTH
+			return store.state.gameStateModule.ruleset && store.state.gameStateModule.ruleset.category === RulesetCategory.RITES
 		})
 
 		const isGameStarted = computed(() => {
@@ -220,6 +254,7 @@ export default defineComponent({
 		const isOpponentFinishedRound = computed(
 			() => !store.state.gameStateModule.isOpponentInRound && store.state.gameStateModule.isPlayerInRound
 		)
+		const isObjectiveVisible = computed(() => GameObjectiveStore.state.popupVisible)
 
 		const fadeInOverlayClass = computed(() => ({
 			visible: !isGameStarted.value || isSwitchingGames.value,
@@ -233,6 +268,10 @@ export default defineComponent({
 		}))
 		const opponentRoundEndOverlayClass = computed(() => ({
 			visible: isOpponentFinishedRound.value,
+		}))
+		const objectiveContainerClass = computed(() => ({
+			visible: isObjectiveVisible.value && !store.state.novel.isActive,
+			'no-transition': store.state.novel.isActive,
 		}))
 
 		const onPlayerDeckClicked = () => {
@@ -248,6 +287,11 @@ export default defineComponent({
 		const onOpponentGraveyardClicked = () => {
 			store.dispatch.popupModule.open({
 				component: TheInGameOpponentGraveyardPopup,
+			})
+		}
+		const onGameObjectiveClicked = () => {
+			requestAnimationFrame(() => {
+				GameObjectiveStore.commit.show()
 			})
 		}
 
@@ -271,6 +315,8 @@ export default defineComponent({
 		const playerSlotsFilled = computed(() => store.state.gameLobbyModule.totalPlayerSlots - store.state.gameLobbyModule.openPlayerSlots)
 		const totalPlayerSlots = computed(() => store.state.gameLobbyModule.totalPlayerSlots)
 		const playersInLobby = computed(() => store.state.gameLobbyModule.players)
+
+		const currentObjective = computed(() => GameObjectiveStore.getters.current)
 
 		const onLeaveGame = (): void => {
 			store.dispatch.leaveGame()
@@ -306,6 +352,8 @@ export default defineComponent({
 			gameEndScreenClass,
 			spectatorOverlayClass,
 			opponentRoundEndOverlayClass,
+			objectiveContainerClass,
+			currentObjective,
 			cardsMulliganed,
 			maxCardMulligans,
 			roundWinsRequired,
@@ -323,6 +371,7 @@ export default defineComponent({
 			onPlayerDeckClicked,
 			onPlayerGraveyardClicked,
 			onOpponentGraveyardClicked,
+			onGameObjectiveClicked,
 			onLeaveGame,
 			onLeaveAndContinue,
 		}
@@ -380,13 +429,27 @@ export default defineComponent({
 		}
 	}
 
+	.game-objective-button-container {
+		left: 0;
+		top: 20%;
+		margin-left: -44px;
+		filter: invert(24%) sepia(100%) saturate(1671%) hue-rotate(322deg) brightness(88%) contrast(90%);
+		transform: scale(-1, 1);
+
+		&:hover {
+			margin-left: 0;
+		}
+	}
+
 	.player-deck-button-container,
 	.player-graveyard-button-container,
-	.opponent-graveyard-button-container {
+	.opponent-graveyard-button-container,
+	.game-objective-button-container {
 		position: absolute;
 		pointer-events: all;
 		transition: margin-left 0.3s, margin-right 0.3s, background-color 0.3s;
 		cursor: pointer;
+		border-radius: 8px;
 
 		& > img {
 			padding: 4px 8px;
@@ -401,6 +464,7 @@ export default defineComponent({
 
 	.fade-in-overlay {
 		position: absolute;
+		z-index: 1;
 		width: 100%;
 		height: 100%;
 		background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('../../assets/background-game.webp');
@@ -580,6 +644,48 @@ export default defineComponent({
 				background: rgba(black, 0.75);
 				border: 1px solid $COLOR_BACKGROUND_GAME_MENU_BORDER;
 			}
+		}
+	}
+}
+
+.objective-container {
+	position: absolute;
+	left: 0;
+	height: calc(100%);
+	width: 500px;
+
+	font-size: 24px;
+	text-align: start;
+	font-family: 'Alegreya Sans', sans-serif;
+
+	margin-left: -500px;
+	transition: margin-left 0.3s;
+
+	&.visible {
+		margin-left: 96px;
+	}
+
+	&.no-transition {
+		transition: margin-left 0s;
+	}
+
+	.objective-content {
+		position: relative;
+		top: 20%;
+		padding: 13px 32px;
+		background: rgba(darken($COLOR-PRIMARY, 20), 0.7);
+		border-radius: 8px;
+		margin-bottom: 200px;
+		backdrop-filter: blur(4px);
+
+		.objective-modifiers {
+			margin-top: 8px;
+			width: 100%;
+		}
+
+		.objective-title {
+			font-weight: bold;
+			color: $COLOR-SECONDARY;
 		}
 	}
 }

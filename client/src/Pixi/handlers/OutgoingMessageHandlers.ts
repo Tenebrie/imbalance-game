@@ -7,6 +7,7 @@ import { GenericActionMessageType, SystemMessageType } from '@shared/models/netw
 
 import RenderedGameBoardRow from '@/Pixi/cards/RenderedGameBoardRow'
 import Core from '@/Pixi/Core'
+import store from '@/Vue/store'
 
 export default {
 	sendUnitCardPlayed(card: Card, gameBoardRow: RenderedGameBoardRow, unitIndex: number): void {
@@ -52,7 +53,22 @@ export default {
 		})
 	},
 
+	sendNovelSkipAnimation(): void {
+		Core.sendMessage({
+			type: GenericActionMessageType.NOVEL_SKIP_CUE_ANIMATION,
+			data: null,
+		})
+	},
+
+	sendNovelNextCue(): void {
+		Core.sendMessage({
+			type: GenericActionMessageType.NOVEL_NEXT_CUE,
+			data: null,
+		})
+	},
+
 	sendNovelChapterMove(chapterId: string): void {
+		store.dispatch.novel.decayCurrentCue()
 		Core.sendMessage({
 			type: GenericActionMessageType.NOVEL_CHAPTER,
 			data: chapterId,
@@ -60,6 +76,7 @@ export default {
 	},
 
 	sendNovelContinue(): void {
+		store.dispatch.novel.decayCurrentCue()
 		Core.sendMessage({
 			type: GenericActionMessageType.NOVEL_CONTINUE,
 			data: null,

@@ -17,6 +17,7 @@ import GameHistoryDatabase from '@src/database/GameHistoryDatabase'
 import AsciiColor from '@src/enums/AsciiColor'
 import DiscordIntegration from '@src/game/integrations/DiscordIntegration'
 import CardLibrary from '@src/game/libraries/CardLibrary'
+import GameLibrary from '@src/game/libraries/GameLibrary'
 import RulesetLibrary from '@src/game/libraries/RulesetLibrary'
 import GenericErrorMiddleware from '@src/middleware/GenericErrorMiddleware'
 import { printAllRoutes } from '@src/utils/RoutePrinter'
@@ -164,6 +165,11 @@ RulesetLibrary.ensureLibraryLoaded()
 /* Clear our old DB data every hour */
 setInterval(async () => {
 	await GameHistoryDatabase.pruneOldestRecords()
+}, 60 * 60 * 1000)
+
+/* Check for orphaned games every hour */
+setInterval(async () => {
+	GameLibrary.checkOrphanedGames()
 }, 60 * 60 * 1000)
 
 const port = process.env.PORT || 3000

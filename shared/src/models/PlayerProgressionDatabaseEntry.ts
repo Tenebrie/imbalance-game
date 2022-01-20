@@ -1,5 +1,5 @@
-import { LabyrinthProgressionState } from './progression/LabyrinthProgressionState'
+import { RitesProgressionState } from './progression/RitesProgressionState'
 
 export default interface PlayerProgressionDatabaseEntry {
-	data: LabyrinthProgressionState
+	data: RitesProgressionState
 }

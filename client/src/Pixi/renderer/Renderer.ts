@@ -6,7 +6,7 @@ import TargetMode from '@shared/enums/TargetMode'
 import AnonymousTargetMessage from '@shared/models/network/AnonymousTargetMessage'
 import CardTargetMessage from '@shared/models/network/CardTargetMessage'
 import gsap from 'gsap'
-import PixiPlugin from 'gsap/PixiPlugin'
+import { PixiPlugin } from 'gsap/dist/PixiPlugin'
 import * as PIXI from 'pixi.js'
 import { throttle } from 'throttle-debounce'
 
@@ -734,20 +734,6 @@ export default class Renderer {
 				return { color: 0x00ff00, alpha: 0.5 }
 			}
 		}
-
-		// /* Unit is hostile and has a valid order */
-		// if (
-		// 	!Core.input.forcedTargetingMode &&
-		// 	!Core.input.grabbedCard &&
-		// 	unit.owner === Core.opponent &&
-		// 	Core.board.getValidOrdersForUnit(unit).length > 0
-		// ) {
-		// 	if (hoveredCard === card) {
-		// 		return { color: 0xff0000, alpha: 0.75 }
-		// 	} else {
-		// 		return { color: 0xff0000, alpha: 0.5 }
-		// 	}
-		// }
 
 		/* Fallback tint */
 		if (!Core.input.forcedTargetingMode && Core.board.getValidOrdersForUnit(unit).length === 0 && hoveredCard === card) {

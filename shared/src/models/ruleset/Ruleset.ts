@@ -1,6 +1,7 @@
 import GameMode from '../../enums/GameMode'
 import RulesetCategory from '../../enums/RulesetCategory'
 import { RulesetConstants } from './RulesetConstants'
+import { RulesetObjective } from './RulesetObjectiveLocalization'
 import RulesetSlots from './RulesetSlots'
 
 export default interface Ruleset {
@@ -12,4 +13,5 @@ export default interface Ruleset {
 	slots: RulesetSlots
 
 	constants: RulesetConstants
+	objective: RulesetObjective | null
 }

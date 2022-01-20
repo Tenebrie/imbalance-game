@@ -4,6 +4,7 @@ import CardLocation from '@shared/enums/CardLocation'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
+import HeroTroviar from '@src/game/cards/00-human/legendary/HeroTroviar'
 import { asDirectHealingPotency } from '@src/utils/LeaderStats'
 
 import ServerCard from '../../../models/ServerCard'
@@ -22,6 +23,7 @@ export default class TutorialHeroTroviar extends ServerCard {
 			stats: {
 				power: 50,
 			},
+			sharedArtwork: HeroTroviar,
 			expansionSet: ExpansionSet.TUTORIAL,
 		})
 		this.dynamicTextVariables = {

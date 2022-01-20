@@ -1,5 +1,7 @@
 import RulesetCategory from '@shared/enums/RulesetCategory'
 import { Time } from '@shared/Utils'
+import GameCloseReason from '@src/enums/GameCloseReason'
+import GameVictoryCondition from '@src/enums/GameVictoryCondition'
 import { OutgoingGlobalMessageHandlers } from '@src/game/handlers/OutgoingGlobalMessageHandlers'
 import RulesetLibrary, { RulesetConstructor } from '@src/game/libraries/RulesetLibrary'
 import { RulesetChain } from '@src/game/models/rulesets/RulesetChain'
@@ -16,10 +18,24 @@ class GameLibrary {
 		this.games = []
 	}
 
+	public checkOrphanedGames(): void {
+		const time = new Date()
+		const oldGames = this.games.filter((game) => time.getTime() - game.creationTimestamp.getTime() >= GameLibrary.MAXIMUM_GAME_DURATION)
+
+		if (oldGames.length === 0) {
+			return
+		}
+
+		console.info(`Found ${colorizeConsoleText(oldGames.length)} orphaned games. Closing...`)
+		oldGames.forEach((game) => {
+			this.destroyGame(game, GameCloseReason.ORPHANED_GAME_CLEANUP)
+		})
+	}
+
 	public createGame(owner: ServerPlayer, ruleset: RulesetConstructor, props: Partial<OptionalGameProps> = {}): ServerGame {
 		let game: ServerGame
 		const rulesetTemplate = RulesetLibrary.findTemplate(ruleset)
-		if (rulesetTemplate.category === RulesetCategory.LABYRINTH) {
+		if (rulesetTemplate.category === RulesetCategory.RITES) {
 			game = ServerGame.newOwnedInstance(owner, ruleset, props)
 			console.info(`Player ${colorizePlayer(owner.username)} created owned game ${colorizeId(game.id)}`)
 		} else {
@@ -33,8 +49,8 @@ class GameLibrary {
 		return game
 	}
 
-	public createChainGame(fromGame: ServerGame, chain: RulesetChain): ServerGame {
-		const newGame = ServerGame.newOwnedInstance(fromGame.owner!, chain.get(fromGame), {})
+	public createChainGame(fromGame: ServerGame, chain: RulesetChain, onStateLoaded: () => void): ServerGame {
+		const newGame = ServerGame.newOwnedInstance(fromGame.owner!, chain.get(fromGame), {}, onStateLoaded)
 		this.games.push(newGame)
 		this.startGameTimeoutTimer(newGame)
 		OutgoingGlobalMessageHandlers.notifyAllPlayersAboutGameCreated(newGame)
@@ -52,7 +68,7 @@ class GameLibrary {
 		return game
 	}
 
-	public destroyGame(game: ServerGame, reason: string): void {
+	public destroyGame(game: ServerGame, reason: GameCloseReason): void {
 		if (!this.games.includes(game)) {
 			return
 		}
@@ -75,7 +91,7 @@ class GameLibrary {
 		this.games.splice(this.games.indexOf(game), 1)
 	}
 
-	public destroyOwnedGame(id: string, player: ServerPlayer, reason: string): void {
+	public destroyOwnedGame(id: string, player: ServerPlayer, reason: GameCloseReason): void {
 		if (!id) {
 			throw 'Missing game ID'
 		}
@@ -88,6 +104,18 @@ class GameLibrary {
 		this.destroyGame(game, reason)
 	}
 
+	public destroyAllGamesForPlayer(player: ServerPlayer, condition: GameVictoryCondition.PLAYER_STARTED_NEW_GAME): void {
+		const connectedGames = this.games.filter((game) =>
+			game.players.flatMap((playerGroup) => playerGroup.players).find((playerInGame) => playerInGame.player.id === player.id)
+		)
+		connectedGames.forEach((game) => {
+			const playerInGame = game.players
+				.flatMap((playerGroup) => playerGroup.players)
+				.find((playerInGame) => playerInGame.player.id === player.id)
+			game.systemFinish(playerInGame?.opponentNullable || null, condition)
+		})
+	}
+
 	private static MAXIMUM_GAME_WAITING = Time.minutes.toMilliseconds(5)
 	private static MAXIMUM_GAME_DURATION = Time.minutes.toMilliseconds(60)
 	private startGameTimeoutTimer(game: ServerGame): void {
@@ -97,12 +125,12 @@ class GameLibrary {
 		setTimeout(() => {
 			if (!game.isStarted) {
 				OutgoingGlobalMessageHandlers.notifyAllPlayersAboutGameDestroyed(game)
-				this.destroyGame(game, `Game not started within ${Time.milliseconds.toMinutes(GameLibrary.MAXIMUM_GAME_WAITING)} minutes.`)
+				this.destroyGame(game, GameCloseReason.MAX_WAIT_TIME_EXCEEDED)
 			}
 		}, GameLibrary.MAXIMUM_GAME_WAITING)
 		setTimeout(() => {
 			OutgoingGlobalMessageHandlers.notifyAllPlayersAboutGameDestroyed(game)
-			this.destroyGame(game, `Game duration exceeded ${Time.milliseconds.toMinutes(GameLibrary.MAXIMUM_GAME_DURATION)} minutes.`)
+			this.destroyGame(game, GameCloseReason.MAX_GAME_TIME_EXCEEDED)
 		}, GameLibrary.MAXIMUM_GAME_DURATION)
 	}
 
@@ -113,7 +141,7 @@ class GameLibrary {
 		}
 		OutgoingGlobalMessageHandlers.notifyAllPlayersAboutGameDestroyed(game)
 		setTimeout(() => {
-			this.destroyGame(game, 'Cleanup (Timeout)')
+			this.destroyGame(game, GameCloseReason.NORMAL_CLEANUP)
 		}, GameLibrary.GAME_CLEANUP_DELAY)
 	}
 }

@@ -8,6 +8,7 @@ import OpenPlayerInGameMessage from '@shared/models/network/playerInGame/OpenPla
 import PlayersInLobbyMessage from '@shared/models/network/PlayersInLobbyMessage'
 import ResolveStackMessage from '@shared/models/network/resolveStack/ResolveStackMessage'
 import OutgoingMessageHandlers from '@src/game/handlers/OutgoingMessageHandlers'
+import { ServerRuleset } from '@src/game/models/rulesets/ServerRuleset'
 import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
 import { isCardPublic } from '@src/utils/Utils'
 
@@ -33,19 +34,19 @@ export default {
 		})
 	},
 
-	notifyAboutGameStart(playerGroup: ServerPlayerGroup, isBoardInverted: boolean): void {
+	notifyAboutGameStart(playerGroup: ServerPlayerGroup, ruleset: ServerRuleset, isBoardInverted: boolean): void {
 		playerGroup.players.forEach((playerInGame) =>
 			playerInGame.player.sendGameMessage({
 				type: GameSyncMessageType.START,
-				data: new GameStartMessage(isBoardInverted),
+				data: new GameStartMessage(ruleset.objective, isBoardInverted),
 			})
 		)
 	},
 
-	notifyAboutGameStartForPlayer(player: ServerPlayer, isBoardInverted: boolean): void {
+	notifyAboutGameStartForPlayer(player: ServerPlayer, ruleset: ServerRuleset, isBoardInverted: boolean): void {
 		player.sendGameMessage({
 			type: GameSyncMessageType.START,
-			data: new GameStartMessage(isBoardInverted),
+			data: new GameStartMessage(ruleset.objective, isBoardInverted),
 		})
 	},
 

@@ -3,6 +3,7 @@ import AnimationThreadStartMessage from '@shared/models/network/AnimationThreadS
 import { AnimationMessageType } from '@shared/models/network/messageHandlers/ServerToClientGameMessages'
 import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
 import ServerPlayerInGame from '@src/game/players/ServerPlayerInGame'
+import ServerPlayerSpectator from '@src/game/players/ServerPlayerSpectator'
 
 import ServerAnimation from '../../models/ServerAnimation'
 import ServerGame from '../../models/ServerGame'
@@ -33,7 +34,10 @@ export default {
 		})
 	},
 
-	triggerAnimationForPlayers(players: ServerPlayerInGame[] | ServerPlayerGroup, animation: ServerAnimation): void {
+	triggerAnimationForPlayers(
+		players: (ServerPlayerInGame | ServerPlayerSpectator)[] | ServerPlayerGroup,
+		animation: ServerAnimation
+	): void {
 		players = players instanceof ServerPlayerGroup ? players.players : players
 		players.forEach((playerInGame) =>
 			playerInGame.player.sendGameMessage({

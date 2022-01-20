@@ -4,6 +4,7 @@ import CardTribe from '@shared/enums/CardTribe'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import TargetType from '@shared/enums/TargetType'
+import UnitPriestessOfAedine from '@src/game/cards/00-human/common/UnitPriestessOfAedine'
 import { asDirectHealingPotency } from '@src/utils/LeaderStats'
 
 import ServerCard from '../../../models/ServerCard'
@@ -24,6 +25,7 @@ export default class TutorialUnitPriestessOfAedine extends ServerCard {
 			stats: {
 				power: 15,
 			},
+			sharedArtwork: UnitPriestessOfAedine,
 			expansionSet: ExpansionSet.TUTORIAL,
 		})
 		this.dynamicTextVariables = {

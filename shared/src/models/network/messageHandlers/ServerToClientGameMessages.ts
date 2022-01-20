@@ -61,6 +61,7 @@ export enum PlayerUpdateMessageType {
 	GAME_END_VICTORY = 'pl_gameEndAsVictory',
 	GAME_END_DEFEAT = 'pl_gameEndAsDefeat',
 	GAME_END_DRAW = 'pl_gameEndAsDraw',
+	SUPPRESS_END_SCREEN = 'pl_suppressEndScreen',
 	LINKED_GAME = 'pl_linkedGame',
 	COMMAND_JOIN_LINKED_GAME = 'pl_commandJoinLinkedGame',
 }
@@ -90,6 +91,7 @@ export type PlayerUpdateMessageTypeMapping = {
 	[PlayerUpdateMessageType.GAME_END_VICTORY]: null
 	[PlayerUpdateMessageType.GAME_END_DEFEAT]: null
 	[PlayerUpdateMessageType.GAME_END_DRAW]: null
+	[PlayerUpdateMessageType.SUPPRESS_END_SCREEN]: null
 	[PlayerUpdateMessageType.LINKED_GAME]: GameLinkMessage
 	[PlayerUpdateMessageType.COMMAND_JOIN_LINKED_GAME]: null
 }
@@ -249,6 +251,9 @@ export enum NovelMessageType {
 	REMOVE_CHARACTER = 'nvl_removeCharacter',
 	CONTINUE = 'nvl_continue',
 	END = 'nvl_end',
+	MUTE = 'nvl_mute',
+	SKIP_CUE_ANIMATION = 'nvl_skipAnim',
+	NEXT_CUE = 'nvl_nextCue',
 }
 
 export type NovelMessageTypeMapping = {
@@ -262,6 +267,9 @@ export type NovelMessageTypeMapping = {
 	[NovelMessageType.REMOVE_CHARACTER]: StoryCharacter
 	[NovelMessageType.CONTINUE]: null
 	[NovelMessageType.END]: null
+	[NovelMessageType.MUTE]: null
+	[NovelMessageType.SKIP_CUE_ANIMATION]: null
+	[NovelMessageType.NEXT_CUE]: null
 }
 
 export type NovelMessageHandlers = ConsumerSideTyper<NovelMessageTypeMapping>

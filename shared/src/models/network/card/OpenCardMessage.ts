@@ -17,6 +17,7 @@ export default class OpenCardMessage implements CardMessage {
 	class: string
 	color: CardColor
 	faction: CardFaction
+	artworkClass: string
 
 	stats: OpenCardStatsMessage
 	buffs: OpenBuffContainerMessage
@@ -39,6 +40,7 @@ export default class OpenCardMessage implements CardMessage {
 		this.class = card.class
 		this.color = card.color
 		this.faction = card.faction
+		this.artworkClass = card.artworkClass
 
 		this.stats = new OpenCardStatsMessage(card.stats)
 		this.buffs = new OpenBuffContainerMessage(card.buffs)

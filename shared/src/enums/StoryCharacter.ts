@@ -9,6 +9,8 @@ enum StoryCharacter {
 	BODGE = 'bodge',
 	NIRA = 'nira',
 	PROTAGONIST = 'protagonist',
+
+	QALEETA = 'qaleeta',
 }
 
 export const storyCharacterFromString = (value: string): StoryCharacter | null => {

@@ -9,17 +9,18 @@ import store from '@/Vue/store'
 
 const IncomingNovelMessages: NovelMessageHandlers = {
 	[NovelMessageType.START]: () => {
-		store.dispatch.novel.clear()
+		store.dispatch.novel.fullClear()
+		store.commit.novel.setIsActive(true)
 	},
 	[NovelMessageType.SAY]: (cue: NovelCueMessage) => {
-		store.commit.novel.setCue(cue)
+		store.dispatch.novel.setCue({ cue })
 		store.dispatch.novel.startPrintTimer()
 	},
 	[NovelMessageType.MOVE]: (action: NovelMoveAction) => {
 		OutgoingMessageHandlers.sendNovelChapterMove(action.chapterId)
 	},
 	[NovelMessageType.CLEAR]: () => {
-		store.dispatch.novel.clear()
+		store.dispatch.novel.clearResponses()
 	},
 	[NovelMessageType.ADD_REPLY]: (response: NovelResponseMessage) => {
 		store.dispatch.novel.addResponse({ response })
@@ -37,7 +38,16 @@ const IncomingNovelMessages: NovelMessageHandlers = {
 		OutgoingMessageHandlers.sendNovelContinue()
 	},
 	[NovelMessageType.END]: () => {
-		store.dispatch.novel.clear()
+		store.commit.novel.setIsActive(false)
+	},
+	[NovelMessageType.MUTE]: () => {
+		store.commit.novel.setIsMuted(true)
+	},
+	[NovelMessageType.SKIP_CUE_ANIMATION]: () => {
+		store.dispatch.novel.skipCurrentCueAnimation()
+	},
+	[NovelMessageType.NEXT_CUE]: () => {
+		store.dispatch.novel.proceedToNextCue()
 	},
 }
 

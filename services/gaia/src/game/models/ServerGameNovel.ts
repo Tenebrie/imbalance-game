@@ -1,4 +1,6 @@
 import StoryCharacter, { storyCharacterFromString } from '@shared/enums/StoryCharacter'
+import NovelCue from '@shared/models/novel/NovelCue'
+import { Time } from '@shared/Utils'
 import OutgoingAnimationMessages from '@src/game/handlers/outgoing/OutgoingAnimationMessages'
 import ServerAnimation from '@src/game/models/ServerAnimation'
 import {
@@ -9,6 +11,8 @@ import {
 	TenScriptStatementSelector,
 } from '@src/game/models/ServerTenScriptParser'
 import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
+import ServerPlayerInGame from '@src/game/players/ServerPlayerInGame'
+import ServerPlayerSpectator from '@src/game/players/ServerPlayerSpectator'
 import { createRandomGuid } from '@src/utils/Utils'
 import { v4 as uuid } from 'uuid'
 
@@ -18,7 +22,11 @@ import ServerGame from './ServerGame'
 export default class ServerGameNovel {
 	private readonly game: ServerGame
 
-	public clientState: TenScriptStatement[] = []
+	public clientState: {
+		statements: TenScriptStatement[]
+		lastCue: NovelCue | null
+		namespace: string
+	} | null = null
 	public clientMoves: {
 		chapterId: string
 	}[] = []
@@ -40,7 +48,11 @@ export default class ServerGameNovel {
 		this.game = game
 	}
 
-	private get player(): ServerPlayerGroup {
+	public isActive(): boolean {
+		return !!this.clientState
+	}
+
+	public get player(): ServerPlayerGroup {
 		const player = this.game.getHumanGroup()
 		if (!player) {
 			throw new Error(`No human player in game ${this.game.id}!`)
@@ -76,6 +88,7 @@ export default class ServerGameNovel {
 		}
 
 		this.clearClientState()
+		OutgoingNovelMessages.notifyAboutDialogMuted(this.player)
 
 		this.executeInlineChapter(id)
 		this.executeScriptChapter(id)
@@ -89,7 +102,7 @@ export default class ServerGameNovel {
 		}
 		const namespace = id.split('/')[0]
 		const runner = new ServerGameNovelRunner(this.game, namespace)
-		runner.executeStatements(chapterStatements)
+		runner.executeStatements(chapterStatements, this.player)
 	}
 
 	private executeScriptChapter(id: string): void {
@@ -102,7 +115,7 @@ export default class ServerGameNovel {
 		throwIfParseFailed(script, scriptSyntaxTree)
 		const namespace = id.split('/')[0]
 		const runner = new ServerGameNovelRunner(this.game, namespace)
-		runner.executeStatements(scriptSyntaxTree.statements)
+		runner.executeStatements(scriptSyntaxTree.statements, this.player)
 	}
 
 	private executeCreatorChapter(id: string): void {
@@ -110,14 +123,28 @@ export default class ServerGameNovel {
 		if (!chapterCreator) {
 			return
 		}
-		chapterCreator(new ServerGameImmediateNovelUnconditionalCreator(this.game))
+		const creator = new ServerGameImmediateNovelUnconditionalCreator(this.game)
+		chapterCreator(creator)
+		creator.finalize()
 	}
 
 	public hasQueue(): boolean {
 		return this.queuedStatements.length > 0
 	}
 
-	public addToQueue(namespace: string, statements: TenScriptStatement[]): void {
+	public hasSayStatementsToPop(): boolean {
+		return !!this.clientState && this.clientState.statements.filter((statement) => statement.type === StatementType.SAY).length > 0
+	}
+
+	public addToQueue(
+		namespace: string,
+		statements: TenScriptStatement[],
+		playerOrGroup: ServerPlayerInGame | ServerPlayerSpectator | ServerPlayerGroup
+	): void {
+		if (!(playerOrGroup instanceof ServerPlayerGroup)) {
+			return
+		}
+
 		this.queuedStatements.unshift({
 			namespace,
 			statements,
@@ -125,21 +152,32 @@ export default class ServerGameNovel {
 	}
 
 	public continueQueue(): void {
+		if (this.hasSayStatementsToPop() || this.clientResponses.length > 0) {
+			return
+		}
+
 		const queueEntry = this.queuedStatements.shift()
+		this.clearClientState()
 		if (!queueEntry) {
 			OutgoingNovelMessages.notifyAboutDialogEnded(this.player)
 			return
 		}
 
-		this.clearClientState()
-
 		const runner = new ServerGameNovelRunner(this.game, queueEntry.namespace)
-		runner.executeStatements(queueEntry.statements)
+		runner.executeStatements(queueEntry.statements, this.player)
 		return
 	}
 
-	public appendClientState(statement: TenScriptStatement): void {
-		this.clientState.push(statement)
+	public appendClientState(statement: TenScriptStatement, namespace: string): void {
+		if (!this.clientState) {
+			this.clientState = {
+				namespace,
+				lastCue: null,
+				statements: [],
+			}
+		}
+
+		this.clientState.statements.push(statement)
 	}
 
 	public appendClientMoves(chapterId: string): void {
@@ -155,8 +193,40 @@ export default class ServerGameNovel {
 		})
 	}
 
-	private clearClientState(): void {
-		this.clientState = []
+	public popClientStateCue(): boolean {
+		if (!this.clientState) {
+			return false
+		}
+
+		const poppedStatement = this.clientState.statements.find((statement) => statement.type === StatementType.SAY)
+
+		if (poppedStatement && poppedStatement.type === StatementType.SAY) {
+			this.clientState.statements.splice(this.clientState.statements.indexOf(poppedStatement), 1)
+			this.clientState.lastCue = {
+				id: uuid(),
+				text: getSayStatementMessage(poppedStatement),
+			}
+			return true
+		}
+		return false
+	}
+
+	public restoreClientStateOnReconnect(player: ServerPlayerInGame | ServerPlayerSpectator): void {
+		if (!this.clientState) {
+			return
+		}
+
+		OutgoingNovelMessages.notifyAboutDialogStarted(player)
+		if (this.clientState.lastCue) {
+			OutgoingNovelMessages.notifyAboutLeftoverCue(player, this.clientState.lastCue)
+		}
+
+		const runner = new ServerGameNovelRunner(this.game, this.clientState.namespace)
+		runner.executeStatements(this.clientState.statements, player)
+	}
+
+	public clearClientState(): void {
+		this.clientState = null
 		this.clientMoves = []
 		this.clientResponses = []
 		OutgoingNovelMessages.notifyAboutDialogCuesCleared(this.player)
@@ -167,13 +237,14 @@ export interface ServerGameNovelCreator {
 	exec(script: string | (() => string)): ServerGameNovelCreator
 	chapter(chapterId: string | number, callback: () => string): ServerGameNovelCreator
 	continue(chapterId: string | number, callback: (novel: ServerGameNovelCreator) => ServerGameNovelCreator): ServerGameNovelCreator
-	closingChapter(chapterId: string | number, callback: () => void): ServerGameNovelCreator
+	actionChapter(chapterId: string | number, callback: () => void): ServerGameNovelCreator
 }
 
 export class ServerGameImmediateNovelCreator implements ServerGameNovelCreator {
 	private readonly game: ServerGame
 	private readonly namespace: string
 	protected readonly runUnconditionally: boolean = false
+	private isFinalized = false
 
 	constructor(game: ServerGame) {
 		this.game = game
@@ -186,12 +257,13 @@ export class ServerGameImmediateNovelCreator implements ServerGameNovelCreator {
 		throwIfParseFailed(script, scriptSyntaxTree)
 
 		if (this.game.novel.hasQueue() && !this.runUnconditionally) {
-			this.game.novel.addToQueue(this.namespace, scriptSyntaxTree.statements)
+			this.game.novel.addToQueue(this.namespace, scriptSyntaxTree.statements, this.game.novel.player)
 		} else {
 			const runner = new ServerGameNovelRunner(this.game, this.namespace)
-			runner.executeStatements(scriptSyntaxTree.statements)
+			runner.executeStatements(scriptSyntaxTree.statements, this.game.novel.player)
 		}
 
+		this.isFinalized = true
 		return this
 	}
 
@@ -208,11 +280,18 @@ export class ServerGameImmediateNovelCreator implements ServerGameNovelCreator {
 		return this
 	}
 
-	public closingChapter(chapterId: string | number, callback: () => void): ServerGameImmediateNovelCreator {
+	public actionChapter(chapterId: string | number, callback: () => void): ServerGameImmediateNovelCreator {
 		return this.chapter(chapterId, () => {
 			callback()
 			return ``
 		})
+	}
+
+	public finalize(): void {
+		if (!this.isFinalized) {
+			const runner = new ServerGameNovelRunner(this.game, this.namespace)
+			runner.executeStatements([], this.game.novel.player)
+		}
 	}
 }
 
@@ -268,7 +347,7 @@ export class ServerGameDelayedNovelCreator implements ServerGameNovelCreator {
 		return this
 	}
 
-	public closingChapter(chapterId: string | number, callback: () => void): ServerGameDelayedNovelCreator {
+	public actionChapter(chapterId: string | number, callback: () => void): ServerGameDelayedNovelCreator {
 		return this.chapter(chapterId, () => {
 			callback()
 			return ``
@@ -302,14 +381,6 @@ export class ServerGameNovelRunner {
 		this.namespace = namespace
 	}
 
-	private get player(): ServerPlayerGroup {
-		const player = this.game.getHumanGroup()
-		if (!player) {
-			throw new Error(`No human player in game ${this.game.id}!`)
-		}
-		return player
-	}
-
 	private handleStatementPreprocess(statement: TenScriptStatement): void {
 		switch (statement.type) {
 			case StatementType.CREATE_CHAPTER:
@@ -319,23 +390,20 @@ export class ServerGameNovelRunner {
 		}
 	}
 
-	private handleStatementEffect(statement: TenScriptStatement): void {
-		this.game.novel.appendClientState(statement)
+	private handleStatementEffect(
+		statement: TenScriptStatement,
+		playerOrGroup: ServerPlayerInGame | ServerPlayerSpectator | ServerPlayerGroup
+	): void {
+		const isWritingMode = playerOrGroup instanceof ServerPlayerGroup
+
+		if (isWritingMode) {
+			this.game.novel.appendClientState(statement, this.namespace)
+		}
+
 		switch (statement.type) {
 			case StatementType.SAY:
-				const getMessage = (statement: TenScriptStatementSelector<StatementType.SAY>): string => {
-					const filteredChildren = statement.children.filter(
-						(child) => child.type === StatementType.SAY
-					) as TenScriptStatementSelector<StatementType.SAY>[]
-					const childrenMessages = filteredChildren.map((child) => getMessage(child)).join('<br>')
-					if (childrenMessages) {
-						return `${statement.data}<br>${childrenMessages}`
-					}
-					return statement.data
-				}
-
-				const message = getMessage(statement)
-				OutgoingNovelMessages.notifyAboutDialogCue(this.player, {
+				const message = getSayStatementMessage(statement)
+				OutgoingNovelMessages.notifyAboutDialogCue(playerOrGroup, {
 					id: `cue:${uuid()}`,
 					text: message,
 				})
@@ -345,8 +413,10 @@ export class ServerGameNovelRunner {
 				const moveAction = {
 					chapterId: moveChapterId,
 				}
-				OutgoingNovelMessages.notifyAboutDialogMove(this.player, moveAction)
-				this.game.novel.appendClientMoves(moveChapterId)
+				OutgoingNovelMessages.notifyAboutDialogMove(playerOrGroup, moveAction)
+				if (isWritingMode) {
+					this.game.novel.appendClientMoves(moveChapterId)
+				}
 				break
 			case StatementType.RESPONSE_INLINE:
 				const inlineChapterId = `${this.namespace}/${createRandomGuid()}`
@@ -355,8 +425,10 @@ export class ServerGameNovelRunner {
 					text: statement.data,
 					chapterId: inlineChapterId,
 				}
-				OutgoingNovelMessages.notifyAboutDialogResponse(this.player, inlineResponse)
-				this.game.novel.appendClientResponses(inlineResponse.text, inlineResponse.chapterId)
+				OutgoingNovelMessages.notifyAboutDialogResponse(playerOrGroup, inlineResponse)
+				if (isWritingMode) {
+					this.game.novel.appendClientResponses(inlineResponse.text, inlineResponse.chapterId)
+				}
 				break
 			case StatementType.RESPONSE_CHAPTER:
 				const responseChapterId = `${this.namespace}/${statement.data.chapterName}`
@@ -364,17 +436,22 @@ export class ServerGameNovelRunner {
 					text: statement.data.text,
 					chapterId: responseChapterId,
 				}
-				OutgoingNovelMessages.notifyAboutDialogResponse(this.player, chapterResponse)
-				this.game.novel.appendClientResponses(chapterResponse.text, chapterResponse.chapterId)
+				OutgoingNovelMessages.notifyAboutDialogResponse(playerOrGroup, chapterResponse)
+				if (isWritingMode) {
+					this.game.novel.appendClientResponses(chapterResponse.text, chapterResponse.chapterId)
+				}
 				break
 			case StatementType.SET_SPEAKER:
 				const character = storyCharacterFromString(statement.data) || StoryCharacter.UNKNOWN
-				OutgoingNovelMessages.notifyAboutActiveDialogCharacter(this.player, character)
+				OutgoingNovelMessages.notifyAboutActiveDialogCharacter(playerOrGroup, character)
 				break
 		}
 	}
 
-	public executeStatements(statements: TenScriptStatement[]): void {
+	public executeStatements(
+		statements: TenScriptStatement[],
+		playerOrGroup: ServerPlayerInGame | ServerPlayerSpectator | ServerPlayerGroup
+	): void {
 		statements.forEach((statement) => {
 			this.handleStatementPreprocess(statement)
 		})
@@ -386,30 +463,42 @@ export class ServerGameNovelRunner {
 			const statement = statements[i]
 			if (state === 'normal' && (statement.type === StatementType.RESPONSE_INLINE || statement.type === StatementType.RESPONSE_CHAPTER)) {
 				state = 'responses'
-				this.handleStatementEffect(statement)
+				this.handleStatementEffect(statement, playerOrGroup)
 			} else if (
 				state === 'responses' &&
 				statement.type !== StatementType.RESPONSE_INLINE &&
 				statement.type !== StatementType.RESPONSE_CHAPTER
 			) {
-				this.game.novel.addToQueue(this.namespace, statements.slice(i))
+				this.game.novel.addToQueue(this.namespace, statements.slice(i), playerOrGroup)
 				break
 			} else if (state === 'normal' && statement.type === StatementType.MOVE) {
 				state = 'post-move'
-				this.handleStatementEffect(statement)
+				this.handleStatementEffect(statement, playerOrGroup)
 			} else if (state === 'post-move') {
-				this.game.novel.addToQueue(this.namespace, statements.slice(i))
+				this.game.novel.addToQueue(this.namespace, statements.slice(i), playerOrGroup)
 				break
 			} else {
-				this.handleStatementEffect(statement)
+				this.handleStatementEffect(statement, playerOrGroup)
 			}
 		}
 		if (state === 'normal') {
-			OutgoingNovelMessages.notifyAboutDialogSegmentEnded(this.player)
+			OutgoingNovelMessages.notifyAboutDialogSegmentEnded(playerOrGroup)
 		} else if (state === 'responses') {
-			OutgoingAnimationMessages.triggerAnimationForPlayers(this.player, ServerAnimation.delay(3600000))
+			const players = playerOrGroup instanceof ServerPlayerGroup ? playerOrGroup.players : [playerOrGroup]
+			OutgoingAnimationMessages.triggerAnimationForPlayers(players, ServerAnimation.delay(Time.minutes.toMilliseconds(60)))
 		}
 	}
+}
+
+const getSayStatementMessage = (statement: TenScriptStatementSelector<StatementType.SAY>): string => {
+	const filteredChildren = statement.children.filter(
+		(child) => child.type === StatementType.SAY
+	) as TenScriptStatementSelector<StatementType.SAY>[]
+	const childrenMessages = filteredChildren.map((child) => getSayStatementMessage(child)).join('<br>')
+	if (childrenMessages) {
+		return `${statement.data}<br>${childrenMessages}`
+	}
+	return statement.data
 }
 
 const throwIfParseFailed = (

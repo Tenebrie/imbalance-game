@@ -4,6 +4,7 @@ import CardTribe from '@shared/enums/CardTribe'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
+import UnitWoundedVeteran from '@src/game/cards/00-human/common/UnitWoundedVeteran'
 
 import ServerCard from '../../../models/ServerCard'
 import { DamageInstance } from '../../../models/ServerDamageSource'
@@ -21,6 +22,7 @@ export default class TutorialUnitWoundedVeteran extends ServerCard {
 			stats: {
 				power: 40,
 			},
+			sharedArtwork: UnitWoundedVeteran,
 			expansionSet: ExpansionSet.TUTORIAL,
 		})
 		this.dynamicTextVariables = {

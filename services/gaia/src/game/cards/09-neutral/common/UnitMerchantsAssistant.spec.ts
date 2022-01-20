@@ -74,7 +74,7 @@ describe('UnitMerchantsAssistant', () => {
 			game.player.add(TestingSpell10Mana)
 			game.player.add(TestingSpell10Mana)
 			game.player.add(TestingSpell10Mana)
-			game.startNextRound()
+			game.finishCurrentRound()
 		})
 
 		it('removes discount', () => {

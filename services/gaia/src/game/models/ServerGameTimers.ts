@@ -1,3 +1,6 @@
+import { Time } from '@shared/Utils'
+import GameVictoryCondition from '@src/enums/GameVictoryCondition'
+
 import ServerGame from './ServerGame'
 
 class ReusableTimeout {
@@ -33,6 +36,8 @@ export default class ServerGameTimers {
 	game: ServerGame
 	playerLeaveTimeout: ReusableTimeout
 
+	public static PLAYER_RECONNECT_TIMEOUT = Time.minutes.toMilliseconds(2)
+
 	constructor(game: ServerGame) {
 		this.game = game
 
@@ -43,9 +48,9 @@ export default class ServerGameTimers {
 					game.players.find((playerGroup) =>
 						playerGroup.players.every((player) => player.player.isInGame() && player.player.game === game)
 					) || null
-				game.systemFinish(victoriousPlayer, 'Player surrendered (Connection lost)')
+				game.systemFinish(victoriousPlayer, GameVictoryCondition.PLAYER_CONNECTION_LOST)
 			},
-			60000
+			ServerGameTimers.PLAYER_RECONNECT_TIMEOUT
 		)
 	}
 }

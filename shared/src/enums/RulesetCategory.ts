@@ -4,7 +4,7 @@ enum RulesetCategory {
 	COOP,
 	CAMPAIGN,
 	PROTOTYPES,
-	LABYRINTH,
+	RITES,
 	OTHER,
 }
 

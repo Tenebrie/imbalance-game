@@ -8,6 +8,7 @@ import CardTargetMessage from '@shared/models/network/CardTargetMessage'
 import { GenericActionMessageType } from '@shared/models/network/messageHandlers/ClientToServerGameMessages'
 import PlayerInGame from '@shared/models/PlayerInGame'
 import { sortCards } from '@shared/Utils'
+import GameCloseReason from '@src/enums/GameCloseReason'
 import IncomingMessageHandlers from '@src/game/handlers/IncomingMessageHandlers'
 import GameLibrary from '@src/game/libraries/GameLibrary'
 import ServerEditorDeck from '@src/game/models/ServerEditorDeck'
@@ -367,7 +368,7 @@ export class ServerBotPlayerInGame extends ServerPlayerInGame {
 				}
 			} catch (e) {
 				console.error('Unknown AI error', e)
-				GameLibrary.destroyGame(this.game, 'Error')
+				GameLibrary.destroyGame(this.game, GameCloseReason.AI_ACTION_LOGIC_ERROR)
 			}
 		} else if (this.behaviour === AIBehaviour.OVERMIND) {
 			if (botWonRound || botLostRound || botHasGoodLead) {
@@ -383,7 +384,7 @@ export class ServerBotPlayerInGame extends ServerPlayerInGame {
 				}
 			} catch (e) {
 				console.error('Unknown AI error', e)
-				GameLibrary.destroyGame(this.game, 'Error')
+				GameLibrary.destroyGame(this.game, GameCloseReason.AI_ACTION_LOGIC_ERROR)
 			}
 		}
 		this.botEndsTurn()

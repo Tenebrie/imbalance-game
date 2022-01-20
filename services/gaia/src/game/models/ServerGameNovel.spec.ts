@@ -6,6 +6,7 @@ import {
 
 import StoryCharacter from '../../../../../shared/src/enums/StoryCharacter'
 import { setupTestGame } from '../../utils/TestGame'
+import { safeWhile } from '../../utils/Utils'
 import TestingRulesetPVP from '../rulesets/testing/TestingRulesetPVP'
 import ServerGame from './ServerGame'
 
@@ -71,28 +72,6 @@ describe('ServerGameNovel', () => {
 			expect(messages.length).toEqual(4)
 		})
 
-		describe('on continue', () => {
-			beforeEach(() => {
-				game.novel.continueQueue()
-			})
-
-			it('re-sends the last segment', () => {
-				const messages = getSentMessages()
-
-				// TODO: Implement this
-				// expect(messages[3].type).toEqual(NovelMessageType.CLEAR)
-				// expect(messages[4].type).toEqual(NovelMessageType.ADD_REPLY)
-				// if (messages[4].type === NovelMessageType.ADD_REPLY) {
-				// 	expect(messages[4].data.text).toEqual('Option A')
-				// }
-				// expect(messages[5].type).toEqual(NovelMessageType.ADD_REPLY)
-				// if (messages[5].type === NovelMessageType.ADD_REPLY) {
-				// 	expect(messages[5].data.text).toEqual('Option B')
-				// }
-				// expect(messages.length).toEqual(6)
-			})
-		})
-
 		describe('on response selected', () => {
 			beforeEach(() => {
 				const messages = getSentMessages()
@@ -109,22 +88,24 @@ describe('ServerGameNovel', () => {
 				const messages = getSentMessages(4)
 
 				expect(messages[0].type).toEqual(NovelMessageType.CLEAR)
-				expect(messages[1].type).toEqual(NovelMessageType.SAY)
-				if (messages[1].type === NovelMessageType.SAY) {
-					expect(messages[1].data.text).toEqual('Option A response')
+				expect(messages[1].type).toEqual(NovelMessageType.MUTE)
+				expect(messages[2].type).toEqual(NovelMessageType.SAY)
+				if (messages[2].type === NovelMessageType.SAY) {
+					expect(messages[2].data.text).toEqual('Option A response')
 				}
-				expect(messages[2].type).toEqual(AnimationMessageType.PLAY)
-				expect(messages[3].type).toEqual(NovelMessageType.CONTINUE)
-				expect(messages.length).toEqual(4)
+				expect(messages[3].type).toEqual(AnimationMessageType.PLAY)
+				expect(messages[4].type).toEqual(NovelMessageType.CONTINUE)
+				expect(messages.length).toEqual(5)
 			})
 
 			describe('on continue', () => {
 				beforeEach(() => {
+					safeWhile(() => game.novel.popClientStateCue())
 					game.novel.continueQueue()
 				})
 
 				it('sends valid messages', () => {
-					const messages = getSentMessages(8)
+					const messages = getSentMessages(9)
 
 					expect(messages[0].type).toEqual(NovelMessageType.CLEAR)
 					expect(messages[1].type).toEqual(NovelMessageType.SAY)
@@ -138,11 +119,12 @@ describe('ServerGameNovel', () => {
 
 				describe('on continue again', () => {
 					beforeEach(() => {
+						safeWhile(() => game.novel.popClientStateCue())
 						game.novel.continueQueue()
 					})
 
 					it('sends dialog end message', () => {
-						const messages = getSentMessages(12)
+						const messages = getSentMessages(14)
 
 						expect(messages[0].type).toEqual(NovelMessageType.END)
 					})
@@ -199,22 +181,24 @@ describe('ServerGameNovel', () => {
 				const messages = getSentMessages(4)
 
 				expect(messages[0].type).toEqual(NovelMessageType.CLEAR)
-				expect(messages[1].type).toEqual(NovelMessageType.SAY)
-				if (messages[1].type === NovelMessageType.SAY) {
-					expect(messages[1].data.text).toEqual('Option A response')
+				expect(messages[1].type).toEqual(NovelMessageType.MUTE)
+				expect(messages[2].type).toEqual(NovelMessageType.SAY)
+				if (messages[2].type === NovelMessageType.SAY) {
+					expect(messages[2].data.text).toEqual('Option A response')
 				}
-				expect(messages[2].type).toEqual(AnimationMessageType.PLAY)
-				expect(messages[3].type).toEqual(NovelMessageType.CONTINUE)
-				expect(messages.length).toEqual(4)
+				expect(messages[3].type).toEqual(AnimationMessageType.PLAY)
+				expect(messages[4].type).toEqual(NovelMessageType.CONTINUE)
+				expect(messages.length).toEqual(5)
 			})
 
 			describe('on continue', () => {
 				beforeEach(() => {
+					safeWhile(() => game.novel.popClientStateCue())
 					game.novel.continueQueue()
 				})
 
 				it('sends valid messages', () => {
-					const messages = getSentMessages(8)
+					const messages = getSentMessages(9)
 
 					expect(messages[0].type).toEqual(NovelMessageType.CLEAR)
 					expect(messages[1].type).toEqual(NovelMessageType.SAY)
@@ -228,11 +212,12 @@ describe('ServerGameNovel', () => {
 
 				describe('on continue again', () => {
 					beforeEach(() => {
+						safeWhile(() => game.novel.popClientStateCue())
 						game.novel.continueQueue()
 					})
 
 					it('sends dialog end message', () => {
-						const messages = getSentMessages(12)
+						const messages = getSentMessages(14)
 
 						expect(messages[0].type).toEqual(NovelMessageType.END)
 					})
@@ -289,22 +274,24 @@ describe('ServerGameNovel', () => {
 				const messages = getSentMessages(4)
 
 				expect(messages[0].type).toEqual(NovelMessageType.CLEAR)
-				expect(messages[1].type).toEqual(NovelMessageType.SAY)
-				if (messages[1].type === NovelMessageType.SAY) {
-					expect(messages[1].data.text).toEqual('Option A response')
+				expect(messages[1].type).toEqual(NovelMessageType.MUTE)
+				expect(messages[2].type).toEqual(NovelMessageType.SAY)
+				if (messages[2].type === NovelMessageType.SAY) {
+					expect(messages[2].data.text).toEqual('Option A response')
 				}
-				expect(messages[2].type).toEqual(AnimationMessageType.PLAY)
-				expect(messages[3].type).toEqual(NovelMessageType.CONTINUE)
-				expect(messages.length).toEqual(4)
+				expect(messages[3].type).toEqual(AnimationMessageType.PLAY)
+				expect(messages[4].type).toEqual(NovelMessageType.CONTINUE)
+				expect(messages.length).toEqual(5)
 			})
 
 			describe('on continue', () => {
 				beforeEach(() => {
+					safeWhile(() => game.novel.popClientStateCue())
 					game.novel.continueQueue()
 				})
 
 				it('sends valid messages', () => {
-					const messages = getSentMessages(8)
+					const messages = getSentMessages(9)
 
 					expect(messages[0].type).toEqual(NovelMessageType.CLEAR)
 					expect(messages[1].type).toEqual(NovelMessageType.SAY)
@@ -318,11 +305,12 @@ describe('ServerGameNovel', () => {
 
 				describe('on continue again', () => {
 					beforeEach(() => {
+						safeWhile(() => game.novel.popClientStateCue())
 						game.novel.continueQueue()
 					})
 
 					it('sends dialog end message', () => {
-						const messages = getSentMessages(12)
+						const messages = getSentMessages(14)
 
 						expect(messages[0].type).toEqual(NovelMessageType.END)
 					})
@@ -334,8 +322,10 @@ describe('ServerGameNovel', () => {
 	describe('for multiple dialogs in succession', () => {
 		beforeEach(() => {
 			game.novel.startDialog('> First dialog option')
+			safeWhile(() => game.novel.popClientStateCue())
 			game.novel.continueQueue()
 			game.novel.startDialog('> Second dialog option')
+			safeWhile(() => game.novel.popClientStateCue())
 			game.novel.continueQueue()
 		})
 
@@ -349,16 +339,18 @@ describe('ServerGameNovel', () => {
 			}
 			expect(messages[2].type).toEqual(AnimationMessageType.PLAY)
 			expect(messages[3].type).toEqual(NovelMessageType.CONTINUE)
-			expect(messages[4].type).toEqual(NovelMessageType.END)
-			expect(messages[5].type).toEqual(NovelMessageType.START)
-			expect(messages[6].type).toEqual(NovelMessageType.SAY)
-			if (messages[6].type === NovelMessageType.SAY) {
-				expect(messages[6].data.text).toEqual('Second dialog option')
+			expect(messages[4].type).toEqual(NovelMessageType.CLEAR)
+			expect(messages[5].type).toEqual(NovelMessageType.END)
+			expect(messages[6].type).toEqual(NovelMessageType.START)
+			expect(messages[7].type).toEqual(NovelMessageType.SAY)
+			if (messages[7].type === NovelMessageType.SAY) {
+				expect(messages[7].data.text).toEqual('Second dialog option')
 			}
-			expect(messages[7].type).toEqual(AnimationMessageType.PLAY)
-			expect(messages[8].type).toEqual(NovelMessageType.CONTINUE)
-			expect(messages[9].type).toEqual(NovelMessageType.END)
-			expect(messages.length).toEqual(10)
+			expect(messages[8].type).toEqual(AnimationMessageType.PLAY)
+			expect(messages[9].type).toEqual(NovelMessageType.CONTINUE)
+			expect(messages[10].type).toEqual(NovelMessageType.CLEAR)
+			expect(messages[11].type).toEqual(NovelMessageType.END)
+			expect(messages.length).toEqual(12)
 		})
 	})
 
@@ -374,7 +366,7 @@ describe('ServerGameNovel', () => {
 					--> Chapter
 				`
 				)
-				.closingChapter('Chapter', () => {
+				.actionChapter('Chapter', () => {
 					callbackExecuted += 1
 				})
 		})
@@ -460,22 +452,24 @@ describe('ServerGameNovel', () => {
 				const messages = getSentMessages(4)
 
 				expect(messages[0].type).toEqual(NovelMessageType.CLEAR)
-				expect(messages[1].type).toEqual(NovelMessageType.SAY)
-				if (messages[1].type === NovelMessageType.SAY) {
-					expect(messages[1].data.text).toEqual('Chapter dialog')
+				expect(messages[1].type).toEqual(NovelMessageType.MUTE)
+				expect(messages[2].type).toEqual(NovelMessageType.SAY)
+				if (messages[2].type === NovelMessageType.SAY) {
+					expect(messages[2].data.text).toEqual('Chapter dialog')
 				}
-				expect(messages[2].type).toEqual(AnimationMessageType.PLAY)
-				expect(messages[3].type).toEqual(NovelMessageType.CONTINUE)
-				expect(messages.length).toEqual(4)
+				expect(messages[3].type).toEqual(AnimationMessageType.PLAY)
+				expect(messages[4].type).toEqual(NovelMessageType.CONTINUE)
+				expect(messages.length).toEqual(5)
 			})
 
 			describe('on continue', () => {
 				beforeEach(() => {
+					safeWhile(() => game.novel.popClientStateCue())
 					game.novel.continueQueue()
 				})
 
 				it('executes chapter', () => {
-					const messages = getSentMessages(8)
+					const messages = getSentMessages(9)
 
 					expect(messages[0].type).toEqual(NovelMessageType.CLEAR)
 					expect(messages[1].type).toEqual(NovelMessageType.SAY)
@@ -489,11 +483,12 @@ describe('ServerGameNovel', () => {
 
 				describe('on continue again', () => {
 					beforeEach(() => {
+						safeWhile(() => game.novel.popClientStateCue())
 						game.novel.continueQueue()
 					})
 
 					it('ends dialog', () => {
-						const messages = getSentMessages(12)
+						const messages = getSentMessages(14)
 						expect(messages[0].type).toEqual(NovelMessageType.END)
 					})
 				})

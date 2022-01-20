@@ -3,6 +3,7 @@ import BoardSplitMode from '@shared/enums/BoardSplitMode'
 import GameEventType from '@shared/enums/GameEventType'
 import GameMode from '@shared/enums/GameMode'
 import RulesetCategory from '@shared/enums/RulesetCategory'
+import GameVictoryCondition from '@src/enums/GameVictoryCondition'
 import UnitChallengeDummyOPWarrior from '@src/game/cards/10-challenge/ai-00-dummy/UnitChallengeDummyOPWarrior'
 import HeroCampfireBodge from '@src/game/cards/10-challenge/test-campfire/HeroCampfireBodge'
 import HeroCampfireElsa from '@src/game/cards/10-challenge/test-campfire/HeroCampfireElsa'
@@ -614,8 +615,8 @@ export default class RulesetCampfire extends ServerRuleset {
 					--> ${NiraChapters.FinishGame}
 				`
 				)
-				.closingChapter(NiraChapters.FinishGame, () => {
-					game.playerFinish(game.getHumanGroup(), 'Story trigger')
+				.actionChapter(NiraChapters.FinishGame, () => {
+					game.playerFinish(game.getHumanGroup(), GameVictoryCondition.STORY_TRIGGER)
 				})
 		}
 	}

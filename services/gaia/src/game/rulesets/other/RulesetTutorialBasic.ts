@@ -3,6 +3,7 @@ import CardType from '@shared/enums/CardType'
 import GameEventType from '@shared/enums/GameEventType'
 import GameMode from '@shared/enums/GameMode'
 import RulesetCategory from '@shared/enums/RulesetCategory'
+import GameVictoryCondition from '@src/enums/GameVictoryCondition'
 import UnitStrayDog from '@src/game/cards/09-neutral/tokens/UnitStrayDog'
 import UnitChallengeDummyVanillaWarrior from '@src/game/cards/10-challenge/ai-00-dummy/UnitChallengeDummyVanillaWarrior'
 import TutorialHeroTroviar from '@src/game/cards/13-special/cards/TutorialHeroTroviar'
@@ -57,7 +58,6 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 				> Welcome to State of Imbalance Alpha!
 					> This tutorial scenario will explain the basic concepts about the game.
 					> Click or press "Space" to continue...
-				> Actually, "Space" key doesn't work at the moment, I know. Will fix soon.
 				> Your goal during a round is to score more points than your opponent.
 					> The score - displayed in a bubble on the right side of the board - is the total power of your cards on the board.
 					> Cards on the board are generally called Units.
@@ -81,7 +81,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 				--> AddHealer
 			`
 			)
-			.closingChapter('AddHealer', () => {
+			.actionChapter('AddHealer', () => {
 				Keywords.addCardToHand.for(game.getHumanGroup().players[0]).fromConstructor(TutorialUnitPriestessOfAedine)
 			})
 
@@ -130,7 +130,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 						> You'll see an overlay with the card description, any other related cards and other information.
 			`
 			)
-			.closingChapter('DropCards', () => {
+			.actionChapter('DropCards', () => {
 				Keywords.addCardToHand.for(game.getSinglePlayer()).fromConstructor(TutorialHeroTroviar)
 				Keywords.addCardToHand.for(game.getSinglePlayer()).fromConstructor(TutorialUnitEagleEyeArcher)
 				Keywords.addCardToHand.for(game.getSinglePlayer()).fromConstructor(TutorialUnitEagleEyeArcher)
@@ -163,7 +163,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 				--> Setup
 			`
 			)
-			.closingChapter('Setup', () => {
+			.actionChapter('Setup', () => {
 				const player = game.getSinglePlayer()
 				Keywords.addCardToHand.for(player).fromConstructor(TutorialUnitStormElemental)
 				player.cardHand.addSpell(new TutorialSpellShadowSpark(game))
@@ -207,7 +207,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 					> Alright. Then feel free to just end the round right now.
 			`
 			)
-			.closingChapter('Spellsling', () => {
+			.actionChapter('Spellsling', () => {
 				const player = game.getSinglePlayer()
 				Keywords.addCardToHand.for(player).fromConstructor(TutorialUnitStormElemental)
 				Keywords.addCardToHand.for(player).fromConstructor(TutorialUnitStormElemental)
@@ -232,7 +232,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 				...values,
 				finishPrevented: true,
 			}))
-			.perform(({ victoryReason }) => {
+			.perform(({ victoryCondition }) => {
 				game.novel
 					.startDialog(
 						`
@@ -244,9 +244,9 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 					--> Finish
 					`
 					)
-					.closingChapter('Finish', () => {
+					.actionChapter('Finish', () => {
 						this.finalDialogShown = true
-						game.playerFinish(game.getHumanGroup(), victoryReason)
+						game.playerFinish(game.getHumanGroup(), victoryCondition)
 					})
 			})
 
@@ -312,9 +312,9 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 						--> End
 					`
 					)
-					.closingChapter('End', () => {
+					.actionChapter('End', () => {
 						this.finalDialogShown = true
-						game.playerFinish(game.getBotPlayer().group, 'Story trigger')
+						game.playerFinish(game.getBotPlayer().group, GameVictoryCondition.STORY_TRIGGER)
 					})
 			})
 
@@ -418,8 +418,8 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 							--> Denial
 					`
 					)
-					.closingChapter('Agreement', () => (agreedToHelp = true))
-					.closingChapter('Denial', () => (thirdDisobedienceTriggered = true))
+					.actionChapter('Agreement', () => (agreedToHelp = true))
+					.actionChapter('Denial', () => (thirdDisobedienceTriggered = true))
 			})
 
 		this.createHook(GameHookType.CARD_PLAYED)
@@ -444,7 +444,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 						--> Denial
 					`
 					)
-					.closingChapter('Denial', () => {
+					.actionChapter('Denial', () => {
 						agreedToHelp = false
 						thirdDisobedienceTriggered = true
 					})
@@ -532,9 +532,9 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 						--> Close
 					`
 					)
-					.closingChapter('Close', () => {
+					.actionChapter('Close', () => {
 						this.finalDialogShown = true
-						game.playerFinish(game.getHumanGroup(), 'Story trigger')
+						game.playerFinish(game.getHumanGroup(), GameVictoryCondition.STORY_TRIGGER)
 					})
 			})
 
@@ -584,7 +584,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 						--> Reset
 					`
 					)
-					.closingChapter('Reset', () => {
+					.actionChapter('Reset', () => {
 						game.board.getAllUnits().forEach((unit) => {
 							game.animation.thread(() => {
 								game.board.destroyUnit(unit)
@@ -631,7 +631,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 						--> Reset
 					`
 					)
-					.closingChapter('Reset', () => {
+					.actionChapter('Reset', () => {
 						game.board.getAllUnits().forEach((unit) => {
 							game.animation.thread(() => {
 								game.board.destroyUnit(unit)
@@ -680,7 +680,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 						--> Reset
 					`
 					)
-					.closingChapter('Reset', () => {
+					.actionChapter('Reset', () => {
 						game.board.getAllUnits().forEach((unit) => {
 							game.animation.thread(() => {
 								game.board.destroyUnit(unit)
@@ -724,7 +724,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 						--> Reset
 					`
 					)
-					.closingChapter('Reset', () => {
+					.actionChapter('Reset', () => {
 						game.board.getAllUnits().forEach((unit) => {
 							game.animation.thread(() => {
 								game.board.destroyUnit(unit)

@@ -8,6 +8,8 @@ import {
 	GenericActionMessageType,
 	SystemMessageType,
 } from '@shared/models/network/messageHandlers/ClientToServerGameMessages'
+import GameVictoryCondition from '@src/enums/GameVictoryCondition'
+import OutgoingNovelMessages from '@src/game/handlers/outgoing/OutgoingNovelMessages'
 import ServerCardTarget from '@src/game/models/ServerCardTarget'
 
 import ServerGame from '../models/ServerGame'
@@ -101,6 +103,22 @@ const IncomingMessageHandlers: ClientToServerGameMessageHandlers<ServerGame, Ser
 		}
 	},
 
+	[GenericActionMessageType.NOVEL_SKIP_CUE_ANIMATION]: (data: null, game: ServerGame, player: ServerPlayerInGame): void => {
+		const otherPlayers = game.allPlayers.filter((filteredPlayer) => filteredPlayer !== player)
+		const spectators = player.player.spectators
+		const targets = [...otherPlayers, ...spectators]
+		OutgoingNovelMessages.notifyAboutCueAnimationSkipSync(targets)
+	},
+
+	[GenericActionMessageType.NOVEL_NEXT_CUE]: (data: null, game: ServerGame, player: ServerPlayerInGame): void => {
+		game.novel.popClientStateCue()
+
+		const otherPlayers = game.allPlayers.filter((filteredPlayer) => filteredPlayer !== player)
+		const spectators = player.player.spectators
+		const targets = [...otherPlayers, ...spectators]
+		OutgoingNovelMessages.notifyAboutNextCueSync(targets)
+	},
+
 	[GenericActionMessageType.NOVEL_CHAPTER]: (data: string, game: ServerGame, player: ServerPlayerInGame): void => {
 		game.novel.executeChapter(data)
 		onPlayerActionEnd(game, player)
@@ -112,7 +130,7 @@ const IncomingMessageHandlers: ClientToServerGameMessageHandlers<ServerGame, Ser
 	},
 
 	[GenericActionMessageType.TURN_END]: (data: null, game: ServerGame, player: ServerPlayerInGame): void => {
-		if (player.group.turnEnded || player.targetRequired) {
+		if (player.group.turnEnded || player.targetRequired || !!game.novel.clientState) {
 			return
 		}
 
@@ -127,7 +145,7 @@ const IncomingMessageHandlers: ClientToServerGameMessageHandlers<ServerGame, Ser
 			return
 		}
 
-		game.systemFinish(player.opponentNullable, 'Player surrendered (Player action)')
+		game.systemFinish(player.opponentNullable, GameVictoryCondition.PLAYER_SURRENDERED)
 		onPlayerActionEnd(game, player)
 	},
 

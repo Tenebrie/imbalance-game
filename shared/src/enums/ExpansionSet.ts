@@ -1,6 +1,6 @@
 enum ExpansionSet {
 	BASE,
-	LABYRINTH,
+	RITES,
 	SPECIAL,
 	TESTING,
 	TUTORIAL,

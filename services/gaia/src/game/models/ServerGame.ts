@@ -7,6 +7,8 @@ import LeaderStatType from '@shared/enums/LeaderStatType'
 import TargetMode from '@shared/enums/TargetMode'
 import { SourceGame } from '@shared/models/Game'
 import GameHistoryDatabase from '@src/database/GameHistoryDatabase'
+import GameCloseReason from '@src/enums/GameCloseReason'
+import GameVictoryCondition from '@src/enums/GameVictoryCondition'
 import UnitDestructionReason from '@src/enums/UnitDestructionReason'
 import { RulesetConstructor } from '@src/game/libraries/RulesetLibrary'
 import { BuffMorningApathy } from '@src/game/models/buffs/ServerBuff'
@@ -52,6 +54,7 @@ export default class ServerGame implements SourceGame {
 	public readonly id: string
 	public readonly name: string
 	public readonly owner: ServerPlayer | undefined
+	public readonly creationTimestamp: Date
 	public players: ServerPlayerGroup[]
 	public isStarted!: boolean
 	public turnIndex!: number
@@ -76,6 +79,7 @@ export default class ServerGame implements SourceGame {
 		this.id = props.id ? props.id : createRandomGameId()
 		this.name = props.name || ServerGame.generateName(props.owner)
 		this.owner = props.owner
+		this.creationTimestamp = new Date()
 		this.players = []
 		this.turnIndex = -1
 		this.roundIndex = -1
@@ -187,7 +191,7 @@ export default class ServerGame implements SourceGame {
 			})
 
 		this.players.forEach((playerGroup) => {
-			OutgoingMessageHandlers.notifyAboutGameStart(playerGroup, this.players.indexOf(playerGroup) === 1)
+			OutgoingMessageHandlers.notifyAboutGameStart(playerGroup, this.ruleset, this.players.indexOf(playerGroup) === 1)
 		})
 
 		this.resetBoardOwnership()
@@ -446,18 +450,22 @@ export default class ServerGame implements SourceGame {
 		const victoriousPlayer = this.players.find((player) => player.roundWins >= roundWinsRequired) || null
 		const defeatedPlayer = this.players.find((player) => player.roundWins < roundWinsRequired) || null
 		if (victoriousPlayer && defeatedPlayer) {
-			let victoryReason = 'PvP win condition'
-			if (victoriousPlayer.isBot && defeatedPlayer.isHuman) {
-				victoryReason = 'Player lost to AI'
-			} else if (victoriousPlayer.isBot && defeatedPlayer.isBot) {
-				victoryReason = `AI ${victoriousPlayer.index} won against AI ${defeatedPlayer.index}`
+			let victoryReason = GameVictoryCondition.UNKNOWN
+			if (victoriousPlayer.isHuman && defeatedPlayer.isHuman) {
+				victoryReason = GameVictoryCondition.STANDARD_PVP
+			} else if (victoriousPlayer.isBot && defeatedPlayer.isHuman) {
+				victoryReason = GameVictoryCondition.AI_GAME_LOSE
+			} else if (victoriousPlayer.isBot && defeatedPlayer.isBot && victoriousPlayer.index === 0) {
+				victoryReason = GameVictoryCondition.SIMULATED_GROUP_ONE_WIN
+			} else if (victoriousPlayer.isBot && defeatedPlayer.isBot && victoriousPlayer.index === 1) {
+				victoryReason = GameVictoryCondition.SIMULATED_GROUP_TWO_WIN
 			} else if (victoriousPlayer.isHuman && defeatedPlayer.isBot) {
-				victoryReason = 'Player won vs AI'
+				victoryReason = GameVictoryCondition.AI_GAME_WIN
 			}
 			this.playerFinish(this.getOpponent(defeatedPlayer), victoryReason)
 			return
 		} else if (this.players.every((player) => player.roundWins >= roundWinsRequired)) {
-			this.playerFinish(null, 'Game ended with a draw')
+			this.playerFinish(null, GameVictoryCondition.STANDARD_DRAW)
 			return
 		}
 
@@ -533,7 +541,7 @@ export default class ServerGame implements SourceGame {
 		player.showMulliganCards()
 	}
 
-	public playerFinish(victoriousPlayer: ServerPlayerGroup | null, victoryReason: string, chainImmediately = false): void {
+	public playerFinish(victoriousPlayer: ServerPlayerGroup | null, victoryCondition: GameVictoryCondition, chainImmediately = false): void {
 		if (this.turnPhase === GameTurnPhase.AFTER_GAME) {
 			return
 		}
@@ -541,14 +549,14 @@ export default class ServerGame implements SourceGame {
 		const hookValues = this.events.applyHooks(
 			GameHookType.GAME_FINISHED,
 			{
-				victoryReason,
+				victoryCondition,
 				finishPrevented: false,
 				chainImmediately,
 				victoriousPlayer,
 			},
 			{
 				game: this,
-				victoryReason,
+				victoryCondition,
 				victoriousPlayer,
 				chainImmediately,
 			}
@@ -558,13 +566,26 @@ export default class ServerGame implements SourceGame {
 			return
 		}
 		victoriousPlayer = hookValues.victoriousPlayer
-		victoryReason = hookValues.victoryReason
+		victoryCondition = hookValues.victoryCondition
 		chainImmediately = hookValues.chainImmediately
 
-		this.systemFinish(victoriousPlayer, victoryReason, chainImmediately)
+		this.systemFinish(victoriousPlayer, victoryCondition, chainImmediately)
 	}
 
-	public systemFinish(victoriousPlayer: ServerPlayerGroup | null, victoryReason: string, chainImmediately = false): void {
+	public static VALID_CHAIN_VICTORY_CONDITIONS = [
+		GameVictoryCondition.AI_GAME_WIN,
+		GameVictoryCondition.AI_GAME_LOSE,
+		GameVictoryCondition.STANDARD_DRAW,
+		GameVictoryCondition.STANDARD_PVP,
+		GameVictoryCondition.SYSTEM_GAME,
+		GameVictoryCondition.STORY_TRIGGER,
+	]
+
+	public systemFinish(
+		victoriousPlayer: ServerPlayerGroup | null,
+		victoryCondition: GameVictoryCondition,
+		transitionToNextGame = false
+	): void {
 		if (this.turnPhase === GameTurnPhase.AFTER_GAME) {
 			return
 		}
@@ -582,18 +603,18 @@ export default class ServerGame implements SourceGame {
 
 		if (victoriousPlayer === null) {
 			OutgoingMessageHandlers.notifyAboutDraw(this)
-			console.info(`Game ${colorizeId(this.id)} finished with a draw: ${colorizeConsoleText(victoryReason)}.`)
+			console.info(`Game ${colorizeId(this.id)} finished with a draw: ${colorizeConsoleText(victoryCondition)}.`)
 		} else {
 			const defeatedPlayer = this.getOpponent(victoriousPlayer)!
 			OutgoingMessageHandlers.notifyAboutVictory(victoriousPlayer)
 			OutgoingMessageHandlers.notifyAboutDefeat(defeatedPlayer)
 			console.info(
 				`Game ${colorizeId(this.id)} has finished. Player ${colorizePlayer(victoriousPlayer.username)} won: ${colorizeConsoleText(
-					victoryReason
+					victoryCondition
 				)}.`
 			)
 		}
-		GameHistoryDatabase.closeGame(this, victoryReason, victoriousPlayer?.isBot ? null : victoriousPlayer).then()
+		GameHistoryDatabase.closeGame(this, victoryCondition, victoriousPlayer?.isBot ? null : victoriousPlayer).then()
 
 		this.board.getAllUnits().forEach((unit) => {
 			this.animation.thread(() => {
@@ -610,26 +631,50 @@ export default class ServerGame implements SourceGame {
 
 		GameLibrary.startGameCleanupTimer(this)
 
-		const validChain = this.ruleset.chains.find((chain) =>
-			chain.isValid({
-				game: this,
-				victoriousPlayer,
+		const validChain =
+			ServerGame.VALID_CHAIN_VICTORY_CONDITIONS.includes(victoryCondition) &&
+			this.ruleset.chains.find((chain) =>
+				chain.isValid({
+					game: this,
+					victoriousPlayer,
+				})
+			)
+
+		if (validChain && this.getHumanGroup() && transitionToNextGame) {
+			this.allPlayers.forEach((playerInGame) => {
+				OutgoingMessageHandlers.commandSuppressEndScreen(playerInGame.player)
 			})
-		)
+		}
 
 		this.progression.saveStates().then(() => {
 			if (validChain && this.getHumanGroup()) {
-				const linkedGame = GameLibrary.createChainGame(this, validChain)
-				this.allPlayers.forEach((playerInGame) => {
-					OutgoingMessageHandlers.notifyAboutLinkedGame(playerInGame.player, linkedGame, chainImmediately)
+				const linkedGame = GameLibrary.createChainGame(this, validChain, () => {
+					// Add players into the new game
+					this.humanPlayers.forEach((playerInGame) => {
+						const targetGroup = linkedGame.getHumanGroup()
+						if (targetGroup.slots.openHumanSlots === 0) {
+							GameLibrary.destroyGame(linkedGame, GameCloseReason.NO_PLAYER_SLOTS_ERROR)
+							return
+						}
+						const targetSlot = targetGroup.slots.grabOpenHumanSlot()
+
+						if (Array.isArray(targetSlot.deck)) {
+							linkedGame.addHumanPlayer(playerInGame.player, linkedGame.players[0], ServerEditorDeck.fromConstructors(targetSlot.deck))
+						}
+					})
 				})
 
-				if (chainImmediately) {
+				this.humanPlayers.forEach((playerInGame) => {
+					OutgoingMessageHandlers.notifyAboutLinkedGame(playerInGame.player, linkedGame, transitionToNextGame)
+				})
+
+				if (transitionToNextGame) {
 					this.animation.play(ServerAnimation.switchingGames())
 					this.allPlayers.forEach((playerInGame) => {
 						OutgoingMessageHandlers.commandJoinLinkedGame(playerInGame.player)
 					})
 				}
+				OutgoingMessageHandlers.executeMessageQueue(this)
 			}
 		})
 	}
@@ -694,7 +739,12 @@ export default class ServerGame implements SourceGame {
 		return game
 	}
 
-	static newOwnedInstance(owner: ServerPlayer, ruleset: RulesetConstructor, props: Partial<OptionalGameProps>): ServerGame {
+	static newOwnedInstance(
+		owner: ServerPlayer,
+		ruleset: RulesetConstructor,
+		props: Partial<OptionalGameProps>,
+		onStatesLoaded?: () => void
+	): ServerGame {
 		const game = new ServerGame({
 			...props,
 			owner,
@@ -703,6 +753,7 @@ export default class ServerGame implements SourceGame {
 		game.progression.loadStates().then(() => {
 			game.ruleset.lifecycleCallback(RulesetLifecycleHook.PROGRESSION_LOADED, game)
 			game.initializeAIPlayers()
+			onStatesLoaded && onStatesLoaded()
 		})
 		return game
 	}

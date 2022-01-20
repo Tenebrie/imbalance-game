@@ -1,6 +1,8 @@
 import TargetMode from '@shared/enums/TargetMode'
 import { sortCards } from '@shared/Utils'
+import GameVictoryCondition from '@src/enums/GameVictoryCondition'
 import { OutgoingGlobalMessageHandlers } from '@src/game/handlers/OutgoingGlobalMessageHandlers'
+import ServerGameTimers from '@src/game/models/ServerGameTimers'
 import { colorizeId, colorizePlayer } from '@src/utils/Utils'
 
 import ServerCardTarget from '../models/ServerCardTarget'
@@ -55,8 +57,9 @@ export default {
 		}
 		OutgoingMessageHandlers.notifyAboutValidActionsChanged(game, [playerInGame])
 		OutgoingMessageHandlers.notifyAboutGamePhaseAdvance(game, game.turnPhase)
-		OutgoingMessageHandlers.notifyAboutGameStartForPlayer(playerInGame.player, playerInGame.isInvertedBoard())
+		OutgoingMessageHandlers.notifyAboutGameStartForPlayer(playerInGame.player, game.ruleset, playerInGame.isInvertedBoard())
 		game.events.flushLogEventGroup()
+		game.novel.restoreClientStateOnReconnect(playerInGame)
 		OutgoingMessageHandlers.executeMessageQueueForPlayer(game, playerInGame.player)
 	},
 
@@ -65,16 +68,26 @@ export default {
 		player.spectators.forEach((spectator) => spectator.player.disconnectGameSocket())
 
 		const connectedPlayers = game.humanPlayers.filter((player) => player.player.isInGame())
-		if (connectedPlayers.length === 1) {
-			console.info(`Only one player left in game ${colorizeId(game.id)}. It will be shutdown in 60 seconds.`)
+		if (connectedPlayers.length === 1 && game.players[0].isHuman && game.players[1].isHuman) {
+			console.info(
+				`Only one player left in game ${colorizeId(game.id)}. It will be shutdown in ${
+					ServerGameTimers.PLAYER_RECONNECT_TIMEOUT / 1000
+				} seconds.`
+			)
 			game.timers.playerLeaveTimeout.start()
-		}
-		if (connectedPlayers.length === 0 && !game.isStarted) {
-			game.systemFinish(null, 'No players left')
+		} else if (connectedPlayers.length === 0 && !game.isStarted) {
+			game.systemFinish(null, GameVictoryCondition.CANCELLED)
 		} else if (connectedPlayers.length === 0 && game.isStarted && !game.isFinished && game.allPlayers.some((player) => player.isBot)) {
-			console.info(`No players left in game ${colorizeId(game.id)}. It will be shutdown in 60 seconds.`)
+			console.info(
+				`No players left in game ${colorizeId(game.id)}. It will be shutdown in ${
+					ServerGameTimers.PLAYER_RECONNECT_TIMEOUT / 1000
+				} seconds.`
+			)
 			game.timers.playerLeaveTimeout.start()
+		} else if (connectedPlayers.length === 0 && game.isStarted && !game.isFinished && game.allPlayers.every((player) => player.isHuman)) {
+			game.systemFinish(null, GameVictoryCondition.ALL_PLAYERS_CONNECTION_LOST)
 		}
+
 		OutgoingGlobalMessageHandlers.notifyAllPlayersAboutGameUpdated(game)
 	},
 
@@ -112,8 +125,9 @@ export default {
 			OutgoingMessageHandlers.notifyAboutRequestedAnonymousTargets(spectator.player, TargetMode.MULLIGAN, targets)
 		}
 		OutgoingMessageHandlers.notifyAboutValidActionsChanged(game, [spectatedPlayerInGame])
-		OutgoingMessageHandlers.notifyAboutGameStartForPlayer(spectator.player, spectatedPlayerInGame.isInvertedBoard())
+		OutgoingMessageHandlers.notifyAboutGameStartForPlayer(spectator.player, game.ruleset, spectatedPlayerInGame.isInvertedBoard())
 		game.events.flushLogEventGroup()
+		game.novel.restoreClientStateOnReconnect(spectator)
 		OutgoingMessageHandlers.executeMessageQueueForPlayer(game, spectator.player)
 	},
 }

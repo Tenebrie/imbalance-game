@@ -3,11 +3,11 @@ import RulesetCategory from '../../../enums/RulesetCategory'
 import Ruleset from '../Ruleset'
 
 export default class RulesetRefMessage {
-	class: string
-	gameMode: GameMode
-	category: RulesetCategory
-	sortPriority: number
-	playerDeckRequired: boolean
+	public readonly class: string
+	public readonly gameMode: GameMode
+	public readonly category: RulesetCategory
+	public readonly sortPriority: number
+	public readonly playerDeckRequired: boolean
 
 	constructor(ruleset: Ruleset) {
 		this.class = ruleset.class

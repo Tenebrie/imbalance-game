@@ -24,6 +24,7 @@ export default class HiddenCardMessage implements CardMessage {
 	class: string
 	color = CardColor.TOKEN
 	faction = CardFaction.NEUTRAL
+	artworkClass: string
 
 	stats: HiddenCardStatsMessage
 	buffs: HiddenBuffContainerMessage
@@ -48,6 +49,7 @@ export default class HiddenCardMessage implements CardMessage {
 		} else {
 			this.class = 'spellHidden'
 		}
+		this.artworkClass = this.class
 
 		this.stats = new HiddenCardStatsMessage(card.stats)
 		this.buffs = new HiddenBuffContainerMessage(card.buffs)

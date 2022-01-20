@@ -13,6 +13,7 @@ export default interface Card {
 	id: string
 	type: CardType
 	class: string
+	artworkClass: string
 	color: CardColor
 	faction: CardFaction
 

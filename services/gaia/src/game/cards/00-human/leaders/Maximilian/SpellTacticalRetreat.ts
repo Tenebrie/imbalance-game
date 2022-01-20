@@ -29,6 +29,7 @@ export default class SpellTacticalRetreat extends ServerCard {
 				cost: 2,
 			},
 			expansionSet: ExpansionSet.BASE,
+			sortPriority: 1,
 		})
 		this.dynamicTextVariables = {
 			healing: this.healing,

@@ -5,6 +5,7 @@ import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
 import LeaderStatType from '@shared/enums/LeaderStatType'
+import HeroSparklingSpirit from '@src/game/cards/01-arcane/epic/HeroSparklingSpirit'
 import SpellFleetingSpark from '@src/game/cards/01-arcane/tokens/SpellFleetingSpark'
 import TutorialSpellFleetingSpark from '@src/game/cards/13-special/cards/TutorialSpellFleetingSpark'
 import Keywords from '@src/utils/Keywords'
@@ -23,6 +24,7 @@ export default class TutorialUnitSparklingSpirit extends ServerCard {
 				power: 16,
 				[LeaderStatType.SPARK_DAMAGE]: 1,
 			},
+			sharedArtwork: HeroSparklingSpirit,
 			expansionSet: ExpansionSet.TUTORIAL,
 		})
 		this.addRelatedCards().requireTribe(CardTribe.SPARK)

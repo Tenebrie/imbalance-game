@@ -3,23 +3,30 @@
 		<div class="the-home-action">
 			<div class="controls">
 				<div class="button-container">
-					<h2>Create game</h2>
+					<h2>Singleplayer</h2>
 					<button @click="onCreateTutorial" class="primary">{{ $locale.get('ui.play.tutorial') }}</button>
 					<span class="action-explanation">Learn the basics of the game.</span>
 					<button @click="onCreateSinglePlayer" class="primary">{{ $locale.get('ui.play.pve') }}</button>
 					<span class="action-explanation">Play against normal AI, or a special challenge scenario.</span>
-					<button @click="onCreateMultiPlayer" class="primary">{{ $locale.get('ui.play.pvp') }}</button>
-					<span class="action-explanation">Create a game and wait for an opponent to challenge you.</span>
 					<button @click="onCreateCooperative" class="primary">{{ $locale.get('ui.play.coop') }}</button>
 					<span class="action-explanation">Invite a friend to play against AI opponent.</span>
-					<!--					<button @click="onCreateLabyrinth" class="primary">{{ $locale.get('ui.play.labyrinth') }}</button>-->
-					<!--					<span class="action-explanation">Delve into the rogue-lite Labyrinth mode.</span>-->
 					<button @click="onCreatePrototypes" class="primary">{{ $locale.get('ui.play.prototypes') }}</button>
 					<span class="action-explanation">See early concepts, modules and gamemode prototypes.</span>
-					<button @click="onCreateDevRuleset" class="primary" v-if="devRulesetVisible">{{ $locale.get('ui.play.dev') }}</button>
-					<span class="action-explanation" v-if="devRulesetVisible">Play special ruleset defined in RulesetDev.ts (server-side).</span>
 					<div class="separator" />
-					<editor-decks-button />
+					<h2>Multiplayer</h2>
+					<button @click="onCreateMultiPlayer" class="primary">{{ $locale.get('ui.play.pvp') }}</button>
+					<span class="action-explanation">Create a game and wait for an opponent to challenge you.</span>
+
+					<div class="action-group" v-if="devRulesetVisible">
+						<div class="separator" />
+						<h2>Development</h2>
+						<button @click="onCreateRitesRun" class="primary">{{ $locale.get('ui.play.rites') }}</button>
+						<span class="action-explanation">Delve into the rogue-lite Rites mode.</span>
+						<button @click="onCreateDevRuleset" class="primary">{{ $locale.get('ui.play.dev') }}</button>
+						<span class="action-explanation">Play special ruleset defined in RulesetDev.ts (server-side).</span>
+						<div class="separator" />
+						<editor-decks-button />
+					</div>
 				</div>
 			</div>
 		</div>
@@ -81,8 +88,8 @@ export default defineComponent({
 			})
 		}
 
-		const onCreateLabyrinth = async (): Promise<void> => {
-			const response = await axios.post('/api/games', { ruleset: 'rulesetLabyrinthMetaCamp' })
+		const onCreateRitesRun = async (): Promise<void> => {
+			const response = await axios.post('/api/games', { ruleset: 'rulesetRitesIntro' })
 			const gameMessage: GameMessage = response.data.data
 			await store.dispatch.joinGame(gameMessage)
 		}
@@ -107,7 +114,7 @@ export default defineComponent({
 			onCreateMultiPlayer,
 			onCreateCooperative,
 			onCreatePrototypes,
-			onCreateLabyrinth,
+			onCreateRitesRun,
 			onCreateDevRuleset,
 			onManageDecks,
 			devRulesetVisible,
@@ -149,6 +156,14 @@ export default defineComponent({
 			align-items: center;
 			justify-content: center;
 			flex-direction: column;
+
+			.action-group {
+				width: 100%;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				flex-direction: column;
+			}
 
 			.button-container {
 				width: 100%;

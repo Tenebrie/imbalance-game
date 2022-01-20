@@ -10,15 +10,16 @@ import RichTextVariables from '@shared/models/RichTextVariables'
 import { sortCards } from '@shared/Utils'
 import AsciiColor from '@src/enums/AsciiColor'
 import ServerBotPlayer from '@src/game/AI/ServerBotPlayer'
+import ConnectionEstablishedHandler from '@src/game/handlers/ConnectionEstablishedHandler'
 import IncomingMessageHandlers, { onPlayerActionEnd } from '@src/game/handlers/IncomingMessageHandlers'
 import { RulesetConstructor } from '@src/game/libraries/RulesetLibrary'
 import ServerBuff from '@src/game/models/buffs/ServerBuff'
 import { BuffConstructor } from '@src/game/models/buffs/ServerBuffContainer'
 import ServerBoardRow from '@src/game/models/ServerBoardRow'
 import ServerCardStats from '@src/game/models/ServerCardStats'
-import { DeployTarget, PlayTarget } from '@src/game/models/ServerCardTargeting'
 import { DamageInstance } from '@src/game/models/ServerDamageSource'
 import ServerEditorDeck from '@src/game/models/ServerEditorDeck'
+import ServerGameNovel from '@src/game/models/ServerGameNovel'
 import ServerUnit from '@src/game/models/ServerUnit'
 import Keywords from '@src/utils/Keywords'
 import { AnyCardLocation, colorize, getClassFromConstructor, getTotalLeaderStat, safeWhile } from '@src/utils/Utils'
@@ -43,9 +44,10 @@ export type TestGame = {
 	novel: TestGameNovel
 	result: TestGameResult
 	player: TestGamePlayer
+	coopPlayer: TestGamePlayer
 	opponent: TestGamePlayer
 	allPlayers: TestGamePlayer[][]
-	startNextRound(): TestGame
+	finishCurrentRound(): TestGame
 }
 
 export const setupTestGame = (ruleset: RulesetConstructor): TestGame => {
@@ -62,15 +64,7 @@ export const setupTestGame = (ruleset: RulesetConstructor): TestGame => {
 	game.events.resolveEvents()
 	game.events.evaluateSelectors()
 
-	const advanceTurn = (): TestGame => {
-		game.players.filter((group) => !group.turnEnded).forEach((group) => group.endTurn())
-		game.advanceCurrentTurn()
-		game.events.resolveEvents()
-		game.events.evaluateSelectors()
-		return gameWrapper
-	}
-
-	const startNextRound = (): TestGame => {
+	const finishCurrentRound = (): TestGame => {
 		game.players.filter((group) => !group.roundEnded).forEach((group) => group.endRound())
 		game.advanceCurrentTurn()
 		game.events.resolveEvents()
@@ -85,9 +79,10 @@ export const setupTestGame = (ruleset: RulesetConstructor): TestGame => {
 		novel: novelWrapper,
 		result: resultWrapper,
 		player: playerWrappers[0][0],
+		coopPlayer: playerWrappers[0][1],
 		opponent: playerWrappers[1][0],
 		allPlayers: playerWrappers,
-		startNextRound,
+		finishCurrentRound,
 	}
 	return gameWrapper
 }
@@ -249,6 +244,8 @@ type TestGamePlayer = {
 	countInHand(card: CardConstructor): number
 	endTurn(): void
 	endRound(): void
+	leaveGame(): void
+	tryToEndRound(): void
 	deck: {
 		add(card: CardConstructor): TestGameCard
 	}
@@ -267,8 +264,22 @@ const setupTestGamePlayers = (game: ServerGame): TestGamePlayer[][] => {
 				const player = new ServerPlayer(`player:id-${id}`, `player-${id}-email`, `player-${id}-username`, AccessLevel.NORMAL, false)
 				const slot = playerGroup.slots.grabOpenHumanSlot()
 				const usedDeck: ServerEditorDeck = Array.isArray(slot.deck) ? ServerEditorDeck.fromConstructors(slot.deck) : deckTemplate
-				game.addHumanPlayer(player, playerGroup, usedDeck)
-				player.registerGameConnection((jest.fn() as unknown) as ws, game)
+				const playerInGame = game.addHumanPlayer(player, playerGroup, usedDeck)
+
+				const fakeSocket = ({
+					state: 'open',
+
+					close: () => {
+						if (fakeSocket.state === 'closed') {
+							return
+						}
+
+						fakeSocket.state = 'closed'
+						playerInGame.disconnect()
+						ConnectionEstablishedHandler.onPlayerDisconnected(game, player)
+					},
+				} as unknown) as ws & { state: 'open' | 'closed' }
+				player.registerGameConnection(fakeSocket, game)
 			}
 		)
 		safeWhile(
@@ -397,7 +408,26 @@ const setupTestGamePlayers = (game: ServerGame): TestGamePlayer[][] => {
 	}
 
 	const endRound = (player: ServerPlayerInGame): void => {
+		const roundIndex = game.roundIndex
+		tryToEndRound(player)
+		if (!player.group.roundEnded && game.roundIndex === roundIndex) {
+			throw new Error('[Test] Unable to end the round.')
+		}
+	}
+
+	const tryToEndRound = (player: ServerPlayerInGame): void => {
+		if (player.group.turnEnded) {
+			throw new Error("[Test] This is not this player's turn.")
+		}
+		if (player.group.roundEnded) {
+			throw new Error('[Test] Round already ended.')
+		}
+
 		IncomingMessageHandlers[GenericActionMessageType.TURN_END](null, game, player)
+	}
+
+	const leaveGame = (playerInGame: ServerPlayerInGame): void => {
+		playerInGame.player.disconnectGameSocket()
 	}
 
 	return game.players.map((playerGroup) =>
@@ -426,6 +456,8 @@ const setupTestGamePlayers = (game: ServerGame): TestGamePlayer[][] => {
 			countInHand: (card: CardConstructor) => countInHand(player, card),
 			endTurn: () => endTurn(player),
 			endRound: () => endRound(player),
+			leaveGame: () => leaveGame(player),
+			tryToEndRound: () => tryToEndRound(player),
 			deck: {
 				add: (card: CardConstructor) => addCardToDeck(player, card),
 			},
@@ -456,6 +488,9 @@ const wrapCard = (game: ServerGame, card: ServerCard, player: ServerPlayerInGame
 	const playCardToRow = (row: RowDistanceWrapper, position: number | 'last'): TestGameCardPlayActions => {
 		if (game.cardPlay.cardResolveStack.currentCard) {
 			throw new Error('[Test] Card stack is not empty.')
+		}
+		if (game.novel.isActive()) {
+			throw new Error('[Test] Novel mode is active.')
 		}
 
 		const distance = unwrapRowDistance(row, game, player)
@@ -610,35 +645,14 @@ const getCardPlayActions = (game: ServerGame, player: ServerPlayerInGame): TestG
 }
 
 /**
- * Play stack targeting action wrapper
- */
-type TestGameCardTarget = {
-	select(): TestGameCardPlayActions
-}
-
-const wrapCardTarget = (
-	game: ServerGame,
-	player: ServerPlayerInGame,
-	playActions: TestGameCardPlayActions,
-	target: PlayTarget | DeployTarget
-): TestGameCardTarget => {
-	return {
-		select: () => {
-			game.cardPlay.selectCardTarget(player, target.target)
-			game.events.resolveEvents()
-			game.events.evaluateSelectors()
-			return playActions
-		},
-	}
-}
-
-/**
  * Novel mode wrapper
  */
 type TestGameNovel = {
-	finishDialogue(): TestGameNovel
+	handle: ServerGameNovel
+	clickThroughDialogue(): TestGameNovel
 	selectFirstResponse(): TestGameNovel
 	selectSecondResponse(): TestGameNovel
+	hasQueuedAction(): boolean
 	countMoveStatements(): number
 	countResponseStatements(): number
 }
@@ -654,11 +668,15 @@ const setupTestGameNovel = (game: ServerGame): TestGameNovel => {
 	}
 
 	const novelWrapper: TestGameNovel = {
-		finishDialogue: () => {
+		handle: game.novel,
+		clickThroughDialogue: () => {
 			const targetMove = game.novel.clientMoves[0]
 			if (targetMove) {
 				game.novel.executeChapter(targetMove.chapterId)
-			} else if (game.novel.hasQueue()) {
+			} else if (game.novel.hasSayStatementsToPop()) {
+				safeWhile(() => game.novel.popClientStateCue())
+				game.novel.continueQueue()
+			} else if (game.novel.hasQueue() && game.novel.clientResponses.length === 0) {
 				game.novel.continueQueue()
 			} else {
 				throw new Error('No available move statement or queue to continue!')
@@ -667,6 +685,9 @@ const setupTestGameNovel = (game: ServerGame): TestGameNovel => {
 		},
 		selectFirstResponse: () => selectNthResponse(0),
 		selectSecondResponse: () => selectNthResponse(1),
+		hasQueuedAction: (): boolean => {
+			return game.novel.hasQueue() || game.novel.clientMoves.length > 0 || game.novel.clientResponses.length > 0
+		},
 		countMoveStatements: (): number => {
 			return game.novel.clientMoves.length
 		},

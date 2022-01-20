@@ -8,13 +8,13 @@ import { getRandomArrayValue } from '@src/utils/Utils'
 export class RulesetChain {
 	public readonly conditions: ((args: RulesetChainRequireArguments) => boolean)[]
 	public readonly fixedLink: RulesetConstructor | null
-	public readonly linkGetter: ((game: ServerGame) => RulesetConstructor | RulesetFeature[]) | null = null
+	public readonly linkGetter: ((game: ServerGame) => ServerRuleset | RulesetConstructor | RulesetFeature[]) | null = null
 	public readonly featureLink: RulesetFeature[]
 
 	constructor(
 		conditions: ((args: RulesetChainRequireArguments) => boolean)[],
 		fixedLink: RulesetConstructor | null,
-		linkGetter: ((game: ServerGame) => RulesetConstructor | RulesetFeature[]) | null,
+		linkGetter: ((game: ServerGame) => ServerRuleset | RulesetConstructor | RulesetFeature[]) | null,
 		featureLink: RulesetFeature[]
 	) {
 		this.conditions = conditions
@@ -67,7 +67,7 @@ export class RulesetChain {
 export class RulesetChainBuilder {
 	private conditions: ((args: RulesetChainRequireArguments) => boolean)[] = []
 	private fixedLink: RulesetConstructor | null = null
-	private linkGetter: ((game: ServerGame) => RulesetConstructor | RulesetFeature[]) | null = null
+	private linkGetter: ((game: ServerGame) => ServerRuleset | RulesetConstructor | RulesetFeature[]) | null = null
 	private featureLink: RulesetFeature[] = []
 
 	public require(condition: (args: RulesetChainRequireArguments) => boolean): RulesetChainBuilder {
@@ -79,7 +79,7 @@ export class RulesetChainBuilder {
 		this.fixedLink = ruleset
 	}
 
-	public setLinkGetter(getter: () => RulesetConstructor | RulesetFeature[]): void {
+	public setLinkGetter(getter: () => ServerRuleset | RulesetConstructor | RulesetFeature[]): void {
 		this.linkGetter = getter
 	}
 

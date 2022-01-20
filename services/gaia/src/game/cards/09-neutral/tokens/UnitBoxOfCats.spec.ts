@@ -30,7 +30,7 @@ describe('UnitBoxOfCats', () => {
 	describe('on round end', () => {
 		beforeEach(() => {
 			game.player.summon(cardInTesting)
-			game.startNextRound()
+			game.finishCurrentRound()
 		})
 
 		it('destroys the box', () => {

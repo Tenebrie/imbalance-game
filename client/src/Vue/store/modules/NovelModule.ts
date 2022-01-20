@@ -1,5 +1,6 @@
 import StoryCharacter from '@shared/enums/StoryCharacter'
 import NovelCue from '@shared/models/novel/NovelCue'
+import NovelCueMessage from '@shared/models/novel/NovelCueMessage'
 import NovelResponseMessage from '@shared/models/novel/NovelResponseMessage'
 import { defineModule } from 'direct-vuex'
 
@@ -11,20 +12,32 @@ const novelModule = defineModule({
 	namespaced: true,
 
 	state: {
+		isActive: false as boolean,
+		isMuted: false as boolean,
 		cue: null as NovelCue | null,
-		replies: [] as NovelResponseMessage[],
+		responses: [] as NovelResponseMessage[],
 		activeCharacter: null as StoryCharacter | null,
 		printTimer: null as number | null,
 		charactersPrinted: 0 as number,
+		decayingCues: [] as NovelCue[],
+		decayingResponses: [] as (NovelResponseMessage & { isSelected: boolean })[],
 	},
 
 	mutations: {
+		setIsActive(state, value: boolean): void {
+			state.isActive = value
+		},
+
+		setIsMuted(state, value: boolean): void {
+			state.isMuted = value
+		},
+
 		setCue(state, value: NovelCue | null): void {
 			state.cue = value
 		},
 
 		addResponse(state, value: NovelResponseMessage): void {
-			state.replies.push(value)
+			state.responses.push(value)
 		},
 
 		setActiveCharacter(state, character: StoryCharacter | null): void {
@@ -41,12 +54,28 @@ const novelModule = defineModule({
 
 		clear(state): void {
 			state.cue = null
-			state.replies = []
 			state.activeCharacter = null
+			state.responses = []
 		},
 
 		clearResponses(state): void {
-			state.replies = []
+			state.responses = []
+		},
+
+		addDecayingCue(state, cue: NovelCue): void {
+			state.decayingCues.push(cue)
+		},
+
+		removeDecayingCue(state, id: string): void {
+			state.decayingCues = state.decayingCues.filter((cue) => cue.id !== id)
+		},
+
+		addDecayingResponses(state, responses: (NovelResponseMessage & { isSelected: boolean })[]): void {
+			responses.forEach((response) => state.decayingResponses.push(response))
+		},
+
+		removeDecayingResponses(state, IDs: string[]): void {
+			state.decayingResponses = state.decayingResponses.filter((response) => !IDs.includes(response.chapterId))
 		},
 	},
 
@@ -62,20 +91,46 @@ const novelModule = defineModule({
 			return state.cue.text.substring(0, Math.min(state.charactersPrinted, state.cue.text.length))
 		},
 
-		currentReplies: (state): NovelResponseMessage[] => {
-			return state.replies
+		currentResponses: (state): NovelResponseMessage[] => {
+			return state.responses
 		},
 	},
 
 	actions: {
+		setCue(context, args: { cue: NovelCueMessage }): void {
+			const { commit, dispatch } = moduleActionContext(context, novelModule)
+
+			dispatch.decayCurrentCue()
+
+			commit.setIsMuted(false)
+			commit.setCue(args.cue)
+		},
+
 		addResponse(context, args: { response: NovelResponseMessage }): void {
 			const { commit } = moduleActionContext(context, novelModule)
 
+			commit.setIsMuted(false)
 			commit.addResponse(args.response)
 		},
 
 		reply(context, args: { response: NovelResponseMessage }): void {
-			const { commit } = moduleActionContext(context, novelModule)
+			const { state, commit, rootState } = moduleActionContext(context, novelModule)
+
+			if (rootState.gameStateModule.isSpectating) {
+				return
+			}
+
+			commit.addDecayingResponses(
+				state.responses.map((response) => ({
+					...response,
+					isSelected: response.chapterId === args.response.chapterId,
+				}))
+			)
+			const responseIDs = state.responses.map((response) => response.chapterId)
+			setTimeout(() => {
+				commit.removeDecayingResponses(responseIDs)
+			}, 1000)
+
 			commit.clearResponses()
 
 			Core.mainHandler.currentOpenAnimationThread.skipCooldown()
@@ -84,17 +139,54 @@ const novelModule = defineModule({
 
 		setActiveCharacter(context, args: { character: StoryCharacter | null }): void {
 			const { commit } = moduleActionContext(context, novelModule)
+			commit.setIsMuted(false)
 			commit.setActiveCharacter(args.character)
 		},
 
 		continue(context): void {
-			const { state, commit, getters, dispatch } = moduleActionContext(context, novelModule)
+			const { state, getters, dispatch, rootState } = moduleActionContext(context, novelModule)
+			if (getters.currentCue && getters.currentCueText.length < getters.currentCue?.text.length) {
+				dispatch.skipCurrentCueAnimation()
+				OutgoingMessageHandlers.sendNovelSkipAnimation()
+			} else if (state.cue && state.responses.length === 0 && !rootState.gameStateModule.isSpectating) {
+				dispatch.proceedToNextCue()
+				OutgoingMessageHandlers.sendNovelNextCue()
+			}
+		},
+
+		skipCurrentCueAnimation(context): void {
+			const { commit, getters, dispatch } = moduleActionContext(context, novelModule)
 			if (getters.currentCue && getters.currentCueText.length < getters.currentCue?.text.length) {
 				commit.setCharactersPrinted(getters.currentCue.text.length)
-				dispatch.stopPrintTimer()
-			} else if (state.cue && state.replies.length === 0) {
-				Core.mainHandler.currentOpenAnimationThread.skipCooldown()
 			}
+			dispatch.stopPrintTimer()
+		},
+
+		proceedToNextCue(context): void {
+			const { state } = moduleActionContext(context, novelModule)
+
+			if (!state.cue || state.responses.length > 0) {
+				return
+			}
+
+			Core.mainHandler.currentOpenAnimationThread.skipCooldown()
+		},
+
+		decayCurrentCue(context): void {
+			const { state, commit } = moduleActionContext(context, novelModule)
+
+			if (!state.cue) {
+				return
+			}
+
+			commit.addDecayingCue(state.cue)
+			const id = state.cue.id
+
+			setTimeout(() => {
+				commit.removeDecayingCue(id)
+			}, 1000)
+
+			commit.setCue(null)
 		},
 
 		startPrintTimer(context): void {
@@ -121,7 +213,7 @@ const novelModule = defineModule({
 					}
 
 					commit.setCharactersPrinted(charactersPrinted)
-				}, 35)
+				}, 25)
 				commit.setPrintTimer(timer)
 			}
 		},
@@ -132,8 +224,18 @@ const novelModule = defineModule({
 			commit.setPrintTimer(null)
 		},
 
-		clear(context): void {
-			const { commit } = moduleActionContext(context, novelModule)
+		clearResponses(context): void {
+			const { state, commit } = moduleActionContext(context, novelModule)
+			const toResetCooldown = !!state.cue || state.responses.length > 0
+			commit.clearResponses()
+			if (toResetCooldown) {
+				Core.mainHandler.currentOpenAnimationThread.skipCooldown()
+			}
+		},
+
+		fullClear(context): void {
+			const { commit, dispatch } = moduleActionContext(context, novelModule)
+			dispatch.clearResponses()
 			commit.clear()
 		},
 	},
