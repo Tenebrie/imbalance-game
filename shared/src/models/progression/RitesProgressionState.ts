@@ -13,6 +13,18 @@ export type RitesEncounter = {
 	class: string
 }
 
+export type RitesPlayerCharacter = {
+	body: 'humanoid' | 'avian' | 'equine'
+	heritage: 'mundane' | 'arcane' | 'nature'
+	appearance: 'masculine' | 'feminine' | 'ambigous'
+	personality: {
+		brave: number
+		charming: number
+		honorable: number
+		nihilistic: number
+	}
+}
+
 export type RitesProgressionRunStatePlayer = {
 	cards: RitesCard[]
 	items: RitesItem[]
@@ -28,6 +40,7 @@ export type RitesProgressionRunState = {
 
 export type RitesProgressionMetaState = {
 	runCount: number
+	character: RitesPlayerCharacter
 }
 
 export type RitesProgressionState = {

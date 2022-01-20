@@ -1,7 +1,7 @@
-import CardFeature from '@shared/enums/CardFeature'
 import RulesetCategory from '@shared/enums/RulesetCategory'
 import HiddenPlayerMessage from '@shared/models/network/player/HiddenPlayerMessage'
 import {
+	RitesPlayerCharacter,
 	RitesProgressionRunState,
 	RitesProgressionRunStatePlayer,
 	RitesProgressionState,
@@ -14,9 +14,9 @@ import { getClassFromConstructor, getLabyrinthItemSlots } from '@src/utils/Utils
 
 import ServerGame from './ServerGame'
 
-const CURRENT_VERSION = 5
+const CURRENT_VERSION = 7
 
-class RitesProgression {
+export class RitesProgression {
 	game: ServerGame
 	private internalState: RitesProgressionState | null = null
 
@@ -43,13 +43,7 @@ class RitesProgression {
 	}
 
 	public async loadState(): Promise<void> {
-		const player = this.player
-		const entry = await PlayerDatabase.selectPlayerLabyrinthProgression(player.id)
-		if (!entry || entry.data.version !== CURRENT_VERSION) {
-			this.internalState = this.createDefaultState()
-			return
-		}
-		this.internalState = entry.data
+		this.internalState = await RitesProgression.forPlayer(this.player)
 	}
 
 	public async saveState(): Promise<boolean> {
@@ -59,71 +53,7 @@ class RitesProgression {
 	public async resetRunState(): Promise<void> {
 		this.internalState = {
 			...this.state,
-			run: this.getDefaultRunState(),
-		}
-	}
-
-	private createDefaultState(): RitesProgressionState {
-		return {
-			version: CURRENT_VERSION,
-			run: this.getDefaultRunState(),
-			lastRun: null,
-			meta: {
-				runCount: 0,
-			},
-		}
-	}
-
-	private getDefaultRunState(): RitesProgressionRunState {
-		const RitesEncounters = require('../../game/rulesets/rites/service/RitesEncounters')
-
-		const player = this.player
-		return {
-			playersExpected: 1,
-			players: [new HiddenPlayerMessage(player)],
-			playerStates: {
-				[player.id]: this.getDefaultPlayerState(),
-			},
-			encounterDeck: RitesEncounters.getRitesEncounterDeck().map((ruleset: RulesetConstructor) => ({
-				class: getClassFromConstructor(ruleset),
-			})),
-			encounterHistory: [],
-		}
-	}
-
-	private getDefaultPlayerState(): RitesProgressionRunStatePlayer {
-		return {
-			cards: [
-				{
-					class: 'unitLabyrinthLostArcher',
-					count: 3,
-				},
-				{
-					class: 'unitLabyrinthLostHound',
-					count: 3,
-				},
-				{
-					class: 'unitLabyrinthLostMage',
-					count: 2,
-				},
-				{
-					class: 'unitLabyrinthLostRaven',
-					count: 2,
-				},
-				{
-					class: 'unitLabyrinthLostRogue',
-					count: 3,
-				},
-				{
-					class: 'unitLabyrinthLostShieldbearer',
-					count: 3,
-				},
-			],
-			items: CardLibrary.cards
-				.filter((card) => card.features.includes(CardFeature.LABYRINTH_ITEM_T0))
-				.map((card) => ({
-					cardClass: card.class,
-				})),
+			run: RitesProgression.getDefaultRunState(this.player),
 		}
 	}
 
@@ -133,7 +63,11 @@ class RitesProgression {
 
 	public addPlayer(player: ServerPlayer): void {
 		this.state.run.players.push(new HiddenPlayerMessage(player))
-		this.state.run.playerStates[player.id] = this.getDefaultPlayerState()
+		this.state.run.playerStates[player.id] = RitesProgression.getDefaultPlayerState()
+	}
+
+	public saveCharacter(character: RitesPlayerCharacter): void {
+		this.state.meta.character = character
 	}
 
 	public addCardToDeck(player: ServerPlayer, card: string, count: number): void {
@@ -168,7 +102,90 @@ class RitesProgression {
 	public failRun(): void {
 		this.state.meta.runCount += 1
 		this.state.lastRun = this.state.run
-		this.state.run = this.getDefaultRunState()
+		this.state.run = RitesProgression.getDefaultRunState(this.player)
+	}
+
+	public static async forPlayer(player: ServerPlayer): Promise<RitesProgressionState> {
+		const entry = await PlayerDatabase.selectPlayerLabyrinthProgression(player.id)
+		if (!entry || entry.data.version !== CURRENT_VERSION) {
+			return RitesProgression.getDefaultState(player)
+		}
+		return entry.data
+	}
+
+	private static getDefaultState(player: ServerPlayer): RitesProgressionState {
+		return {
+			version: CURRENT_VERSION,
+			run: this.getDefaultRunState(player),
+			lastRun: null,
+			meta: {
+				runCount: 0,
+				character: {
+					body: 'humanoid',
+					heritage: 'mundane',
+					appearance: 'ambigous',
+					personality: {
+						brave: 0,
+						charming: 0,
+						honorable: 0,
+						nihilistic: 0,
+					},
+				},
+			},
+		}
+	}
+
+	private static getDefaultRunState(player: ServerPlayer): RitesProgressionRunState {
+		const RitesEncounters = require('../../game/rulesets/rites/service/RitesEncounters')
+
+		return {
+			playersExpected: 1,
+			players: [new HiddenPlayerMessage(player)],
+			playerStates: {
+				[player.id]: this.getDefaultPlayerState(),
+			},
+			encounterDeck: RitesEncounters.getRitesEncounterDeck().map((ruleset: RulesetConstructor) => ({
+				class: getClassFromConstructor(ruleset),
+			})),
+			encounterHistory: [],
+		}
+	}
+
+	private static getDefaultPlayerState(): RitesProgressionRunStatePlayer {
+		return {
+			cards: [
+				{
+					class: 'unitLabyrinthLostArcher',
+					count: 3,
+				},
+				{
+					class: 'unitLabyrinthLostHound',
+					count: 3,
+				},
+				{
+					class: 'unitLabyrinthLostMage',
+					count: 2,
+				},
+				{
+					class: 'unitLabyrinthLostRaven',
+					count: 2,
+				},
+				{
+					class: 'unitLabyrinthLostRogue',
+					count: 3,
+				},
+				{
+					class: 'unitLabyrinthLostShieldbearer',
+					count: 3,
+				},
+			],
+			items: [],
+			// items: CardLibrary.cards
+			// 	.filter((card) => card.features.includes(CardFeature.LABYRINTH_ITEM_T0))
+			// 	.map((card) => ({
+			// 		cardClass: card.class,
+			// 	})),
+		}
 	}
 }
 

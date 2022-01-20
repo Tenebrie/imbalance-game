@@ -30,7 +30,7 @@ export default class RulesetRitesRunCamp extends ServerRuleset {
 		this.createChain()
 			.require(({ game, victoriousPlayer }) => victoriousPlayer === game.getHumanGroup())
 			.setLinkGetter(() => {
-				const nextEncounter = game.progression.rites.state.run.encounterDeck.pop()
+				const nextEncounter = game.progression.rites.state.run.encounterDeck[0]
 				if (!nextEncounter) {
 					throw new Error('No encounters left in the encounter deck!')
 				}
