@@ -43,11 +43,11 @@ export class RitesProgression {
 	}
 
 	public async loadState(): Promise<void> {
-		this.internalState = await RitesProgression.forPlayer(this.player)
+		this.internalState = await RitesProgression.loadStateForPlayer(this.player)
 	}
 
 	public async saveState(): Promise<boolean> {
-		return PlayerDatabase.updatePlayerLabyrinthProgression(this.player.id, this.state)
+		return await RitesProgression.saveStateForPlayer(this.player, this.state)
 	}
 
 	public async resetRunState(): Promise<void> {
@@ -99,18 +99,30 @@ export class RitesProgression {
 		})
 	}
 
+	public popEncounterFromDeck(): void {
+		this.state.run.encounterDeck.shift()
+	}
+
 	public failRun(): void {
 		this.state.meta.runCount += 1
 		this.state.lastRun = this.state.run
 		this.state.run = RitesProgression.getDefaultRunState(this.player)
 	}
 
-	public static async forPlayer(player: ServerPlayer): Promise<RitesProgressionState> {
+	public static async loadStateForPlayer(player: ServerPlayer): Promise<RitesProgressionState> {
 		const entry = await PlayerDatabase.selectPlayerLabyrinthProgression(player.id)
 		if (!entry || entry.data.version !== CURRENT_VERSION) {
 			return RitesProgression.getDefaultState(player)
 		}
 		return entry.data
+	}
+
+	public static async saveStateForPlayer(player: ServerPlayer, state: RitesProgressionState): Promise<boolean> {
+		return await PlayerDatabase.updatePlayerLabyrinthProgression(player.id, state)
+	}
+
+	public static async resetStateForPlayer(player: ServerPlayer): Promise<boolean> {
+		return await PlayerDatabase.updatePlayerLabyrinthProgression(player.id, RitesProgression.getDefaultState(player))
 	}
 
 	private static getDefaultState(player: ServerPlayer): RitesProgressionState {
@@ -153,38 +165,8 @@ export class RitesProgression {
 
 	private static getDefaultPlayerState(): RitesProgressionRunStatePlayer {
 		return {
-			cards: [
-				{
-					class: 'unitLabyrinthLostArcher',
-					count: 3,
-				},
-				{
-					class: 'unitLabyrinthLostHound',
-					count: 3,
-				},
-				{
-					class: 'unitLabyrinthLostMage',
-					count: 2,
-				},
-				{
-					class: 'unitLabyrinthLostRaven',
-					count: 2,
-				},
-				{
-					class: 'unitLabyrinthLostRogue',
-					count: 3,
-				},
-				{
-					class: 'unitLabyrinthLostShieldbearer',
-					count: 3,
-				},
-			],
+			cards: [],
 			items: [],
-			// items: CardLibrary.cards
-			// 	.filter((card) => card.features.includes(CardFeature.LABYRINTH_ITEM_T0))
-			// 	.map((card) => ({
-			// 		cardClass: card.class,
-			// 	})),
 		}
 	}
 }

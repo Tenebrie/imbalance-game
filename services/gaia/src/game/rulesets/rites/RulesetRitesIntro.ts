@@ -3,12 +3,11 @@ import GameMode from '@shared/enums/GameMode'
 import RulesetCategory from '@shared/enums/RulesetCategory'
 import { RitesPlayerCharacter } from '@shared/models/progression/RitesProgressionState'
 import GameVictoryCondition from '@src/enums/GameVictoryCondition'
-import UnitLabyrinthLostArcher from '@src/game/cards/12-rites/cards/UnitLabyrinthLostArcher'
-import UnitLabyrinthLostHound from '@src/game/cards/12-rites/cards/UnitLabyrinthLostHound'
-import UnitLabyrinthLostMage from '@src/game/cards/12-rites/cards/UnitLabyrinthLostMage'
-import { LabyrinthItemChainmail } from '@src/game/cards/12-rites/items/armor/LabyrinthArmor_Chainmail'
-import { LabyrinthItemCasualDress } from '@src/game/cards/12-rites/items/armor/LabyrinthArmor_Dress'
-import { LabyrinthItemDragonsteelSword } from '@src/game/cards/12-rites/items/weapon/LabyrinthWeapon_Basic'
+import UnitRitesFlameArcana from '@src/game/cards/12-rites/cards/UnitRitesFlameArcana'
+import UnitRitesMajorFlameArcana from '@src/game/cards/12-rites/cards/UnitRitesMajorFlameArcana'
+import UnitRitesPoisonArcana from '@src/game/cards/12-rites/cards/UnitRitesPoisonArcana'
+import UnitRitesWindArcana from '@src/game/cards/12-rites/cards/UnitRitesWindArcana'
+import { RitesItemTravelingGarb } from '@src/game/cards/12-rites/items/armor/RitesArmor_Basic'
 import { CardConstructor } from '@src/game/libraries/CardLibrary'
 import ServerGame from '@src/game/models/ServerGame'
 import { getClassFromConstructor } from '@src/utils/Utils'
@@ -206,8 +205,8 @@ export default class RulesetRitesIntro extends BaseRulesetRitesEncounter {
 
 					@ I may not be as fast as some, but I have my magic to compensate. [Arcane heritage]
 						--> setHeritageArcane
-						> You feel your body change, filling with pure magic. You can see your own glow for a moment before you disappear just to hop
-							> out a lot further along down the track. You turn around, and you notice a glimpse of the portal you left behind. It fades away
+						> You feel your body change, filling with pure magic. You can see your own fiery glow for a moment before you disappear just to hop
+							> out a lot further along down the track. You turn around, and you notice a glimpse of the blazing portal you left behind. It fades away
 							> in a second, but it leaves a smile on your face.
 						> Of course, teleportation is not the only thing you're good at. It's just the unique thing that you seem to enjoy more than others.
 						> You continue moving along the track. Sometimes moving your hooves over lazily, sometimes jumping over long distances when you feel like it.
@@ -393,32 +392,81 @@ export default class RulesetRitesIntro extends BaseRulesetRitesEncounter {
 				const deck: { card: CardConstructor; count: number }[] = []
 				const items: CardConstructor[] = []
 
-				// TODO: Add actual arcanae.
+				/**
+				 * Minimal deck:
+				 * - Wind Arcana x1
+				 * - Flame Arcana x3
+				 */
+
+				deck.push(
+					{
+						card: UnitRitesWindArcana,
+						count: 1,
+					},
+					{
+						card: UnitRitesFlameArcana,
+						count: 3,
+					}
+				)
+
+				items.push(RitesItemTravelingGarb)
+
+				/**
+				 * Racial units:
+				 * - Mundane human - Wind Arcana x2
+				 * - Flame-marked human - Major Flame Arcana x1
+				 * - Humanoid dryad - Poison Arcana x2
+				 *
+				 * - Centaur - Wind Arcana x1
+				 * - Flame centaur - Flame Arcana x2
+				 * - Deer-dryad - Poison Arcana x1
+				 *
+				 * - Harpy - Wind Arcana x1
+				 * - Phoenix - Flame Arcana x2
+				 * - Merbird - Poison Arcana x1
+				 */
+
 				if (character.heritage === 'mundane') {
 					deck.push({
-						card: UnitLabyrinthLostArcher,
-						count: 5,
+						card: UnitRitesWindArcana,
+						count: character.body === 'humanoid' ? 2 : 1,
 					})
 				} else if (character.heritage === 'arcane') {
 					deck.push({
-						card: UnitLabyrinthLostMage,
-						count: 5,
+						card: character.body === 'humanoid' ? UnitRitesMajorFlameArcana : UnitRitesFlameArcana,
+						count: character.body === 'humanoid' ? 1 : 2,
 					})
 				} else if (character.heritage === 'nature') {
 					deck.push({
-						card: UnitLabyrinthLostHound,
-						count: 5,
+						card: UnitRitesPoisonArcana,
+						count: character.body === 'humanoid' ? 2 : 1,
 					})
 				}
 
+				/**
+				 * Racial items:
+				 * - Mundane human - 'Plains walking' movement item; Ultimate: Permanently add a Wind Arcana into your deck.
+				 * - Flame-marked human - 'Plains walking' movement item; Ultimate: Upgrade all Arcanae in your hand.
+				 * - Humanoid dryad - Plains walking' movement item; Ultimate: Draw an Arcana for every unit you control.
+				 *
+				 * - Centaur - Ram it' damage item; 'Hoof it' movement item
+				 * - Flame centaur - Full Steam Ahead'; 'Full Steam Behind' movement item
+				 * - Deer-dryad - 'Natural Boop' damage item; 'Hop-skip' movement item
+				 *
+				 * - Harpy - Claw damage item; 'Fly high' | 'Land nigh" movement item
+				 * - Phoenix - Claw damage item; 'Fly high' | 'Land nigh" movement item
+				 * - Merbird - Claw damage item; 'Fly high' | 'Land nigh" movement item
+				 */
+
 				if (character.body === 'humanoid') {
-					items.push(LabyrinthItemCasualDress)
+					// items.push(LabyrinthItemCasualDress)
 				} else if (character.body === 'equine') {
-					items.push(LabyrinthItemChainmail)
+					// items.push(LabyrinthItemChainmail)
 				} else if (character.body === 'avian') {
-					items.push(LabyrinthItemDragonsteelSword)
+					// items.push(LabyrinthItemDragonsteelSword)
 				}
 
+				game.progression.rites.resetRunState()
 				deck.forEach((wrapper) => game.progression.rites.addCardToDeck(player, getClassFromConstructor(wrapper.card), wrapper.count))
 				items.forEach((card) => game.progression.rites.addItemToDeck(player, getClassFromConstructor(card)))
 

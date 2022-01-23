@@ -1,16 +1,16 @@
 import CardTribe from '@shared/enums/CardTribe'
 import BuffRowBurning from '@src/game/buffs/BuffRowBurning'
-import { BaseLabyrinthActiveItem } from '@src/game/cards/12-rites/items/ItemLabyrinthBase'
+import { BaseRitesActiveItem } from '@src/game/cards/12-rites/items/ItemRitesBase'
 import ServerGame from '@src/game/models/ServerGame'
 import { asDirectSpellDamage, asSplashSpellDamage } from '@src/utils/LeaderStats'
 
-export class LabyrinthItemRustedSword extends BaseLabyrinthActiveItem {
+export class LabyrinthItemRustedSword extends BaseRitesActiveItem {
 	damage = asDirectSpellDamage(1)
 
 	constructor(game: ServerGame) {
 		super(game, {
 			tier: 0,
-			slot: CardTribe.LABYRINTH_WEAPON,
+			slot: CardTribe.RITES_WEAPON,
 			stats: {
 				cost: 1,
 			},
@@ -30,13 +30,13 @@ export class LabyrinthItemRustedSword extends BaseLabyrinthActiveItem {
 	}
 }
 
-export class LabyrinthItemSteelSword extends BaseLabyrinthActiveItem {
+export class LabyrinthItemSteelSword extends BaseRitesActiveItem {
 	damage = asDirectSpellDamage(3)
 
 	constructor(game: ServerGame) {
 		super(game, {
 			tier: 1,
-			slot: CardTribe.LABYRINTH_WEAPON,
+			slot: CardTribe.RITES_WEAPON,
 			stats: {
 				cost: 1,
 			},
@@ -56,13 +56,13 @@ export class LabyrinthItemSteelSword extends BaseLabyrinthActiveItem {
 	}
 }
 
-export class LabyrinthItemObsidianSword extends BaseLabyrinthActiveItem {
+export class LabyrinthItemObsidianSword extends BaseRitesActiveItem {
 	damage = asDirectSpellDamage(5)
 
 	constructor(game: ServerGame) {
 		super(game, {
 			tier: 2,
-			slot: CardTribe.LABYRINTH_WEAPON,
+			slot: CardTribe.RITES_WEAPON,
 			stats: {
 				cost: 1,
 			},
@@ -81,14 +81,14 @@ export class LabyrinthItemObsidianSword extends BaseLabyrinthActiveItem {
 	}
 }
 
-export class LabyrinthItemFlamingSword extends BaseLabyrinthActiveItem {
+export class LabyrinthItemFlamingSword extends BaseRitesActiveItem {
 	damage = asDirectSpellDamage(3)
 	splashDamage = asSplashSpellDamage(1)
 
 	constructor(game: ServerGame) {
 		super(game, {
 			tier: 2,
-			slot: CardTribe.LABYRINTH_WEAPON,
+			slot: CardTribe.RITES_WEAPON,
 			stats: {
 				cost: 1,
 			},
@@ -108,13 +108,13 @@ export class LabyrinthItemFlamingSword extends BaseLabyrinthActiveItem {
 	}
 }
 
-export class LabyrinthItemDragonsteelSword extends BaseLabyrinthActiveItem {
+export class LabyrinthItemDragonsteelSword extends BaseRitesActiveItem {
 	damage = asDirectSpellDamage(3)
 
 	constructor(game: ServerGame) {
 		super(game, {
 			tier: 2,
-			slot: CardTribe.LABYRINTH_WEAPON,
+			slot: CardTribe.RITES_WEAPON,
 			stats: {
 				cost: 1,
 			},

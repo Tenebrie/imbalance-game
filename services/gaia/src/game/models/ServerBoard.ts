@@ -197,6 +197,23 @@ export default class ServerBoard implements Board {
 		return opposingEnemies.filter((unit) => this.getVerticalUnitDistance(unit, thisUnit) === shortestDistance)
 	}
 
+	public getClosestEnemyUnits(thisUnit: ServerUnit): ServerUnit[] {
+		const enemyUnits = this.game.board.getUnitsOwnedByOpponent(thisUnit)
+		const enemyUnitsWithDistance = enemyUnits
+			.map((unit) => ({
+				unit,
+				distance: this.getHorizontalUnitDistance(unit, thisUnit) + this.getVerticalUnitDistance(unit, thisUnit) * 100,
+			}))
+			.sort((a, b) => a.distance - b.distance)
+
+		if (enemyUnitsWithDistance.length === 0) {
+			return []
+		}
+
+		const shortestDistance = enemyUnitsWithDistance[0].distance
+		return enemyUnitsWithDistance.filter((unit) => unit.distance === shortestDistance).map((unitWithDistance) => unitWithDistance.unit)
+	}
+
 	public getUnitsOwnedByPlayer(owner: ServerPlayerInGame | null): ServerUnit[] {
 		if (!owner) {
 			return []
@@ -211,12 +228,18 @@ export default class ServerBoard implements Board {
 		return this.getAllUnits().filter((unit) => unit.owner === owner)
 	}
 
-	public getUnitsOwnedByOpponent(context: ServerCard | ServerPlayerInGame | ServerPlayerGroup | null): ServerUnit[] {
+	public getUnitsOwnedByOpponent(context: ServerCard | ServerUnit | ServerPlayerInGame | ServerPlayerGroup | null): ServerUnit[] {
 		if (!context) {
 			return []
 		}
 		const playerGroup: ServerPlayerGroup =
-			context instanceof ServerPlayerGroup ? context : context instanceof ServerCard ? context.ownerGroup : context.group
+			context instanceof ServerPlayerGroup
+				? context
+				: context instanceof ServerCard
+				? context.ownerGroup
+				: context instanceof ServerUnit
+				? context.card.ownerGroup
+				: context.group
 		return this.getUnitsOwnedByGroup(playerGroup.opponent)
 	}
 

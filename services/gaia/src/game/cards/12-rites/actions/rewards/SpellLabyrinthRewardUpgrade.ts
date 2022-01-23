@@ -51,7 +51,7 @@ export class SpellLabyrinthRewardUpgradeAny extends BaseSpellLabyrinthRewardUpgr
 	public readonly rewardsOffered = 4
 	protected isCardValidUpgrade(card: ServerCard): boolean {
 		const upgradeableCards = this.ownerPlayer.cardHand.allCards.filter(
-			(filteredCard) => filteredCard.upgrades.length > 0 && filteredCard.features.includes(CardFeature.LABYRINTH_ITEM)
+			(filteredCard) => filteredCard.upgrades.length > 0 && filteredCard.features.includes(CardFeature.RITES_ITEM)
 		)
 		const validCardClasses = upgradeableCards
 			.flatMap((upgradeableCard) => upgradeableCard.upgrades)

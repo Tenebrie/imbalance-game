@@ -89,7 +89,7 @@ export default defineComponent({
 		}
 
 		const onCreateRitesRun = async (): Promise<void> => {
-			const response = await axios.post('/api/games', { ruleset: 'rulesetRitesIntro' })
+			const response = await axios.post('/api/games/rites/solo')
 			const gameMessage: GameMessage = response.data.data
 			await store.dispatch.joinGame(gameMessage)
 		}

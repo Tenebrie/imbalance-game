@@ -19,11 +19,11 @@ enum CardTribe {
 	MANIFESTATION = 'manifestation',
 
 	LOST = 'lost',
-	LABYRINTH_WEAPON = 'lab_weapon',
-	LABYRINTH_ARMOR = 'lab_armor',
-	LABYRINTH_GLOVES = 'lab_gloves',
-	LABYRINTH_BOOTS = 'lab_boots',
-	LABYRINTH_TREASURE = 'lab_treasure',
+	RITES_WEAPON = 'lab_weapon',
+	RITES_ARMOR = 'lab_armor',
+	RITES_GLOVES = 'lab_gloves',
+	RITES_BOOTS = 'lab_boots',
+	RITES_TREASURE = 'lab_treasure',
 	LABYRINTH_BUCKET = 'lab_bucket',
 }
 

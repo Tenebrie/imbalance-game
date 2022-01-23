@@ -77,7 +77,8 @@
 	"ui.decks.deleteDeck.progress": "Deleting...",
 	"ui.decks.leaveDeck": "Back",
 
-	"story.character.narrator": "Narrator",
+	"story.character.narrator": "",
+	"story.character.dragonNarrator": "Narrator",
 	"story.character.notNessa": "Not Nessa",
 	"story.character.unknown": "???",
 	"story.character.elsa": "Elsa",
@@ -274,6 +275,8 @@
 	"card.keyword.healingRain": "Healing Rain (Row effect)",
 	"card.keyword.healingRain.search": "Healing Rain",
 	"card.keyword.healingRain.description": "At the end of the turn, Heal 3 on 3 weakest allies.",
+	"card.keyword.auto": "Auto",
+	"card.keyword.auto.description": "Trigger an effect at the end of the player's turn.",
 
 	"card.feature.protector.text": "*Protector*",
 	"card.feature.prominent.text": "*Prominent*",

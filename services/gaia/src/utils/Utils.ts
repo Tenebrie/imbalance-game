@@ -151,16 +151,16 @@ export const getTotalLeaderStat = (player: ServerPlayerInGame | ServerPlayerGrou
 export type LabyrinthItemSlot = 'weapon' | 'armor' | 'gloves' | 'boots'
 export const getLabyrinthItemSlots = (card: ServerCard): LabyrinthItemSlot[] => {
 	const cardSlots: LabyrinthItemSlot[] = []
-	if (card.tribes.includes(CardTribe.LABYRINTH_WEAPON)) {
+	if (card.tribes.includes(CardTribe.RITES_WEAPON)) {
 		cardSlots.push('weapon')
 	}
-	if (card.tribes.includes(CardTribe.LABYRINTH_ARMOR)) {
+	if (card.tribes.includes(CardTribe.RITES_ARMOR)) {
 		cardSlots.push('armor')
 	}
-	if (card.tribes.includes(CardTribe.LABYRINTH_GLOVES)) {
+	if (card.tribes.includes(CardTribe.RITES_GLOVES)) {
 		cardSlots.push('gloves')
 	}
-	if (card.tribes.includes(CardTribe.LABYRINTH_BOOTS)) {
+	if (card.tribes.includes(CardTribe.RITES_BOOTS)) {
 		cardSlots.push('boots')
 	}
 	return cardSlots

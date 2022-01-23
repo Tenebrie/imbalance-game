@@ -1,16 +1,16 @@
 import CardTribe from '@shared/enums/CardTribe'
 import LeaderStatType from '@shared/enums/LeaderStatType'
-import { BaseLabyrinthPassiveItem } from '@src/game/cards/12-rites/items/ItemLabyrinthBase'
+import { BaseRitesPassiveItem } from '@src/game/cards/12-rites/items/ItemRitesBase'
 import ServerGame from '@src/game/models/ServerGame'
 
-export class LabyrinthItemOldGloves extends BaseLabyrinthPassiveItem {
+export class LabyrinthItemOldGloves extends BaseRitesPassiveItem {
 	public readonly BONUS_POWER = 2
 	public static readonly BONUS_HAND_SIZE = 7
 
 	constructor(game: ServerGame) {
 		super(game, {
 			tier: 0,
-			slot: CardTribe.LABYRINTH_GLOVES,
+			slot: CardTribe.RITES_GLOVES,
 			stats: {
 				[LeaderStatType.STARTING_HAND_SIZE]: LabyrinthItemOldGloves.BONUS_HAND_SIZE,
 			},
@@ -31,14 +31,14 @@ export class LabyrinthItemOldGloves extends BaseLabyrinthPassiveItem {
 	}
 }
 
-export class LabyrinthItemCombatGloves extends BaseLabyrinthPassiveItem {
+export class LabyrinthItemCombatGloves extends BaseRitesPassiveItem {
 	public readonly BONUS_POWER = 5
 	public static readonly BONUS_HAND_SIZE = 8
 
 	constructor(game: ServerGame) {
 		super(game, {
 			tier: 1,
-			slot: CardTribe.LABYRINTH_GLOVES,
+			slot: CardTribe.RITES_GLOVES,
 			stats: {
 				[LeaderStatType.STARTING_HAND_SIZE]: LabyrinthItemCombatGloves.BONUS_HAND_SIZE,
 			},
@@ -58,7 +58,7 @@ export class LabyrinthItemCombatGloves extends BaseLabyrinthPassiveItem {
 	}
 }
 
-export class LabyrinthItemVelvetGloves extends BaseLabyrinthPassiveItem {
+export class LabyrinthItemVelvetGloves extends BaseRitesPassiveItem {
 	public readonly BONUS_POWER = 5
 	public readonly BONUS_REGEN = 3
 	public static readonly BONUS_HAND_SIZE = 7
@@ -66,7 +66,7 @@ export class LabyrinthItemVelvetGloves extends BaseLabyrinthPassiveItem {
 	constructor(game: ServerGame) {
 		super(game, {
 			tier: 1,
-			slot: CardTribe.LABYRINTH_GLOVES,
+			slot: CardTribe.RITES_GLOVES,
 			stats: {
 				[LeaderStatType.STARTING_HAND_SIZE]: LabyrinthItemVelvetGloves.BONUS_HAND_SIZE,
 			},

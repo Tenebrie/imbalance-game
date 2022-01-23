@@ -23,7 +23,7 @@ export default abstract class BaseRulesetRitesEncounter extends ServerRuleset {
 			sortPriority: props?.sortPriority || 0,
 			constants: {
 				FIRST_GROUP_MOVES_FIRST: true,
-				UNIT_HAND_SIZE_STARTING: 0,
+				UNIT_HAND_SIZE_STARTING: 7,
 				...props?.constants,
 			},
 		})
@@ -79,6 +79,7 @@ export default abstract class BaseRulesetRitesEncounter extends ServerRuleset {
 			const { game, victoriousPlayer } = args
 			if (victoriousPlayer === game.getHumanGroup()) {
 				game.progression.rites.addEncounterToHistory(this.class)
+				game.progression.rites.popEncounterFromDeck()
 			} else {
 				game.progression.rites.failRun()
 			}

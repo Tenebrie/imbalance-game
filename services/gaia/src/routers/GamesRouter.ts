@@ -73,10 +73,15 @@ router.post(
 
 		GameLibrary.destroyAllGamesForPlayer(player, GameVictoryCondition.PLAYER_STARTED_NEW_GAME)
 
-		const progression = await RitesProgression.forPlayer(player)
+		const progression = await RitesProgression.loadStateForPlayer(player)
 
-		const runStarted = progression.run.encounterHistory.length > 0
-		const ruleset = runStarted ? RulesetRitesRunCamp : RulesetRitesIntro
+		// const runStarted = progression.run.encounterHistory.length > 0
+		const runStarted = false
+		const ruleset = RulesetLibrary.findTemplate(runStarted ? RulesetRitesRunCamp : RulesetRitesIntro)
+
+		if (!runStarted) {
+			await RitesProgression.resetStateForPlayer(player)
+		}
 
 		const game = GameLibrary.createGame(player, ruleset.constructor as RulesetConstructor)
 
