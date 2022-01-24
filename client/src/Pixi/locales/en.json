@@ -1091,8 +1091,5 @@
 	"card.unitLabyrinthLostShieldbearer.description": " ",
 
 	"card.spellLabyrinthMagicArrow.name": "Magic Arrow",
-	"card.spellLabyrinthMagicArrow.description": "Deal {damage} Damage to an enemy unit.",
-	
-	"card.unitNewYearBeast.name": "New Year Beast",
-	"card.unitNewYearBeast.description": "*Deploy:*\nShoot a rocket to either deal {damage} Damage to an enemy unit or give {powerBuff} Power to a friendly unit."
+	"card.spellLabyrinthMagicArrow.description": "Deal {damage} Damage to an enemy unit."
 }

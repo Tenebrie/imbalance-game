@@ -5,13 +5,14 @@ import CardTribe from '@shared/enums/CardTribe'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import TargetType from '@shared/enums/TargetType'
-import { asDirectUnitDamage, asDirectBuffPotency } from '@src/utils/LeaderStats'
+import { asDirectBuffPotency, asDirectUnitDamage } from '@src/utils/LeaderStats'
 
 import BuffStrength from '../../../buffs/BuffStrength'
 import ServerCard from '../../../models/ServerCard'
 import { DamageInstance } from '../../../models/ServerDamageSource'
 import ServerGame from '../../../models/ServerGame'
 
+/* Original design and implementation by Eretzu. */
 export default class UnitNewYearBeast extends ServerCard {
 	damage = asDirectUnitDamage(6)
 	powerBuff = asDirectBuffPotency(8)
@@ -26,19 +27,28 @@ export default class UnitNewYearBeast extends ServerCard {
 				power: 12,
 			},
 			expansionSet: ExpansionSet.BASE,
+			isCommunity: true,
 		})
 		this.dynamicTextVariables = {
 			damage: this.damage,
 			powerBuff: this.powerBuff,
 		}
 
-		this.createDeployTargets(TargetType.UNIT)
-			.perform(({ targetUnit }) => {
-				if(targetUnit.owner === this.ownerGroup) {
-					targetUnit.buffs.addMultiple(BuffStrength, this.powerBuff, this, BuffDuration.INFINITY)
-				} else {
-					targetUnit.dealDamage(DamageInstance.fromCard(this.damage, this))
-				}
-			})
+		this.createLocalization({
+			en: {
+				name: 'New Year Beast',
+				description:
+					'*Deploy:*\nShoot a rocket to either deal {damage} Damage to an enemy unit or give {powerBuff} Power to a friendly unit.',
+				flavor: 'Community card by Eretzu.',
+			},
+		})
+
+		this.createDeployTargets(TargetType.UNIT).perform(({ targetUnit }) => {
+			if (targetUnit.owner === this.ownerGroup) {
+				targetUnit.buffs.addMultiple(BuffStrength, this.powerBuff, this, BuffDuration.INFINITY)
+			} else {
+				targetUnit.dealDamage(DamageInstance.fromCard(this.damage, this))
+			}
+		})
 	}
 }
