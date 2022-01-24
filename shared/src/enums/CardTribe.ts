@@ -19,12 +19,12 @@ enum CardTribe {
 	MANIFESTATION = 'manifestation',
 
 	LOST = 'lost',
-	LABYRINTH_WEAPON = 'lab_weapon',
-	LABYRINTH_ARMOR = 'lab_armor',
-	LABYRINTH_GLOVES = 'lab_gloves',
-	LABYRINTH_BOOTS = 'lab_boots',
-	LABYRINTH_TREASURE = 'lab_treasure',
-	LABYRINTH_BUCKET = 'lab_bucket',
+	RITES_WEAPON = 'ritesWeapon',
+	RITES_ARMOR = 'ritesArmor',
+	RITES_GLOVES = 'ritesGloves',
+	RITES_BOOTS = 'ritesBoots',
+	RITES_TREASURE = 'ritesTreasure',
+	LABYRINTH_BUCKET = 'ritesBucket',
 }
 
 export default CardTribe

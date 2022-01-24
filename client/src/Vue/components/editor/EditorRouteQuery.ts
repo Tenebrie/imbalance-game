@@ -17,7 +17,9 @@ router.afterEach((route) => {
 interface Query {
 	color: CardColor[] | null
 	faction: CardFaction[] | null
+	community: boolean
 	experimental: boolean
+	searchQuery: string
 
 	toggleColor(color: CardColor | null): void
 	toggleFaction(faction: CardFaction | null): void
@@ -51,11 +53,25 @@ export const useDecksRouteQuery = (): ComputedRef<Query> => {
 				router.push({ query: { ...router.currentRoute.value.query, faction: faction } })
 			},
 
+			get community(): boolean {
+				return !!routeData.value.query['community']
+			},
+			set community(value: boolean) {
+				router.push({ query: { ...router.currentRoute.value.query, community: value ? 'true' : undefined } })
+			},
+
 			get experimental(): boolean {
 				return !!routeData.value.query['experimental']
 			},
 			set experimental(value: boolean) {
 				router.push({ query: { ...router.currentRoute.value.query, experimental: value ? 'true' : undefined } })
+			},
+
+			get searchQuery(): string {
+				return routeData.value.query['q'] || ''
+			},
+			set searchQuery(value: string) {
+				router.push({ query: { ...router.currentRoute.value.query, q: value?.length > 0 ? value : undefined } })
 			},
 
 			toggleColor(color: CardColor | null) {

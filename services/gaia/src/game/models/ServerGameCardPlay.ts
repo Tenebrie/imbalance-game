@@ -115,13 +115,13 @@ export default class ServerGameCardPlay {
 		const targetMode = ownedCard.card.type === CardType.UNIT ? TargetMode.CARD_PLAY : TargetMode.DEPLOY_EFFECT
 		this.cardResolveStack.startResolvingImmediately(ownedCard, targetMode, () => this.updateResolvingCardTargetingStatus())
 
-		// this.game.events.postEvent(
-		// 	GameEventCreators.cardPlayed({
-		// 		game: this.game,
-		// 		owner: ownedCard.owner,
-		// 		triggeringCard: ownedCard.card,
-		// 	})
-		// )
+		this.game.events.postEvent(
+			GameEventCreators.cardPlayed({
+				game: this.game,
+				owner: ownedCard.owner,
+				triggeringCard: ownedCard.card,
+			})
+		)
 		if (ownedCard.card.type === CardType.UNIT && ownedCard.card.unit) {
 			/* Invoke the card Deploy effect */
 			this.game.events.postEvent(
@@ -158,14 +158,17 @@ export default class ServerGameCardPlay {
 		} else if (source === 'deck' && owner.cardDeck.findCardById(card.id)) {
 			owner.cardDeck.removeCard(card)
 		}
+
 		/* Trigger card played event */
-		this.game.events.postEvent(
-			GameEventCreators.cardPlayed({
-				game: this.game,
-				owner: owner,
-				triggeringCard: card,
-			})
-		)
+		if (source !== 'aether') {
+			this.game.events.postEvent(
+				GameEventCreators.cardPlayed({
+					game: this.game,
+					owner: owner,
+					triggeringCard: card,
+				})
+			)
+		}
 
 		/* Resolve card */
 		if (card.type === CardType.UNIT) {

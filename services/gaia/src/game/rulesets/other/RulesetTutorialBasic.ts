@@ -54,7 +54,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 			.require(({ group }) => group.isHuman)
 			.startDialog(
 				`
-				Narrator:
+				DragonNarrator:
 				> Welcome to State of Imbalance Alpha!
 					> This tutorial scenario will explain the basic concepts about the game.
 					> Click or press "Space" to continue...
@@ -71,7 +71,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 			.require(({ group }) => group.isHuman)
 			.startDialog(
 				`
-				Narrator:
+				DragonNarrator:
 				> Unless specified otherwise, you need to play exactly one unit from your hand on your turn.
 					> After you played Wounded Veteran, the opponent took their turn as well.
 				> You may have noticed that your card did something when it was played.
@@ -90,7 +90,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 			.require(({ group }) => group.isHuman)
 			.startDialog(
 				`
-				Narrator:
+				DragonNarrator:
 				> I forgot to mention that the game is played over multiple rounds.
 					> Normally it is a Best-of-3 match, but this one is, in fact, Best-of-5.
 				> Your opponent has decided to forfeit this round as they don't have any more cards to play.
@@ -105,21 +105,21 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 			.require(({ group }) => group.isHuman)
 			.startDialog(
 				`
-				Narrator:
+				DragonNarrator:
 				> I don't want to hold your hand too much, so what about a little hands-on practice?
 				> I'll give you a few cards, and you beat this pesky AI. Deal?
 				@ Deal.
-					Narrator:
+					DragonNarrator:
 					> I knew I can count on you.
 					> If you need to figure out what a card is, just right-click it.
 						> You'll see an overlay with the card description, any other related cards and other information.
 					--> DropCards
 				@ I need some instructions.
-					Narrator:
+					DragonNarrator:
 					> Sure thing!
 						> First, let me drop you some cards...
 					--> DropCards
-					Narrator: 
+					DragonNarrator: 
 					> Currently you have two types of cards in your hand: 
 						> - One Troviar, the Torturer.
 						> - And a few Eagle Eye Archers.
@@ -149,7 +149,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 			})
 			.startDialog(
 				`
-				Narrator:
+				DragonNarrator:
 				> Good job!
 				> Now, let me introduce something... magic!
 					> Quite literally, in fact.
@@ -192,18 +192,18 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 			.require(({ group }) => group.isHuman)
 			.startDialog(
 				`
-				Narrator:
+				DragonNarrator:
 				> Did you notice how the spell labeled as Leader Power returned to your hand?
 				> Leader powers can be used every turn, as long as you have the mana to afford them.
 					> Other spells, however, are single-use only.
 				> Want to practice some more spell-slinging before we wrap up?
 				@ Yes, why not.
-					Narrator:
+					DragonNarrator:
 					> Glad to hear it.
 					> I'll toss a few more cards at you, but I think you can figure it out.
 					--> Spellsling
 				@ No, I get it.
-					Narrator:
+					DragonNarrator:
 					> Alright. Then feel free to just end the round right now.
 			`
 			)
@@ -236,7 +236,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 				game.novel
 					.startDialog(
 						`
-					Narrator:
+					DragonNarrator:
 					> Thanks for playing the tutorial!
 					> I don't want to keep you too long, so I'll call it here.
 						> Feel free to explore the menus and play versus AI to practice more.
@@ -265,7 +265,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 			.perform(() => {
 				firstDisobedienceTriggered = true
 				game.novel.startDialog(`
-					Narrator:
+					DragonNarrator:
 					> Hey, uhm, so about this button.
 					> I'll explain what it does later. For now, may I ask you to play along and play the card from your hand?
 					> Just drag it out to one of the blue rows in the middle of the screen.
@@ -284,7 +284,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 			.perform(() => {
 				firstDisobedienceTriggeredTwice = true
 				game.novel.startDialog(`
-					Narrator:
+					DragonNarrator:
 					> ...
 					> Look, it's a curated tutorial experience.
 					> If you're very bored and you don't need your hand held, you're free to press Escape and leave.
@@ -305,7 +305,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 				game.novel
 					.startDialog(
 						`
-						Narrator:
+						DragonNarrator:
 						> Thing is... you'll lose if you just push the button without playing anything.
 						> You would just lose one round usually, but that leads to you losing the game.
 						> Like that.
@@ -331,7 +331,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 				game.novel
 					.startDialog(
 						`
-						Narrator:
+						DragonNarrator:
 						> While you can end the round at any point normally, your opponent may keep playing their cards even after you do.
 						> So, for the purposes of this tutorial scenario I'll kindly ask you to play all your cards before ending the round.
 						--> Condition
@@ -340,7 +340,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 					.continue('Condition', (novel) => {
 						if (secondDisobedienceTriggered) {
 							novel.exec(`
-								Narrator:
+								DragonNarrator:
 								> ...
 								> "All of them?", you might ask.
 									> Yes, ALL of them.
@@ -362,7 +362,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 			.perform(() => {
 				game.novel.startDialog(
 					`
-						Narrator:
+						DragonNarrator:
 						> Would you please just play your spells? Thanks.
 					`
 				)
@@ -380,7 +380,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 			.perform(() => {
 				game.novel.startDialog(
 					`
-						Narrator:
+						DragonNarrator:
 						> So, you're out of spells. Now you need to play your unit card.
 					`
 				)
@@ -403,15 +403,15 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 				game.novel
 					.startDialog(
 						`
-						Narrator:
+						DragonNarrator:
 						> I believe you already know how the units work, and this part of the tutorial covers spells.
 						> May I kindly ask you to shoot all your spells away before playing the unit?
 						@ Yes, of course.
-							Narrator:
+							DragonNarrator:
 							> Thanks, that means a lot.
 							--> Agreement
 						@ No, absolutely not.
-							Narrator:
+							DragonNarrator:
 							> Interesting.
 							> The thing is, however, I may prevent you from doing anything other than using spells.
 							> So we find ourself in a bit of a standstill.
@@ -437,7 +437,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 				game.novel
 					.startDialog(
 						`
-						Narrator:
+						DragonNarrator:
 						> Didn't you just say you'll play along and play your spells?
 						> Please, just... just play them, okay?
 						> Otherwise... we find ourself in a bit of a standstill.
@@ -476,7 +476,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 				game.novel
 					.startDialog(
 						`
-						Narrator:
+						DragonNarrator:
 						> Okay.
 						> Okay...
 						> Congratulations.
@@ -484,25 +484,25 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 						> Look, it's just a tutorial. Why do you need to be like this?
 							> Be honest, at least.
 						@ I have found it accidentally.
-							Narrator:
+							DragonNarrator:
 							> Honestly? I don't believe it.
 							> To trigger this conversation you needed to fail the tutorial in three different ways, multiple times.
 						@ I was just testing all combinations.
-							Narrator:
+							DragonNarrator:
 							> If this is true, you're a great QA engineer.
 						@ I was looking for the easter eggs.
-							Narrator:
+							DragonNarrator:
 							> Good job then, you found the ultimate easter egg.
 							> Granted, I have no idea why it's even here.
 								> Can't I just design a normal tutorial like any other game?
 							> Apparently not.
 						
-						Narrator:
+						DragonNarrator:
 						> Anyway.
 						> You've derailed the experience enough. You definitely know how the game works anyway, so why bother pretending?
 						> I'll close the game after this. However. Want to ask me something before we wrap up?
 						@ Why design all the extra conversations?
-							Narrator:
+							DragonNarrator:
 							> Honestly? No idea. I guess this is just how I am.
 							> I absolutely could just block all the incorrect actions, and leave it at that.
 							> The tutorial would work, and it would serve the purpose absolutely fine.
@@ -512,21 +512,21 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 							> I hope to see you for more stories later, by the way. I have more where it came from.
 							> But for now, thanks for playing. And have a good one.
 						@ How long did it take to make this?
-							Narrator:
+							DragonNarrator:
 							> The whole game, or just the tutorial?
 							@ The whole game
-								Narrator:
+								DragonNarrator:
 								> A while.
 								> It's going to be two years soon, as I write this.
 							@ The tutorial
-								Narrator:
+								DragonNarrator:
 								> Not that long, actually.
 								> Not counting all the supporting systems, the actual scenario took a couple of days.
-							Narrator:
+							DragonNarrator:
 							> Hope you're satisfied with the answer. In any case, that's it from me.
 							> Have a good one.
 						@ No, nothing
-							Narrator:
+							DragonNarrator:
 							> Alright.
 							> Have a good one.
 						--> Close
@@ -550,7 +550,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 			.perform(() => {
 				game.novel.startDialog(
 					`
-						Narrator:
+						DragonNarrator:
 						> You still have cards in your hand. You may want to play them all before ending the round.
 					`
 				)
@@ -577,7 +577,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 				game.novel
 					.startDialog(
 						`
-						Narrator:
+						DragonNarrator:
 						> Hm. It seems that the opponent is winning at the moment.
 						> You may need to play your cards in a different order.
 						> Let me reset the round for you real quick.
@@ -624,7 +624,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 				game.novel
 					.startDialog(
 						`
-						Narrator:
+						DragonNarrator:
 						> They're still winning.
 						> No worries. Here, have an extra card this time.
 							> On the house.
@@ -674,7 +674,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 				game.novel
 					.startDialog(
 						`
-						Narrator:
+						DragonNarrator:
 						> Alright, you're doing it on purpose now.
 						> Good luck failing this.
 						--> Reset
@@ -718,7 +718,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 				game.novel
 					.startDialog(
 						`
-						Narrator:
+						DragonNarrator:
 						> Losing here is practically impossible if you just play your stuff, so you're probably doing it on purpose.
 						> Just go again.
 						--> Reset

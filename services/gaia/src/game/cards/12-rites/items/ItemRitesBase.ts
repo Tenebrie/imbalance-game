@@ -20,47 +20,42 @@ import { LeaderStatValueGetter } from '@src/utils/LeaderStats'
 const tierToFeature = (tier: number): CardFeature => {
 	switch (tier) {
 		case 0:
-			return CardFeature.LABYRINTH_ITEM_T0
+			return CardFeature.RITES_ITEM_T0
 		case 1:
-			return CardFeature.LABYRINTH_ITEM_T1
+			return CardFeature.RITES_ITEM_T1
 		case 2:
-			return CardFeature.LABYRINTH_ITEM_T2
+			return CardFeature.RITES_ITEM_T2
 		case 3:
-			return CardFeature.LABYRINTH_ITEM_T3
+			return CardFeature.RITES_ITEM_T3
 		case 4:
-			return CardFeature.LABYRINTH_ITEM_T4
+			return CardFeature.RITES_ITEM_T4
 		default:
 			throw new Error(`No tier feature for tier ${tier}`)
 	}
 }
 
-const propsToFeatures = (props?: LabyrinthPassiveItemProps): CardFeature[] => {
-	const features = [CardFeature.LABYRINTH_ITEM]
+const propsToFeatures = (props?: RitesPassiveItemProps): CardFeature[] => {
+	const features = [CardFeature.RITES_ITEM]
 	if (!props) {
 		return features
 	}
 	return features.concat(tierToFeature(props.tier))
 }
 
-type LabyrinthPassiveItemProps = {
-	slot:
-		| CardTribe.LABYRINTH_WEAPON
-		| CardTribe.LABYRINTH_ARMOR
-		| CardTribe.LABYRINTH_GLOVES
-		| CardTribe.LABYRINTH_BOOTS
-		| CardTribe.LABYRINTH_TREASURE
+type RitesPassiveItemProps = {
+	slot: CardTribe.RITES_WEAPON | CardTribe.RITES_ARMOR | CardTribe.RITES_GLOVES | CardTribe.RITES_BOOTS | CardTribe.RITES_TREASURE
 	tier: number
 	stats?: Partial<Record<LeaderStatType, number>>
 	upgrades?: CardConstructor[]
 }
 
-type LabyrinthActiveItemProps = LabyrinthPassiveItemProps & {
+type RitesActiveItemProps = RitesPassiveItemProps & {
 	stats: {
 		cost: number
 	} & Partial<Record<LeaderStatType, number>>
 }
 
-class ItemLabyrinthBase extends ServerCard {
+class ItemRitesBase extends ServerCard {
 	public addLeaderPower(value: number | (() => number)): void {
 		this.createSelector()
 			.requireTarget(({ target }) => target.ownerGroup.owns(this) && target === this.ownerPlayer.leader)
@@ -87,13 +82,14 @@ class ItemLabyrinthBase extends ServerCard {
 	}
 }
 
-export class BaseLabyrinthPassiveItem extends ItemLabyrinthBase {
-	constructor(game: ServerGame, props?: LabyrinthPassiveItemProps) {
+export class BaseRitesPassiveItem extends ItemRitesBase {
+	constructor(game: ServerGame, props?: RitesPassiveItemProps) {
 		super(game, {
 			type: CardType.SPELL,
 			color: CardColor.BRONZE,
 			faction: CardFaction.HUMAN,
-			tribes: props ? [props.slot] : [],
+			tribes: props?.slot ?? [],
+			upgrades: props?.upgrades ?? [],
 			features: propsToFeatures(props).concat(CardFeature.PASSIVE),
 			stats: {
 				cost: 0,
@@ -104,13 +100,14 @@ export class BaseLabyrinthPassiveItem extends ItemLabyrinthBase {
 	}
 }
 
-export class BaseLabyrinthActiveItem extends ItemLabyrinthBase {
-	constructor(game: ServerGame, props?: LabyrinthActiveItemProps) {
+export class BaseRitesActiveItem extends ItemRitesBase {
+	constructor(game: ServerGame, props?: RitesActiveItemProps) {
 		super(game, {
 			type: CardType.SPELL,
 			color: CardColor.BRONZE,
 			faction: CardFaction.HUMAN,
-			tribes: props ? [props.slot] : [],
+			tribes: props?.slot ?? [],
+			upgrades: props?.upgrades ?? [],
 			features: propsToFeatures(props).concat(CardFeature.HERO_POWER),
 			stats: {
 				cost: props?.stats.cost || 0,
@@ -152,13 +149,14 @@ export class BaseLabyrinthActiveItem extends ItemLabyrinthBase {
 	}
 }
 
-export class BaseLabyrinthArtifactItem extends ItemLabyrinthBase {
-	constructor(game: ServerGame, props?: LabyrinthActiveItemProps) {
+export class BaseRitesArtifactItem extends ItemRitesBase {
+	constructor(game: ServerGame, props?: RitesActiveItemProps) {
 		super(game, {
 			type: CardType.SPELL,
 			color: CardColor.BRONZE,
 			faction: CardFaction.HUMAN,
-			tribes: props ? [props.slot] : [],
+			tribes: props?.slot ?? [],
+			upgrades: props?.upgrades ?? [],
 			features: propsToFeatures(props).concat(CardFeature.HERO_ARTIFACT),
 			stats: {
 				cost: props?.stats.cost || 0,

@@ -3,6 +3,7 @@ import GameHistoryDatabaseEntry from '@shared/models/GameHistoryDatabaseEntry'
 import OpenCardMessage from '@shared/models/network/card/OpenCardMessage'
 import GameHistoryDatabase from '@src/database/GameHistoryDatabase'
 import CardLibrary from '@src/game/libraries/CardLibrary'
+import profiler from '@src/profiler/profiler'
 import express, { Response } from 'express'
 
 import PlayerDatabase from '../database/PlayerDatabase'
@@ -184,4 +185,26 @@ router.post(
 	})
 )
 
-module.exports = router
+router.get(
+	'/performance',
+	AsyncHandler(async (req, res: Response) => {
+		const totalTime = profiler.totalTime || 1
+		const totalSyncTime = profiler.totalSyncTime || 1
+		const totalAsyncTime = profiler.totalAsyncTime || 1
+		const profilerData = Object.values(profiler.data)
+			.filter((entry) => entry.calls > 1)
+			.map((entry) => ({
+				...entry,
+				syncPercentage: !entry.isAsync ? Math.round((entry.total / totalSyncTime) * 10000) / 100 : 0,
+				asyncPercentage: entry.isAsync ? Math.round((entry.total / totalAsyncTime) * 10000) / 100 : 0,
+				totalPercentage: Math.round((entry.total / totalTime) * 10000) / 100,
+			}))
+			.sort((a, b) => b.syncPercentage - a.syncPercentage || b.asyncPercentage - a.asyncPercentage || b.total - a.total)
+		res.json({
+			totalTime: profiler.totalTime,
+			entries: profilerData,
+		})
+	})
+)
+
+export default router

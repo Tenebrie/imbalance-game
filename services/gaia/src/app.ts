@@ -36,25 +36,23 @@ import { wsLogger } from './utils/WebSocketLogger'
 const app = express()
 expressWs(app)
 
-/* Routers must be imported after express-ws is initialized, therefore 'require' syntax */
-const ChangelogRouter = require('./routers/ChangelogRouter')
-
-const UserRouter = require('./routers/UserRouter')
-const PlayRouter = require('./routers/PlayRouter')
-const HealthRouter = require('./routers/HealthRouter')
-const StatusRouter = require('./routers/StatusRouter')
-const AdminRouter = require('./routers/AdminRouter')
-const CardsRouter = require('./routers/CardsRouter')
-const RulesetsRouter = require('./routers/RulesetsRouter')
-const DecksRouter = require('./routers/DecksRouter')
-const DevRouter = require('./routers/DevRouter')
-const GamesRouter = require('./routers/GamesRouter')
-const ModalsRouter = require('./routers/ModalsRouter')
-const SessionRouter = require('./routers/SessionRouter')
-const UserProfileRouter = require('./routers/UserProfileRouter')
-const FeedbackRouter = require('./routers/FeedbackRouter')
-const WorkshopRouter = require('./routers/WorkshopRouter')
-const OvermindRouter = require('./routers/overmind/OvermindRouter')
+import AdminRouter from './routers/AdminRouter'
+import CardsRouter from './routers/CardsRouter'
+import ChangelogRouter from './routers/ChangelogRouter'
+import DecksRouter from './routers/DecksRouter'
+import DevRouter from './routers/DevRouter'
+import FeedbackRouter from './routers/FeedbackRouter'
+import GamesRouter from './routers/GamesRouter'
+import HealthRouter from './routers/HealthRouter'
+import ModalsRouter from './routers/ModalsRouter'
+import OvermindRouter from './routers/overmind/OvermindRouter'
+import PlayRouter from './routers/PlayRouter'
+import RulesetsRouter from './routers/RulesetsRouter'
+import SessionRouter from './routers/SessionRouter'
+import StatusRouter from './routers/StatusRouter'
+import UserProfileRouter from './routers/UserProfileRouter'
+import UserRouter from './routers/UserRouter'
+import WorkshopRouter from './routers/WorkshopRouter'
 
 /* Templating engine */
 app.set('views', path.join(__dirname, 'views'))

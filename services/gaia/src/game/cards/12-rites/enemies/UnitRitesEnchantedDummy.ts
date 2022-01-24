@@ -5,25 +5,19 @@ import ExpansionSet from '@shared/enums/ExpansionSet'
 
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
+import UnitChallengeDummyOPWarrior from '../../10-challenge/ai-00-dummy/UnitChallengeDummyOPWarrior'
 
-export default class HeroLabyrinthGatekeeper extends ServerCard {
+export default class UnitRitesEnchantedDummy extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, {
 			type: CardType.UNIT,
-			color: CardColor.GOLDEN,
+			color: CardColor.SILVER,
 			faction: CardFaction.NEUTRAL,
 			stats: {
-				power: 30,
-				armor: 10,
+				power: 25,
 			},
 			expansionSet: ExpansionSet.RITES,
-		})
-		this.createLocalization({
-			en: {
-				name: 'The Gatekeeper',
-				title: 'Guardian of the Labyrinth',
-				description: '<i>???</i>',
-			},
+			sharedArtwork: UnitChallengeDummyOPWarrior,
 		})
 	}
 }

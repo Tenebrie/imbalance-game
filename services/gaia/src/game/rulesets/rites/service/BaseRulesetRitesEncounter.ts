@@ -23,7 +23,7 @@ export default abstract class BaseRulesetRitesEncounter extends ServerRuleset {
 			sortPriority: props?.sortPriority || 0,
 			constants: {
 				FIRST_GROUP_MOVES_FIRST: true,
-				UNIT_HAND_SIZE_STARTING: 0,
+				UNIT_HAND_SIZE_STARTING: 7,
 				...props?.constants,
 			},
 		})
@@ -47,6 +47,7 @@ export default abstract class BaseRulesetRitesEncounter extends ServerRuleset {
 			])
 			.addGroup({ type: 'ai', deck: [LeaderLabyrinthOpponent], behaviour: AIBehaviour.DEFAULT })
 
+		// Initialize coop player count
 		this.createCallback(GameEventType.GAME_CREATED).perform(({ game }) => {
 			const registeredPlayers = game.progression.rites.state.run.players
 			const newPlayers = game.allPlayers
@@ -57,6 +58,7 @@ export default abstract class BaseRulesetRitesEncounter extends ServerRuleset {
 			})
 		})
 
+		// Load cards
 		this.createCallback(GameEventType.GAME_CREATED).perform(({ game }) => {
 			const state = game.progression.rites.state.run
 			game.humanPlayers.forEach((playerInGame) => {
@@ -79,6 +81,7 @@ export default abstract class BaseRulesetRitesEncounter extends ServerRuleset {
 			const { game, victoriousPlayer } = args
 			if (victoriousPlayer === game.getHumanGroup()) {
 				game.progression.rites.addEncounterToHistory(this.class)
+				game.progression.rites.popEncounterFromDeck()
 			} else {
 				game.progression.rites.failRun()
 			}

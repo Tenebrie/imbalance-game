@@ -29,6 +29,7 @@ export default class OpenCardMessage implements CardMessage {
 	sortPriority: number
 	expansionSet: ExpansionSet
 
+	isCommunity: boolean
 	isCollectible: boolean
 	isExperimental: boolean
 
@@ -51,6 +52,8 @@ export default class OpenCardMessage implements CardMessage {
 		this.variables = card.variables
 		this.sortPriority = card.sortPriority
 		this.expansionSet = card.expansionSet
+
+		this.isCommunity = card.isCommunity
 		this.isCollectible = card.isCollectible
 		this.isExperimental = card.isExperimental
 	}

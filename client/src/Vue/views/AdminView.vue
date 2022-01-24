@@ -5,6 +5,9 @@
 				<router-link tag="span" :to="{ name: 'admin-cards' }" class="router-link"><i class="fas fa-book" /> Card library </router-link>
 				<router-link tag="span" :to="{ name: 'admin-games' }" class="router-link"><i class="fas fa-history" /> Game history </router-link>
 				<router-link tag="span" :to="{ name: 'admin-users' }" class="router-link"><i class="fas fa-users" /> Registered users </router-link>
+				<router-link tag="span" :to="{ name: 'admin-performance' }" class="router-link"
+					><i class="fas fa-code" /> System performance
+				</router-link>
 			</div>
 			<div class="content">
 				<router-view />

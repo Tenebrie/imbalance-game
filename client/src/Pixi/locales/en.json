@@ -77,7 +77,8 @@
 	"ui.decks.deleteDeck.progress": "Deleting...",
 	"ui.decks.leaveDeck": "Back",
 
-	"story.character.narrator": "Narrator",
+	"story.character.narrator": "",
+	"story.character.dragonNarrator": "Narrator",
 	"story.character.notNessa": "Not Nessa",
 	"story.character.unknown": "???",
 	"story.character.elsa": "Elsa",
@@ -133,7 +134,8 @@
 	"target.order.card.spell": "Target",
 
 	"filter.all": "All",
-	"filter.experimental": "Experimental",
+	"filter.community": "Community cards",
+	"filter.experimental": "Work-in-progress cards",
 
 	"ruleset.rulesetChallengeDummy.label": "<b>AI:</b> Target Dummy",
 	"ruleset.rulesetEpicDummyFight.label": "<b>Special:</b> Epic Dummy Fight",
@@ -274,6 +276,8 @@
 	"card.keyword.healingRain": "Healing Rain (Row effect)",
 	"card.keyword.healingRain.search": "Healing Rain",
 	"card.keyword.healingRain.description": "At the end of the turn, Heal 3 on 3 weakest allies.",
+	"card.keyword.auto": "Auto",
+	"card.keyword.auto.description": "Trigger an effect at the end of the player's turn.",
 
 	"card.feature.protector.text": "*Protector*",
 	"card.feature.prominent.text": "*Prominent*",
@@ -332,7 +336,12 @@
 	"card.tribe.gloves": "Gloves",
 	"card.tribe.boots": "Boots",
 	"card.tribe.treasure": "Treasure",
-	"card.tribe.labyrinth_bucket": "Bucket",
+	"card.tribe.ritesWeapon": "Rites Weapon",
+	"card.tribe.ritesArmor": "Rites Armor",
+	"card.tribe.ritesGloves": "Rites Gloves",
+	"card.tribe.ritesBoots": "Rites Boots",
+	"card.tribe.ritesTreasure": "Rites Treasure",
+	"card.tribe.ritesBucket": "Bucket",
 
 	"buff.buffProtector.name": "Protector (Service buff)",
 	"buff.buffProtector.description": "This card is a protector.",

@@ -151,16 +151,16 @@ export const getTotalLeaderStat = (player: ServerPlayerInGame | ServerPlayerGrou
 export type LabyrinthItemSlot = 'weapon' | 'armor' | 'gloves' | 'boots'
 export const getLabyrinthItemSlots = (card: ServerCard): LabyrinthItemSlot[] => {
 	const cardSlots: LabyrinthItemSlot[] = []
-	if (card.tribes.includes(CardTribe.LABYRINTH_WEAPON)) {
+	if (card.tribes.includes(CardTribe.RITES_WEAPON)) {
 		cardSlots.push('weapon')
 	}
-	if (card.tribes.includes(CardTribe.LABYRINTH_ARMOR)) {
+	if (card.tribes.includes(CardTribe.RITES_ARMOR)) {
 		cardSlots.push('armor')
 	}
-	if (card.tribes.includes(CardTribe.LABYRINTH_GLOVES)) {
+	if (card.tribes.includes(CardTribe.RITES_GLOVES)) {
 		cardSlots.push('gloves')
 	}
-	if (card.tribes.includes(CardTribe.LABYRINTH_BOOTS)) {
+	if (card.tribes.includes(CardTribe.RITES_BOOTS)) {
 		cardSlots.push('boots')
 	}
 	return cardSlots
@@ -379,4 +379,23 @@ export const forEachRowCardSlot = (callback: (index: number) => void): void => {
 
 export const collapseNumber = (valueOrGetter: number | (() => number)): number => {
 	return typeof valueOrGetter === 'function' ? valueOrGetter() : valueOrGetter
+}
+
+export const capitalize = (value: string): string => value.substring(0, 1).toUpperCase() + value.substring(1).toLowerCase()
+
+export const plurify = (article: 'a', nextWord: string): string => {
+	return `${nextWord.startsWith('aeio') ? 'an' : 'a'} ${nextWord}`
+}
+
+export const seededRandom = (str: string): (() => number) => {
+	let h: number
+	for (let i = 0, h = 1779033703 ^ str.length; i < str.length; i++) {
+		h = Math.imul(h ^ str.charCodeAt(i), 3432918353)
+		h = (h << 13) | (h >>> 19)
+	}
+	return function () {
+		h = Math.imul(h ^ (h >>> 16), 2246822507)
+		h = Math.imul(h ^ (h >>> 13), 3266489909)
+		return (h ^= h >>> 16) >>> 0
+	}
 }

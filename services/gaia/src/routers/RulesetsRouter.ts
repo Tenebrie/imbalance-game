@@ -15,4 +15,4 @@ router.get('/', (req: Request, res: Response) => {
 	res.json(rulesetMessages)
 })
 
-module.exports = router
+export default router

@@ -18,7 +18,8 @@
 		"paths": {
 			"@src/*": ["./src/*"],
 			"@shared/*": ["../../shared/src/*"]
-		}
+		},
+		"plugins": [{ "transform": "./src/transformers/profilerTransformer.ts" }]
 	},
 	"include": ["./src/**/*.ts", "./src/**/*.tsx"],
 	"exclude": ["node_modules", "**/*.spec.ts"]

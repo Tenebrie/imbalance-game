@@ -1,4 +1,4 @@
-yarn tsc --incremental --tsBuildInfoFile dist/tsBuildInfo.json
+yarn ttsc --incremental --tsBuildInfoFile dist/tsBuildInfo.json
 yarn build:jade
 yarn build:assets
 

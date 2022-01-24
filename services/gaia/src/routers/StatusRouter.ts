@@ -33,4 +33,4 @@ router.ws('/', async (ws: ws, req: express.Request) => {
 	})
 })
 
-module.exports = router
+export default router

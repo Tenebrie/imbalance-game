@@ -15,13 +15,13 @@ import CardMessage from '@shared/models/network/card/CardMessage'
 import OpenCardMessage from '@shared/models/network/card/OpenCardMessage'
 import { cardColorToString, cardFactionToString, cardTypeToString, enumKeys } from '@shared/Utils'
 import axios from 'axios'
-import { debounce } from 'throttle-debounce'
 import { defineComponent, onMounted, ref } from 'vue'
 
 import Localization from '@/Pixi/Localization'
 import { parseRichText } from '@/utils/RichTextParser'
 import AdminCardsTable from '@/Vue/components/admin/AdminCardsTable.vue'
-import { useAdminRouteQuery } from '@/Vue/components/editor/AdminRouteParams'
+
+import usePreserveTableScrollState from './utils/usePreserveTableScrollState'
 
 export type FilterType = 'name' | 'type' | 'color' | 'faction' | 'collectible'
 
@@ -48,8 +48,7 @@ export default defineComponent({
 		const hasLoaded = ref(false)
 		const cards = ref<AdminViewCardCategory[]>([])
 
-		const scrollerRef = ref<HTMLDivElement | null>(null)
-		const routeQuery = useAdminRouteQuery()
+		const { onScroll, scrollerRef, restoreScrollState } = usePreserveTableScrollState()
 
 		const loadData = async () => {
 			const response = await axios.get('/api/admin/cards')
@@ -84,27 +83,11 @@ export default defineComponent({
 			cards.value = cardCategories
 
 			hasLoaded.value = true
-			requestAnimationFrame(() => {
-				const scroller = scrollerRef.value
-				const targetValue = routeQuery.value.scroll
-				if (targetValue > 0 && scroller) {
-					scroller.scrollTo({
-						top: targetValue,
-					})
-				}
-			})
+			restoreScrollState()
 		}
 
 		onMounted(() => {
 			loadData()
-		})
-
-		const onScroll = (e: Event) => {
-			const target = e.target as HTMLDivElement
-			saveScrollValueDebounced(target.scrollTop)
-		}
-		const saveScrollValueDebounced = debounce(100, (value: number) => {
-			routeQuery.value.scroll = value
 		})
 
 		return {

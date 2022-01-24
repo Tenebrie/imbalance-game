@@ -12,4 +12,4 @@ router.get('/', (req: Request, res: Response) => {
 	res.json(cardMessages)
 })
 
-module.exports = router
+export default router

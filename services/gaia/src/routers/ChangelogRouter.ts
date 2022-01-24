@@ -5,4 +5,4 @@ router.get('/', (req, res) => {
 	res.render('changelog')
 })
 
-module.exports = router
+export default router

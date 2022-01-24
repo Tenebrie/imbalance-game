@@ -40,7 +40,8 @@ abstract class BaseSpellLabyrinthRewardTreasure extends ServerCard {
 			.require(({ targetCard }) => this.cardsChosen.includes(targetCard))
 			.preventSorting()
 			.perform(({ player, targetCard }) => {
-				this.game.progression.rites.addItemToDeck(player.player, targetCard.class)
+				game.progression.rites.addItemToDeck(player.player, targetCard.class)
+				player.cardHand.addSpell(CardLibrary.instantiateFromInstance(game, targetCard))
 			})
 	}
 
@@ -51,27 +52,27 @@ abstract class BaseSpellLabyrinthRewardTreasure extends ServerCard {
 export class SpellLabyrinthRewardTreasureT1 extends BaseSpellLabyrinthRewardTreasure {
 	public readonly rewardsOffered = 4
 	protected isCardValidTreasure(card: ServerCard): boolean {
-		return card.features.includes(CardFeature.LABYRINTH_ITEM_T1) && card.tribes.includes(CardTribe.LABYRINTH_TREASURE)
+		return card.features.includes(CardFeature.RITES_ITEM_T1) && card.tribes.includes(CardTribe.RITES_TREASURE)
 	}
 }
 
 export class SpellLabyrinthRewardTreasureT2 extends BaseSpellLabyrinthRewardTreasure {
 	public readonly rewardsOffered = 4
 	protected isCardValidTreasure(card: ServerCard): boolean {
-		return card.features.includes(CardFeature.LABYRINTH_ITEM_T2) && card.tribes.includes(CardTribe.LABYRINTH_TREASURE)
+		return card.features.includes(CardFeature.RITES_ITEM_T2) && card.tribes.includes(CardTribe.RITES_TREASURE)
 	}
 }
 
 export class SpellLabyrinthRewardTreasureT3 extends BaseSpellLabyrinthRewardTreasure {
 	public readonly rewardsOffered = 4
 	protected isCardValidTreasure(card: ServerCard): boolean {
-		return card.features.includes(CardFeature.LABYRINTH_ITEM_T3) && card.tribes.includes(CardTribe.LABYRINTH_TREASURE)
+		return card.features.includes(CardFeature.RITES_ITEM_T3) && card.tribes.includes(CardTribe.RITES_TREASURE)
 	}
 }
 
 export class SpellLabyrinthRewardTreasureT4 extends BaseSpellLabyrinthRewardTreasure {
 	public readonly rewardsOffered = 4
 	protected isCardValidTreasure(card: ServerCard): boolean {
-		return card.features.includes(CardFeature.LABYRINTH_ITEM_T4) && card.tribes.includes(CardTribe.LABYRINTH_TREASURE)
+		return card.features.includes(CardFeature.RITES_ITEM_T4) && card.tribes.includes(CardTribe.RITES_TREASURE)
 	}
 }

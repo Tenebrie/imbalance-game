@@ -126,4 +126,4 @@ router.put('/', (req: Request, res: Response) => {
 	res.send()
 })
 
-module.exports = router
+export default router

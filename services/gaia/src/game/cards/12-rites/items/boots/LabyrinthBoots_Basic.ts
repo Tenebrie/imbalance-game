@@ -1,15 +1,15 @@
 import CardTribe from '@shared/enums/CardTribe'
-import { BaseLabyrinthPassiveItem } from '@src/game/cards/12-rites/items/ItemLabyrinthBase'
+import { BaseRitesPassiveItem } from '@src/game/cards/12-rites/items/ItemRitesBase'
 import ServerGame from '@src/game/models/ServerGame'
 
-export class LabyrinthItemOldBoots extends BaseLabyrinthPassiveItem {
+export class LabyrinthItemOldBoots extends BaseRitesPassiveItem {
 	public readonly BONUS_POWER = 3
 	public readonly BONUS_POWER_PER_GAME = 1
 
 	constructor(game: ServerGame) {
 		super(game, {
 			tier: 0,
-			slot: CardTribe.LABYRINTH_BOOTS,
+			slot: CardTribe.RITES_BOOTS,
 			upgrades: [LabyrinthItemWornBoots],
 		})
 		this.dynamicTextVariables = {
@@ -28,14 +28,14 @@ export class LabyrinthItemOldBoots extends BaseLabyrinthPassiveItem {
 	}
 }
 
-export class LabyrinthItemWornBoots extends BaseLabyrinthPassiveItem {
+export class LabyrinthItemWornBoots extends BaseRitesPassiveItem {
 	public readonly BONUS_POWER = 5
 	public readonly BONUS_POWER_PER_GAME = 2
 
 	constructor(game: ServerGame) {
 		super(game, {
 			tier: 1,
-			slot: CardTribe.LABYRINTH_BOOTS,
+			slot: CardTribe.RITES_BOOTS,
 		})
 		this.dynamicTextVariables = {
 			bonusPower: this.BONUS_POWER,

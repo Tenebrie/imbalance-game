@@ -5,7 +5,6 @@ import RulesetLibrary, { RulesetConstructor } from '@src/game/libraries/RulesetL
 import { ServerRuleset } from '@src/game/models/rulesets/ServerRuleset'
 import { RitesProgression } from '@src/game/models/ServerGameProgression'
 import RulesetRitesIntro from '@src/game/rulesets/rites/RulesetRitesIntro'
-import RulesetRitesRunCamp from '@src/game/rulesets/rites/service/RulesetRitesRunCamp'
 import AsyncHandler from '@src/utils/AsyncHandler'
 import express, { Request, Response } from 'express'
 
@@ -73,12 +72,16 @@ router.post(
 
 		GameLibrary.destroyAllGamesForPlayer(player, GameVictoryCondition.PLAYER_STARTED_NEW_GAME)
 
-		const progression = await RitesProgression.forPlayer(player)
+		const progression = await RitesProgression.loadStateForPlayer(player)
 
+		// const ruleset = RulesetLibrary.findTemplate(runStarted ? RulesetRitesRunCamp : RulesetRitesIntro)
 		const runStarted = progression.run.encounterHistory.length > 0
-		const ruleset = runStarted ? RulesetRitesRunCamp : RulesetRitesIntro
 
-		const game = GameLibrary.createGame(player, ruleset.constructor as RulesetConstructor)
+		if (runStarted) {
+			await RitesProgression.resetRunStateForPlayer(player)
+		}
+
+		const game = GameLibrary.createGame(player, RulesetRitesIntro as RulesetConstructor)
 
 		res.json({ data: new GameMessage(game) })
 	})
@@ -99,4 +102,4 @@ router.delete('/:gameId', (req: Request, res: Response) => {
 	res.json({ success: true })
 })
 
-module.exports = router
+export default router

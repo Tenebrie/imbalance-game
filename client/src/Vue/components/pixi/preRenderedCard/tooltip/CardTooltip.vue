@@ -17,6 +17,7 @@ import { computed, defineComponent, PropType } from 'vue'
 import Localization from '@/Pixi/Localization'
 import { RichTextTooltip } from '@/Pixi/render/RichText'
 import { snakeToCamelCase } from '@/utils/Utils'
+import { useDecksRouteQuery } from '@/Vue/components/editor/EditorRouteQuery'
 import CardTooltipKeyword, { CardTooltipKeywordProps } from '@/Vue/components/pixi/preRenderedCard/tooltip/CardTooltipKeyword.vue'
 import CardTooltipRelatedCard, {
 	CardTooltipRelatedCardProps,
@@ -49,6 +50,8 @@ export default defineComponent({
 	},
 
 	setup(props) {
+		const routeQuery = useDecksRouteQuery()
+
 		const parsedTooltip = computed<ParsedTooltip | null>(() => {
 			const baseText = props.tooltip.text
 			const sanitizedText = snakeToCamelCase(baseText.trim().replace(/[:,]/g, '').replace(/\s/g, '_'))
@@ -108,12 +111,12 @@ export default defineComponent({
 				event.stopPropagation()
 			} else if (tooltip.type === 'card' && !event.ctrlKey && !isInGame) {
 				const query = Localization.getCardName(tooltip.props.card)
-				store.commit.editor.setSearchQuery(query)
+				routeQuery.value.searchQuery = query
 				InspectedCardStore.dispatch.clear()
 			} else if (tooltip.type === 'keyword' && !isInGame) {
 				const localizationKey = `card.keyword.${tooltip.props.keyword}`
 				const query = Localization.get(`${localizationKey}.search`, 'null') || Localization.get(localizationKey, 'empty')
-				store.commit.editor.setSearchQuery(query)
+				routeQuery.value.searchQuery = query
 				InspectedCardStore.dispatch.clear()
 			}
 		}

@@ -1,5 +1,5 @@
 <template>
-	<div class="admin-games-view" v-if="hasLoaded">
+	<div class="admin-games-view" v-if="hasLoaded" :onscroll="onScroll" ref="scrollerRef">
 		<admin-games-tables :games="allGames" />
 	</div>
 </template>
@@ -11,17 +11,21 @@ import { defineComponent, onMounted, ref } from 'vue'
 
 import AdminGamesTables from '@/Vue/components/admin/AdminGamesTables.vue'
 
+import usePreserveTableScrollState from './utils/usePreserveTableScrollState'
+
 export default defineComponent({
 	components: { AdminGamesTables },
 
 	setup() {
 		const hasLoaded = ref(false)
 		const allGames = ref<GameHistoryDatabaseEntry[]>([])
+		const { onScroll, scrollerRef, restoreScrollState } = usePreserveTableScrollState()
 
 		const loadData = async () => {
 			const response = await axios.get('/api/admin/games')
 			allGames.value = response.data as GameHistoryDatabaseEntry[]
 			hasLoaded.value = true
+			restoreScrollState()
 		}
 
 		onMounted(() => {
@@ -34,6 +38,8 @@ export default defineComponent({
 		return {
 			hasLoaded,
 			allGames,
+			onScroll,
+			scrollerRef,
 		}
 	},
 })
