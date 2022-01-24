@@ -134,7 +134,8 @@
 	"target.order.card.spell": "Target",
 
 	"filter.all": "All",
-	"filter.experimental": "Experimental",
+	"filter.community": "Community cards",
+	"filter.experimental": "Work-in-progress cards",
 
 	"ruleset.rulesetChallengeDummy.label": "<b>AI:</b> Target Dummy",
 	"ruleset.rulesetEpicDummyFight.label": "<b>Special:</b> Epic Dummy Fight",

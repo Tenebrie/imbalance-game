@@ -24,11 +24,15 @@
 					{{ data.text }}
 				</button>
 				<div class="vertical-separator" />
-				<div class="checkbox-container">
-					<div class="checkbox">
-						<input id="checkbox-experimental" type="checkbox" value="Test" v-model="experimentalToggle" />
-						<label for="checkbox-experimental">{{ $locale.get('filter.experimental') }}</label>
-					</div>
+			</div>
+			<div class="checkbox-container">
+				<div class="checkbox">
+					<input id="checkbox-community" type="checkbox" value="Community" v-model="communityToggle" />
+					<label for="checkbox-community">{{ $locale.get('filter.community') }}</label>
+				</div>
+				<div class="checkbox">
+					<input id="checkbox-experimental" type="checkbox" value="Experimental" v-model="experimentalToggle" />
+					<label for="checkbox-experimental">{{ $locale.get('filter.experimental') }}</label>
 				</div>
 			</div>
 		</div>
@@ -60,7 +64,6 @@ import { computed, defineComponent, ref } from 'vue'
 
 import Localization from '@/Pixi/Localization'
 import { useDecksRouteQuery } from '@/Vue/components/editor/EditorRouteQuery'
-import store from '@/Vue/store'
 
 export default defineComponent({
 	setup() {
@@ -94,11 +97,20 @@ export default defineComponent({
 		])
 
 		const clearSearch = () => {
-			store.commit.editor.setSearchQuery('')
+			routeQuery.value.searchQuery = ''
 		}
 
 		const setSearchQueryDebounced = debounce(200, (query: string) => {
-			store.commit.editor.setSearchQuery(query)
+			routeQuery.value.searchQuery = query
+		})
+
+		const communityToggle = computed<boolean>({
+			get(): boolean {
+				return routeQuery.value.community
+			},
+			set(value: boolean) {
+				routeQuery.value.community = value
+			},
 		})
 
 		const experimentalToggle = computed<boolean>({
@@ -112,7 +124,8 @@ export default defineComponent({
 
 		const searchQuery = computed<string>({
 			get(): string {
-				return store.state.editor.searchQuery
+				return routeQuery.value.searchQuery
+				// return store.state.editor.searchQuery
 			},
 			set(value: string) {
 				setSearchQueryDebounced(value)
@@ -130,6 +143,7 @@ export default defineComponent({
 			toggleColor: routeQuery.value.toggleColor,
 			toggleFilters,
 			clearSearch,
+			communityToggle,
 			experimentalToggle,
 			searchQuery,
 		}
@@ -152,6 +166,10 @@ $COMPACT_MODE_THRESHOLD: 2050px;
 
 	&.filters-hidden {
 		justify-content: flex-end;
+	}
+
+	button {
+		max-height: 38px;
 	}
 
 	button.selected {
@@ -179,6 +197,7 @@ $COMPACT_MODE_THRESHOLD: 2050px;
 
 		.filter-buttons {
 			display: flex;
+			align-items: center;
 			margin: 8px 0;
 		}
 
@@ -201,11 +220,13 @@ $COMPACT_MODE_THRESHOLD: 2050px;
 
 		.checkbox-container {
 			display: flex;
-			align-items: center;
+			align-items: flex-start;
 			justify-content: center;
+			flex-direction: column;
 			margin: 8px 0;
 
 			.checkbox {
+				padding: 2px;
 				display: flex;
 			}
 		}
@@ -240,6 +261,7 @@ $COMPACT_MODE_THRESHOLD: 2050px;
 		.search {
 			position: relative;
 			display: flex;
+			align-items: center;
 			min-height: 40px;
 			margin: 8px 0;
 			@media (max-width: $COMPACT_MODE_THRESHOLD) {
@@ -249,6 +271,7 @@ $COMPACT_MODE_THRESHOLD: 2050px;
 			.search-input-container {
 				flex: 5;
 				height: 100%;
+				max-height: 38px;
 				display: flex;
 				flex-direction: column;
 				justify-content: center;
@@ -264,6 +287,7 @@ $COMPACT_MODE_THRESHOLD: 2050px;
 
 			button {
 				width: 40px;
+				height: 100%;
 				margin: 0;
 				padding: 0;
 				border-radius: 0 0.25em 0.25em 0;
@@ -275,8 +299,11 @@ $COMPACT_MODE_THRESHOLD: 2050px;
 		}
 
 		.hide-filters-normal {
-			margin-top: 4px;
+			margin-top: 3px;
+			margin-bottom: 3px;
 			margin-left: 8px;
+			display: flex;
+			align-items: center;
 			button {
 				height: calc(100% - 12px);
 			}

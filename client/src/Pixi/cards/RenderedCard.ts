@@ -53,6 +53,7 @@ export default class RenderedCard implements Card {
 	public readonly sortPriority: number
 	public readonly expansionSet: ExpansionSet
 
+	public readonly isCommunity: boolean
 	public readonly isCollectible: boolean
 	public readonly isExperimental: boolean
 
@@ -107,6 +108,7 @@ export default class RenderedCard implements Card {
 		this.variables = message.variables
 		this.sortPriority = message.sortPriority
 
+		this.isCommunity = message.isCommunity
 		this.isCollectible = message.isCollectible
 		this.isExperimental = message.isExperimental
 

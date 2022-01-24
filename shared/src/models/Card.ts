@@ -26,6 +26,8 @@ export default interface Card {
 	variables: RichTextVariables
 	sortPriority: number
 	expansionSet: ExpansionSet
+
+	isCommunity: boolean
 	isCollectible: boolean
 	isExperimental: boolean
 

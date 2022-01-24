@@ -36,6 +36,7 @@ export default class HiddenCardMessage implements CardMessage {
 	sortPriority: number
 	expansionSet = ExpansionSet.BASE
 
+	isCommunity: boolean
 	isCollectible: boolean
 	isExperimental: boolean
 
@@ -63,6 +64,7 @@ export default class HiddenCardMessage implements CardMessage {
 		this.relatedCards = []
 		this.sortPriority = 0
 
+		this.isCommunity = false
 		this.isCollectible = false
 		this.isExperimental = false
 	}
