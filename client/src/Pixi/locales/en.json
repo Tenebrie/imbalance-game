@@ -335,7 +335,12 @@
 	"card.tribe.gloves": "Gloves",
 	"card.tribe.boots": "Boots",
 	"card.tribe.treasure": "Treasure",
-	"card.tribe.labyrinth_bucket": "Bucket",
+	"card.tribe.ritesWeapon": "Rites Weapon",
+	"card.tribe.ritesArmor": "Rites Armor",
+	"card.tribe.ritesGloves": "Rites Gloves",
+	"card.tribe.ritesBoots": "Rites Boots",
+	"card.tribe.ritesTreasure": "Rites Treasure",
+	"card.tribe.ritesBucket": "Bucket",
 
 	"buff.buffProtector.name": "Protector (Service buff)",
 	"buff.buffProtector.description": "This card is a protector.",

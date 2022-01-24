@@ -6,14 +6,13 @@ import GameVictoryCondition from '@src/enums/GameVictoryCondition'
 import SpellLabyrinthNextEncounter from '@src/game/cards/12-rites/actions/SpellLabyrinthNextEncounter'
 import LeaderLabyrinthOpponent from '@src/game/cards/12-rites/LeaderLabyrinthOpponent'
 import LeaderLabyrinthPlayer from '@src/game/cards/12-rites/LeaderLabyrinthPlayer'
-import { CardConstructor } from '@src/game/libraries/CardLibrary'
+import CardLibrary, { CardConstructor } from '@src/game/libraries/CardLibrary'
 import RulesetLibrary from '@src/game/libraries/RulesetLibrary'
 import RulesetLifecycleHook from '@src/game/models/rulesets/RulesetLifecycleHook'
 import { ServerRuleset } from '@src/game/models/rulesets/ServerRuleset'
 import ServerGame from '@src/game/models/ServerGame'
 import ServerPlayerInGame from '@src/game/players/ServerPlayerInGame'
-import { getReward } from '@src/game/rulesets/rites/service/LabyrinthRewards'
-import Keywords from '@src/utils/Keywords'
+import { getReward } from '@src/game/rulesets/rites/service/RitesRewards'
 
 export default class RulesetRitesRunCamp extends ServerRuleset {
 	constructor(game: ServerGame) {
@@ -69,6 +68,19 @@ export default class RulesetRitesRunCamp extends ServerRuleset {
 			})
 		})
 
+		this.createCallback(GameEventType.GAME_CREATED).perform(({ game }) => {
+			const state = game.progression.rites.state.run
+			game.humanPlayers.forEach((playerInGame) => {
+				const playerState = state.playerStates[playerInGame.player.id]
+				if (!playerState) {
+					throw new Error(`Player ${playerInGame.player.username} has no state available!`)
+				}
+				playerState.items.forEach((card) => {
+					playerInGame.cardHand.addSpell(CardLibrary.instantiateFromClass(game, card.cardClass))
+				})
+			})
+		})
+
 		this.createCallback(GameEventType.GAME_SETUP).perform(({ game }) => {
 			game.owner!.playerInGame!.cardHand.addUnit(new SpellLabyrinthNextEncounter(game))
 
@@ -82,7 +94,7 @@ export default class RulesetRitesRunCamp extends ServerRuleset {
 
 		const addCardReward = (game: ServerGame, player: ServerPlayerInGame, card: CardConstructor, count: number): void => {
 			for (let i = 0; i < count; i++) {
-				Keywords.addCardToHand.for(player).fromConstructor(card)
+				player.cardHand.addUnit(CardLibrary.instantiate(game, card))
 			}
 		}
 	}

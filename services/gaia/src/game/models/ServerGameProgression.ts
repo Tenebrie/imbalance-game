@@ -121,8 +121,17 @@ export class RitesProgression {
 		return await PlayerDatabase.updatePlayerLabyrinthProgression(player.id, state)
 	}
 
-	public static async resetStateForPlayer(player: ServerPlayer): Promise<boolean> {
-		return await PlayerDatabase.updatePlayerLabyrinthProgression(player.id, RitesProgression.getDefaultState(player))
+	public static async resetRunStateForPlayer(player: ServerPlayer): Promise<boolean> {
+		const state = await RitesProgression.loadStateForPlayer(player)
+		return await PlayerDatabase.updatePlayerLabyrinthProgression(player.id, {
+			...state,
+			lastRun: state.run,
+			meta: {
+				...state.meta,
+				runCount: state.meta.runCount + 1,
+			},
+			run: RitesProgression.getDefaultRunState(player),
+		})
 	}
 
 	private static getDefaultState(player: ServerPlayer): RitesProgressionState {

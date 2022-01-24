@@ -15,7 +15,7 @@ export default class RulesetRitesAbandonedDummies extends BaseRulesetRitesEncoun
 			},
 		})
 
-		this.createBoard().bot([[UnitRitesEnchantedDummy], [UnitRitesTargetDummy, UnitRitesTargetDummy]])
+		this.createBoard().bot([[UnitRitesTargetDummy, UnitRitesTargetDummy], [UnitRitesEnchantedDummy]])
 
 		this.createObjective({
 			en: {
@@ -49,6 +49,7 @@ export default class RulesetRitesAbandonedDummies extends BaseRulesetRitesEncoun
 				}
 
 				return `
+					--> Start
 					Start:
 						> You arrive at an old training area, filled with a bunch of old and barely-survived targets.
 							> Most of them are covered in snow, but the one in the back seems to be preserved a lot better

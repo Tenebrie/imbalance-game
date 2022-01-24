@@ -4,7 +4,7 @@ enum StoryCharacter {
 	NARRATOR = 'narrator',
 	DRAGON_NARRATOR = 'dragonNarrator',
 	NOT_NESSA = 'notNessa',
-	UNKNOWN = 'unknown',
+	UNKNOWN = '',
 
 	ELSA = 'elsa',
 	BODGE = 'bodge',

@@ -88,7 +88,8 @@ export class BaseRitesPassiveItem extends ItemRitesBase {
 			type: CardType.SPELL,
 			color: CardColor.BRONZE,
 			faction: CardFaction.HUMAN,
-			tribes: props ? [props.slot] : [],
+			tribes: props?.slot ?? [],
+			upgrades: props?.upgrades ?? [],
 			features: propsToFeatures(props).concat(CardFeature.PASSIVE),
 			stats: {
 				cost: 0,
@@ -105,7 +106,8 @@ export class BaseRitesActiveItem extends ItemRitesBase {
 			type: CardType.SPELL,
 			color: CardColor.BRONZE,
 			faction: CardFaction.HUMAN,
-			tribes: props ? [props.slot] : [],
+			tribes: props?.slot ?? [],
+			upgrades: props?.upgrades ?? [],
 			features: propsToFeatures(props).concat(CardFeature.HERO_POWER),
 			stats: {
 				cost: props?.stats.cost || 0,
@@ -153,7 +155,8 @@ export class BaseRitesArtifactItem extends ItemRitesBase {
 			type: CardType.SPELL,
 			color: CardColor.BRONZE,
 			faction: CardFaction.HUMAN,
-			tribes: props ? [props.slot] : [],
+			tribes: props?.slot ?? [],
+			upgrades: props?.upgrades ?? [],
 			features: propsToFeatures(props).concat(CardFeature.HERO_ARTIFACT),
 			stats: {
 				cost: props?.stats.cost || 0,

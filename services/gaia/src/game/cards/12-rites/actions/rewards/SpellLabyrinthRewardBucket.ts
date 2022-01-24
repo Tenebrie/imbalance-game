@@ -40,12 +40,19 @@ abstract class BaseSpellLabyrinthRewardBucket extends ServerCard {
 			rewardsOffered: () => this.rewardsOffered,
 		}
 
+		this.createEffect(GameEventType.SPELL_DEPLOYED).perform(() => console.log('OI'))
+		this.createCallback(GameEventType.CARD_PLAYED, AnyCardLocation)
+			.require(({ triggeringCard }) => triggeringCard === this)
+			.perform(() => console.log('Another OI!~'))
+		this.createCallback(GameEventType.CARD_PLAYED, AnyCardLocation).perform(() => console.log('COME ON'))
+
 		this.createCallback(GameEventType.CARD_PLAYED, AnyCardLocation)
 			.require(({ triggeringCard }) => triggeringCard === this)
 			.perform(() => chooseRewards())
 
 		const chooseRewards = () => {
-			const validCards = CardLibrary.cards.filter(this.isCardValidReward).filter((card) => isCardVisibleInLabyrinth(card))
+			const validCards = CardLibrary.cards.filter((card) => this.isCardValidReward(card)).filter((card) => isCardVisibleInLabyrinth(card))
+			console.log(validCards)
 			this.cardsToChooseFrom = sortCards(shuffle(validCards).slice(0, this.rewardsOffered))
 		}
 

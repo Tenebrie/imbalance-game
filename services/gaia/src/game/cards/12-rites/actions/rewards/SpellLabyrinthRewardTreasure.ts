@@ -40,7 +40,8 @@ abstract class BaseSpellLabyrinthRewardTreasure extends ServerCard {
 			.require(({ targetCard }) => this.cardsChosen.includes(targetCard))
 			.preventSorting()
 			.perform(({ player, targetCard }) => {
-				this.game.progression.rites.addItemToDeck(player.player, targetCard.class)
+				game.progression.rites.addItemToDeck(player.player, targetCard.class)
+				player.cardHand.addSpell(CardLibrary.instantiateFromInstance(game, targetCard))
 			})
 	}
 

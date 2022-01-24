@@ -7,7 +7,13 @@ if (process.env.NODE_ENV === 'development') {
 const transformer = (_: ts.Program) => (transformationContext: ts.TransformationContext) => (sourceFile: ts.SourceFile): ts.Node => {
 	function visitNode(node: ts.Node): ts.VisitResult<ts.Node> {
 		const file = node.getSourceFile()
-		if (!file || process.env.NODE_ENV !== 'development' || file.fileName.includes('/shared/') || file.fileName.includes('profiler.ts')) {
+		if (
+			!file ||
+			process.env.NODE_ENV !== 'development' ||
+			process.env.JEST_WORKER_ID !== undefined ||
+			file.fileName.includes('/shared/') ||
+			file.fileName.includes('profiler.ts')
+		) {
 			return ts.visitEachChild(node, visitNode, transformationContext)
 		}
 

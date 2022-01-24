@@ -380,3 +380,9 @@ export const forEachRowCardSlot = (callback: (index: number) => void): void => {
 export const collapseNumber = (valueOrGetter: number | (() => number)): number => {
 	return typeof valueOrGetter === 'function' ? valueOrGetter() : valueOrGetter
 }
+
+export const capitalize = (value: string): string => value.substring(0, 1).toUpperCase() + value.substring(1).toLowerCase()
+
+export const plurify = (article: 'a', nextWord: string): string => {
+	return `${nextWord.startsWith('aeio') ? 'an' : 'a'} ${nextWord}`
+}

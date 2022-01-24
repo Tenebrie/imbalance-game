@@ -11,7 +11,7 @@
 			<div class="character-name-container">
 				<div class="character-name" :key="lastActiveCharacter">
 					<span v-if="lastActiveCharacter">{{ $locale.get(`story.character.${lastActiveCharacter}`) }}</span>
-					<span v-if="!lastActiveCharacter">???</span>
+					<span v-if="!lastActiveCharacter">&nbsp;</span>
 				</div>
 			</div>
 			<div class="cue-container">
@@ -179,6 +179,7 @@ export default defineComponent({
 	}
 
 	&.visible.muted {
+		pointer-events: none;
 		opacity: 0;
 	}
 
@@ -270,7 +271,7 @@ export default defineComponent({
 	.controls {
 		z-index: 1;
 		width: 100%;
-		height: 40%;
+		height: 620px;
 
 		.character-name-container {
 			display: flex;

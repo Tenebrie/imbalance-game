@@ -77,6 +77,10 @@ export default class ServerHand {
 		)
 	}
 
+	/**
+	 * Properly removes the card from hand and notifies the client.
+	 * Raises GameEventType.CARD_DISCARDED event.
+	 */
 	public discardCard(card: ServerCard): void {
 		this.game.events.postEvent(
 			GameEventCreators.cardDiscarded({
@@ -96,6 +100,10 @@ export default class ServerHand {
 		return this.allCards.find((card) => card.class === getClassFromConstructor(cardConstructor)) || null
 	}
 
+	/**
+	 * Properly removes the card from hand and notifies the client.
+	 * Does not raise any game events.
+	 */
 	public removeCard(card: ServerCard): void {
 		this.unitCards = this.unitCards.filter((unitCard) => unitCard !== card)
 		this.spellCards = this.spellCards.filter((spellCard) => spellCard !== card)

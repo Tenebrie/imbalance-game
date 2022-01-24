@@ -5,7 +5,6 @@ import RulesetLibrary, { RulesetConstructor } from '@src/game/libraries/RulesetL
 import { ServerRuleset } from '@src/game/models/rulesets/ServerRuleset'
 import { RitesProgression } from '@src/game/models/ServerGameProgression'
 import RulesetRitesIntro from '@src/game/rulesets/rites/RulesetRitesIntro'
-import RulesetRitesRunCamp from '@src/game/rulesets/rites/service/RulesetRitesRunCamp'
 import AsyncHandler from '@src/utils/AsyncHandler'
 import express, { Request, Response } from 'express'
 
@@ -75,15 +74,14 @@ router.post(
 
 		const progression = await RitesProgression.loadStateForPlayer(player)
 
-		// const runStarted = progression.run.encounterHistory.length > 0
-		const runStarted = false
-		const ruleset = RulesetLibrary.findTemplate(runStarted ? RulesetRitesRunCamp : RulesetRitesIntro)
+		// const ruleset = RulesetLibrary.findTemplate(runStarted ? RulesetRitesRunCamp : RulesetRitesIntro)
+		const runStarted = progression.run.encounterHistory.length > 0
 
-		if (!runStarted) {
-			await RitesProgression.resetStateForPlayer(player)
+		if (runStarted) {
+			await RitesProgression.resetRunStateForPlayer(player)
 		}
 
-		const game = GameLibrary.createGame(player, ruleset.constructor as RulesetConstructor)
+		const game = GameLibrary.createGame(player, RulesetRitesIntro as RulesetConstructor)
 
 		res.json({ data: new GameMessage(game) })
 	})
