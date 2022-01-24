@@ -104,4 +104,4 @@ router.delete('/:gameId', (req: Request, res: Response) => {
 	res.json({ success: true })
 })
 
-module.exports = router
+export default router

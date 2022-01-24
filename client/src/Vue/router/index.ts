@@ -197,6 +197,11 @@ const router = createRouter({
 					name: 'admin-stats',
 					component: () => import('@/Vue/components/admin/AdminPlayerView.vue'),
 				},
+				{
+					path: '/admin/performance',
+					name: 'admin-performance',
+					component: () => import('@/Vue/components/admin/AdminPerformanceView.vue'),
+				},
 			],
 		},
 	],

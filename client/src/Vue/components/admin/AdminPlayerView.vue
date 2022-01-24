@@ -1,5 +1,6 @@
 <template>
-	<div class="admin-player-view" v-if="hasLoaded">
+	<div class="admin-player-view" v-if="hasLoaded" :onscroll="onScroll" ref="scrollerRef">
+		<h2>Registered players</h2>
 		<table class="players-table">
 			<thead>
 				<tr>
@@ -57,16 +58,21 @@ import { computed, defineComponent, onMounted, ref } from 'vue'
 import Notifications from '@/utils/Notifications'
 import store from '@/Vue/store'
 
+import usePreserveTableScrollState from './utils/usePreserveTableScrollState'
+
 export default defineComponent({
 	setup() {
 		const hasLoaded = ref(false)
 		const players = ref<PlayerDatabaseEntry[]>([])
 		const currentPlayer = computed<Player | null>(() => store.state.player)
 
+		const { onScroll, scrollerRef, restoreScrollState } = usePreserveTableScrollState()
+
 		const loadData = async () => {
 			const response = await axios.get('/api/admin/players')
 			players.value = response.data as PlayerDatabaseEntry[]
 			hasLoaded.value = true
+			restoreScrollState()
 		}
 
 		onMounted(() => {
@@ -98,6 +104,8 @@ export default defineComponent({
 			onLogin,
 			onDelete,
 			AccessLevel,
+			onScroll,
+			scrollerRef,
 		}
 	},
 })

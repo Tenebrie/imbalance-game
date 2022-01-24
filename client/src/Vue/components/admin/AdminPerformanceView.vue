@@ -1,29 +1,43 @@
 <template>
-	<div class="admin-games-view" v-if="hasLoaded" :onscroll="onScroll" ref="scrollerRef">
-		<admin-games-tables :games="allGames" />
+	<div class="admin-performance-view" v-if="hasLoaded" :onscroll="onScroll" ref="scrollerRef">
+		<admin-performance-tables :performance-data="performanceData" />
 	</div>
 </template>
 
 <script lang="ts">
-import GameHistoryDatabaseEntry from '@shared/models/GameHistoryDatabaseEntry'
 import axios from 'axios'
 import { defineComponent, onMounted, ref } from 'vue'
 
-import AdminGamesTables from '@/Vue/components/admin/AdminGamesTables.vue'
+import AdminPerformanceTables from '@/Vue/components/admin/AdminPerformanceTables.vue'
 
 import usePreserveTableScrollState from './utils/usePreserveTableScrollState'
 
+export type PerformanceData = { totalTime: number; entries: PerformanceData[] }
+
+export type FunctionPerformanceEntry = {
+	calls: number
+	total: number
+	average: number
+	syncPercentage: number
+	asyncPercentage: number
+	totalPercentage: number
+	isAsync: boolean
+}
+
 export default defineComponent({
-	components: { AdminGamesTables },
+	components: { AdminPerformanceTables },
 
 	setup() {
 		const hasLoaded = ref(false)
-		const allGames = ref<GameHistoryDatabaseEntry[]>([])
+		const performanceData = ref<PerformanceData>({
+			totalTime: 0,
+			entries: [],
+		})
 		const { onScroll, scrollerRef, restoreScrollState } = usePreserveTableScrollState()
 
 		const loadData = async () => {
-			const response = await axios.get('/api/admin/games')
-			allGames.value = response.data as GameHistoryDatabaseEntry[]
+			const response = await axios.get('/api/admin/performance')
+			performanceData.value = response.data as PerformanceData
 			hasLoaded.value = true
 			restoreScrollState()
 		}
@@ -32,12 +46,12 @@ export default defineComponent({
 			loadData()
 			setInterval(() => {
 				loadData()
-			}, 30000)
+			}, 5000)
 		})
 
 		return {
 			hasLoaded,
-			allGames,
+			performanceData,
 			onScroll,
 			scrollerRef,
 		}
@@ -48,7 +62,7 @@ export default defineComponent({
 <style scoped lang="scss">
 @import '../../styles/generic';
 
-.admin-games-view {
+.admin-performance-view {
 	overflow-y: scroll;
 }
 
