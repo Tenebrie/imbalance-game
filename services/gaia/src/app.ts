@@ -36,7 +36,6 @@ import { wsLogger } from './utils/WebSocketLogger'
 const app = express()
 expressWs(app)
 
-/* Routers must be imported after express-ws is initialized, therefore 'require' syntax */
 import AdminRouter from './routers/AdminRouter'
 import CardsRouter from './routers/CardsRouter'
 import ChangelogRouter from './routers/ChangelogRouter'
