@@ -12,7 +12,7 @@ import { DamageInstance } from '../../../models/ServerDamageSource'
 import ServerGame from '../../../models/ServerGame'
 
 export default class UnitRitesPoisonArcana extends ServerCard {
-	damage = asSplashUnitDamage(8)
+	damage = asSplashUnitDamage(5)
 	autoDamage = asRecurringUnitDamage(1)
 
 	constructor(game: ServerGame) {
@@ -29,6 +29,7 @@ export default class UnitRitesPoisonArcana extends ServerCard {
 		})
 		this.dynamicTextVariables = {
 			damage: this.damage,
+			autoDamage: this.autoDamage,
 		}
 
 		this.createLocalization({
@@ -55,7 +56,7 @@ export default class UnitRitesPoisonArcana extends ServerCard {
 
 				targets.forEach((unit) => {
 					this.game.animation.instantThread(() => {
-						unit.dealDamage(DamageInstance.fromUnit(this.damage, triggeringUnit))
+						unit.dealDamage(DamageInstance.fromUnit(this.autoDamage, triggeringUnit))
 					})
 				})
 				this.game.animation.syncAnimationThreads()

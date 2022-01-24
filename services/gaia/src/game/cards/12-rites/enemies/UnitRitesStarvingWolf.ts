@@ -1,6 +1,7 @@
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
 import CardLocation from '@shared/enums/CardLocation'
+import CardTribe from '@shared/enums/CardTribe'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
@@ -10,17 +11,18 @@ import ServerCard from '../../../models/ServerCard'
 import { DamageInstance } from '../../../models/ServerDamageSource'
 import ServerGame from '../../../models/ServerGame'
 
-export default class UnitRitesFlameArcana extends ServerCard {
-	damage = asRecurringUnitDamage(3)
+export default class UnitRitesStarvingWolf extends ServerCard {
+	damage = asRecurringUnitDamage(2)
 
 	constructor(game: ServerGame) {
 		super(game, {
 			type: CardType.UNIT,
 			color: CardColor.BRONZE,
-			faction: CardFaction.NEUTRAL,
+			faction: CardFaction.WILD,
+			tribes: [CardTribe.BEAST],
 			stats: {
-				power: 0,
-				armor: 3,
+				power: 12,
+				armor: 0,
 			},
 			expansionSet: ExpansionSet.RITES,
 		})
@@ -30,13 +32,17 @@ export default class UnitRitesFlameArcana extends ServerCard {
 
 		this.createLocalization({
 			en: {
-				name: 'Flame Arcana',
-				description: '*Auto:*\nDeal {damage} Damage to closest enemies.',
+				name: 'Starving Wolf',
+				description: '*Auto:*\nOne of the *Starving Wolves* deals {damage} Damage to closest enemies.',
 			},
 		})
 
 		this.createCallback(GameEventType.TURN_ENDED, [CardLocation.BOARD])
 			.require(({ group }) => group.isHuman)
+			.require(() => {
+				const allStarvingWolves = game.board.getUnitsOwnedByPlayer(this.ownerPlayer).map((unit) => unit.card)
+				return allStarvingWolves.indexOf(this) === game.turnIndex
+			})
 			.perform(() => {
 				const triggeringUnit = this.unit!
 				const targets = game.board.getClosestEnemyUnits(triggeringUnit)

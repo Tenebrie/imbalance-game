@@ -36,7 +36,7 @@ export default class UnitRitesMajorFlameArcana extends ServerCard {
 		})
 
 		this.createCallback(GameEventType.TURN_ENDED, [CardLocation.BOARD])
-			.require(({ group }) => group.owns(this))
+			.require(({ group }) => group.isHuman)
 			.perform(() => {
 				const triggeringUnit = this.unit!
 				const targets = game.board.getClosestEnemyUnits(triggeringUnit)

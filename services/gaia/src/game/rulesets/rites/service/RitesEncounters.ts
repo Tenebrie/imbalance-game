@@ -1,6 +1,9 @@
 import { RulesetConstructor } from '@src/game/libraries/RulesetLibrary'
-import RulesetRitesAbandonedDummies from '@src/game/rulesets/rites/RulesetRitesAbandonedDummies'
+
+import RulesetRitesAbandonedDummies from '../encounters/RulesetRitesAbandonedDummies'
+import RulesetRitesStarvingWolves from '../encounters/RulesetRitesStarvingWolves'
+import RulesetRitesIntro from '../RulesetRitesIntro'
 
 export const getRitesEncounterDeck = (): RulesetConstructor[] => {
-	return [RulesetRitesAbandonedDummies, RulesetRitesAbandonedDummies, RulesetRitesAbandonedDummies]
+	return [RulesetRitesIntro, RulesetRitesStarvingWolves, RulesetRitesAbandonedDummies, RulesetRitesStarvingWolves]
 }

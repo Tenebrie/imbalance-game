@@ -386,3 +386,16 @@ export const capitalize = (value: string): string => value.substring(0, 1).toUpp
 export const plurify = (article: 'a', nextWord: string): string => {
 	return `${nextWord.startsWith('aeio') ? 'an' : 'a'} ${nextWord}`
 }
+
+export const seededRandom = (str: string): (() => number) => {
+	let h: number
+	for (let i = 0, h = 1779033703 ^ str.length; i < str.length; i++) {
+		h = Math.imul(h ^ str.charCodeAt(i), 3432918353)
+		h = (h << 13) | (h >>> 19)
+	}
+	return function () {
+		h = Math.imul(h ^ (h >>> 16), 2246822507)
+		h = Math.imul(h ^ (h >>> 13), 3266489909)
+		return (h ^= h >>> 16) >>> 0
+	}
+}
