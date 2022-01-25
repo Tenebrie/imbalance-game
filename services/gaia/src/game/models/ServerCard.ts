@@ -96,6 +96,7 @@ interface ServerCardBaseProps {
 	upgrades?: CardConstructor[]
 	sortPriority?: number
 	expansionSet: ExpansionSet
+	isCommunity?: boolean
 	isExperimental?: boolean
 	generatedArtworkMagicString?: string
 	deckAddedCards?: CardConstructor[]
@@ -149,6 +150,7 @@ export default class ServerCard implements Card {
 	public readonly sortPriority: number
 	public readonly expansionSet: ExpansionSet
 
+	public readonly isCommunity: boolean
 	public readonly isCollectible: boolean
 	public readonly isExperimental: boolean
 
@@ -235,6 +237,8 @@ export default class ServerCard implements Card {
 			: this.expansionSet !== ExpansionSet.BASE
 			? false
 			: props.color === CardColor.LEADER || (props.color !== CardColor.TOKEN && props.type === CardType.UNIT)
+
+		this.isCommunity = props.isCommunity !== undefined ? props.isCommunity : false
 		this.isExperimental = props.isExperimental !== undefined ? props.isExperimental : false
 
 		this.generatedArtworkMagicString = props.generatedArtworkMagicString ? props.generatedArtworkMagicString : ''
