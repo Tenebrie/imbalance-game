@@ -31,7 +31,6 @@ const editorModule = defineModule({
 		cardLibrary: [] as CardMessage[],
 		renderQueue: [] as CardMessage[],
 		renderedCards: [] as RenderedEditorCard[],
-		searchQuery: '' as string,
 	},
 
 	mutations: {
@@ -74,10 +73,6 @@ const editorModule = defineModule({
 				return
 			}
 			state.decks[state.decks.indexOf(oldDeck)] = newDeck
-		},
-
-		setSearchQuery(state, query: string): void {
-			state.searchQuery = query
 		},
 	},
 

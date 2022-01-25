@@ -303,6 +303,7 @@ export default defineComponent({
 			sortPriority: 0,
 			expansionSet: ExpansionSet.BASE,
 
+			isCommunity: false,
 			isCollectible: false,
 			isExperimental: false,
 

@@ -1,6 +1,6 @@
 import ts from 'typescript'
 
-if (process.env.NODE_ENV === 'development') {
+if (process.env.NODE_ENV === 'development' || process.env.PROFILER === 'force') {
 	console.warn(`\u001b[33;1mProfiler enabled. Performance may be reduced.\u001b[0m`)
 }
 
@@ -9,7 +9,7 @@ const transformer = (_: ts.Program) => (transformationContext: ts.Transformation
 		const file = node.getSourceFile()
 		if (
 			!file ||
-			process.env.NODE_ENV !== 'development' ||
+			(process.env.NODE_ENV !== 'development' && process.env.PROFILER !== 'force') ||
 			process.env.JEST_WORKER_ID !== undefined ||
 			file.fileName.includes('/shared/') ||
 			file.fileName.includes('profiler.ts')

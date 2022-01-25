@@ -8,6 +8,10 @@
 				<the-card-library-item :card="card" class="card" :mode="'library'" />
 			</div>
 		</div>
+		<div class="empty-result" v-if="library.length === 0">
+			<div class="icon"><tenebrie-logo /></div>
+			<div class="text">No cards match these filters!</div>
+		</div>
 	</div>
 </template>
 
@@ -23,11 +27,13 @@ import { insertRichTextVariables, mergeCardFeatures, snakeToCamelCase } from '@/
 import { useDecksRouteQuery } from '@/Vue/components/editor/EditorRouteQuery'
 import TheCardLibraryHeader from '@/Vue/components/editor/TheCardLibraryHeader.vue'
 import TheCardLibraryItem from '@/Vue/components/editor/TheCardLibraryItem.vue'
+import TenebrieLogo from '@/Vue/components/utils/TenebrieLogo.vue'
 import store from '@/Vue/store'
 import InspectedCardStore from '@/Vue/store/InspectedCardStore'
 
 export default defineComponent({
 	components: {
+		TenebrieLogo,
 		TheCardLibraryItem,
 		TheCardLibraryHeader,
 	},
@@ -42,22 +48,25 @@ export default defineComponent({
 			InspectedCardStore.dispatch.clear()
 		})
 
+		const routeQuery = useDecksRouteQuery()
+
 		const onKeyPress = (event: KeyboardEvent): void => {
 			if (event.key === 'Escape' && InspectedCardStore.getters.card) {
 				InspectedCardStore.dispatch.undoCard()
 				return
 			}
-			if (event.key === 'Escape' && store.state.editor.searchQuery) {
-				store.commit.editor.setSearchQuery('')
+			if (event.key === 'Escape' && routeQuery.value.searchQuery) {
+				routeQuery.value.searchQuery = ''
 			}
 		}
 
 		const userLanguage = computed<Language>(() => store.state.userPreferencesModule.userLanguage)
 
 		const library = computed<CardMessage[]>(() => {
-			const routeQuery = useDecksRouteQuery()
 			const isCollectible = (card: CardMessage): boolean => {
-				return card.isCollectible && card.isExperimental === routeQuery.value.experimental
+				return (
+					card.isCollectible && card.isCommunity === routeQuery.value.community && card.isExperimental === routeQuery.value.experimental
+				)
 			}
 
 			const stripFormatting = (str: string): string => {
@@ -96,7 +105,7 @@ export default defineComponent({
 					localizedDescription: stripFormatting(insertRichTextVariables(Localization.getCardDescription(card), card.variables)),
 				}))
 
-			const searchQuery = store.state.editor.searchQuery
+			const searchQuery = routeQuery.value.searchQuery
 			if (!searchQuery) {
 				return results
 			}
@@ -197,6 +206,21 @@ export default defineComponent({
 
 		.card {
 			margin: 16px;
+		}
+	}
+
+	.empty-result {
+		width: 100%;
+		height: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-direction: column;
+		font-size: 2em;
+
+		.logo {
+			user-select: none;
+			height: 200px;
 		}
 	}
 
