@@ -1,14 +1,10 @@
 import Language from '@shared/enums/Language'
 import { RulesetObjective, RulesetObjectiveLocalizationEntry } from '@shared/models/ruleset/RulesetObjectiveLocalization'
-import { createDirectStore, defineModule } from 'direct-vuex'
+import { createDirectStore } from 'direct-vuex'
 
 import globalStore from './index'
 
 const { store, rootActionContext } = createDirectStore({
-	modules: {
-		_: defineModule({}),
-	},
-
 	state: {
 		objective: null as RulesetObjective | null,
 		popupVisible: false as boolean,

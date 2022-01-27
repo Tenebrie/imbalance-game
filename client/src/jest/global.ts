@@ -19,6 +19,7 @@ console.log = (value: string, ...args: any): void => {
 import { config } from '@vue/test-utils'
 
 import Localization from '@/Pixi/Localization'
+import GameObjectiveStore from '@/Vue/store/GameObjectiveStore'
 
 config.global.mixins = [
 	{
@@ -28,6 +29,14 @@ config.global.mixins = [
 	},
 ]
 
+let gameObjectiveState: typeof GameObjectiveStore.state
+
+beforeAll(() => {
+	gameObjectiveState = { ...GameObjectiveStore.state }
+})
+
 afterEach(() => {
 	jest.useRealTimers()
+
+	Object.assign(GameObjectiveStore.state, gameObjectiveState)
 })

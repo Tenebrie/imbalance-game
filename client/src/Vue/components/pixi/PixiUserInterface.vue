@@ -8,19 +8,19 @@
 			<button @click="onShowEscapeMenu" class="primary borderless game-button"><i class="fas fa-cog"></i></button>
 		</div>
 		<the-popup-view class="popup-view" />
-		<div class="player-deck-button-container" @click="onPlayerDeckClicked">
+		<button class="player-deck-button-container" @click="onPlayerDeckClicked">
 			<img src="../../assets/icons/icon-deck.svg" />
-		</div>
-		<div class="player-graveyard-button-container" @click="onPlayerGraveyardClicked">
+		</button>
+		<button class="player-graveyard-button-container" @click="onPlayerGraveyardClicked">
 			<img src="../../assets/icons/icon-graveyard.svg" />
-		</div>
-		<div class="opponent-graveyard-button-container" @click="onOpponentGraveyardClicked">
+		</button>
+		<button class="opponent-graveyard-button-container" @click="onOpponentGraveyardClicked">
 			<img src="../../assets/icons/icon-graveyard.svg" />
-		</div>
-		<div class="game-objective-button-container" @click="onGameObjectiveClicked">
-			<img src="../../assets/icons/icon-objective.svg" />
-		</div>
-		<div class="objective-container" :class="objectiveContainerClass" v-if="currentObjective">
+		</button>
+		<button class="game-objective-button-container" @click="onGameObjectiveClicked" v-if="currentObjective">
+			<img src="../../assets/icons/icon-objective.svg" alt="Game objective button" />
+		</button>
+		<div class="objective-container" :class="objectiveContainerClass" v-if="currentObjective" data-testid="objective-container">
 			<div class="objective-content">
 				<div>
 					<div class="objective-title">{{ currentObjective.title }}:</div>
@@ -445,6 +445,7 @@ export default defineComponent({
 	.player-graveyard-button-container,
 	.opponent-graveyard-button-container,
 	.game-objective-button-container {
+		border: none;
 		position: absolute;
 		pointer-events: all;
 		transition: margin-left 0.3s, margin-right 0.3s, background-color 0.3s;
@@ -456,6 +457,7 @@ export default defineComponent({
 			height: 72px;
 		}
 
+		background: transparent;
 		&:hover {
 			background: $COLOR_BACKGROUND_TRANSPARENT;
 			transition: margin-left 0.3s, margin-right 0.3s, background-color 0s;
