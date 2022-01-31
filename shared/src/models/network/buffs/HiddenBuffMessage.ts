@@ -3,7 +3,13 @@ import BuffFeature from '../../../enums/BuffFeature'
 import CardFeature from '../../../enums/CardFeature'
 import CardTribe from '../../../enums/CardTribe'
 import Buff from '../../Buff'
+import { BuffLocalization, BuffLocalizationEntry } from '../../cardLocalization/CardLocalization'
 import BuffMessage from './BuffMessage'
+
+const defaultLocalization: BuffLocalizationEntry = {
+	name: '',
+	description: '',
+}
 
 export default class HiddenBuffMessage implements BuffMessage {
 	id: string
@@ -14,8 +20,7 @@ export default class HiddenBuffMessage implements BuffMessage {
 	buffFeatures: BuffFeature[] = []
 	cardFeatures: CardFeature[] = []
 
-	name = 'buff.hidden.name'
-	description = ''
+	localization: BuffLocalization
 
 	duration = '0'
 	baseDuration = '0'
@@ -24,5 +29,10 @@ export default class HiddenBuffMessage implements BuffMessage {
 
 	constructor(buff: Buff) {
 		this.id = buff.id
+
+		this.localization = {
+			en: defaultLocalization,
+			ru: defaultLocalization,
+		}
 	}
 }

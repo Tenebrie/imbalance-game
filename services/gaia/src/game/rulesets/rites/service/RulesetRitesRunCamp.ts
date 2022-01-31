@@ -4,8 +4,8 @@ import GameMode from '@shared/enums/GameMode'
 import RulesetCategory from '@shared/enums/RulesetCategory'
 import GameVictoryCondition from '@src/enums/GameVictoryCondition'
 import SpellLabyrinthNextEncounter from '@src/game/cards/12-rites/actions/SpellLabyrinthNextEncounter'
-import LeaderLabyrinthOpponent from '@src/game/cards/12-rites/LeaderLabyrinthOpponent'
-import LeaderLabyrinthPlayer from '@src/game/cards/12-rites/LeaderLabyrinthPlayer'
+import LeaderRitesOpponent from '@src/game/cards/12-rites/LeaderRitesOpponent'
+import LeaderRitesPlayer from '@src/game/cards/12-rites/LeaderRitesPlayer'
 import CardLibrary, { CardConstructor } from '@src/game/libraries/CardLibrary'
 import RulesetLibrary from '@src/game/libraries/RulesetLibrary'
 import RulesetLifecycleHook from '@src/game/models/rulesets/RulesetLifecycleHook'
@@ -49,10 +49,10 @@ export default class RulesetRitesRunCamp extends ServerRuleset {
 
 		this.createSlots()
 			.addGroup([
-				{ type: 'player', deck: [LeaderLabyrinthPlayer] },
-				{ type: 'player', deck: [LeaderLabyrinthPlayer], require: () => getPlayersExpected() > 1 },
+				{ type: 'player', deck: [LeaderRitesPlayer] },
+				{ type: 'player', deck: [LeaderRitesPlayer], require: () => getPlayersExpected() > 1 },
 			])
-			.addGroup({ type: 'ai', deck: [LeaderLabyrinthOpponent], behaviour: AIBehaviour.PASSIVE })
+			.addGroup({ type: 'ai', deck: [LeaderRitesOpponent], behaviour: AIBehaviour.PASSIVE })
 
 		this.createCallback(GameEventType.CARD_PLAYED)
 			.require(({ triggeringCard }) => triggeringCard instanceof SpellLabyrinthNextEncounter)

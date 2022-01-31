@@ -20,6 +20,13 @@ export default class UnitRitesFrostArcana extends ServerCard {
 			expansionSet: ExpansionSet.RITES,
 		})
 
+		this.createLocalization({
+			en: {
+				name: 'Frost Arcana',
+				description: '',
+			},
+		})
+
 		this.buffs.add(BuffProtector, this)
 	}
 }

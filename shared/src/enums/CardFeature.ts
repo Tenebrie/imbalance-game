@@ -20,6 +20,9 @@ enum CardFeature {
 	RITES_ITEM_T2,
 	RITES_ITEM_T3,
 	RITES_ITEM_T4,
+	RITES_ACTIVE_ENEMY,
+	RITES_UNIT_COOLDOWN,
+	RITES_UNIT_CAN_ATTACK,
 }
 
 export default CardFeature

@@ -76,7 +76,7 @@ export default defineComponent({
 
 			const message =
 				"If you DO know what you're doing, have fun hacking!\n" +
-				'This is an open-source project. You can find the code at https://github.com/Tenebrie/notgwent-game.' +
+				'This is an open-source project. You can find the code at https://github.com/Tenebrie/imbalance-game.' +
 				' If you find a bug or an exploit, or if you have a feature request, feel free to open an issue on GitHub.' +
 				' You can also make a pull request with a fix. Contributions are welcome!'
 

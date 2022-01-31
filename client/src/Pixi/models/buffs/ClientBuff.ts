@@ -3,6 +3,7 @@ import BuffFeature from '@shared/enums/BuffFeature'
 import CardFeature from '@shared/enums/CardFeature'
 import CardTribe from '@shared/enums/CardTribe'
 import Buff from '@shared/models/Buff'
+import { BuffLocalization } from '@shared/models/cardLocalization/CardLocalization'
 import BuffMessage from '@shared/models/network/buffs/BuffMessage'
 
 export default class ClientBuff implements Buff {
@@ -13,8 +14,7 @@ export default class ClientBuff implements Buff {
 	buffFeatures: BuffFeature[]
 	cardFeatures: CardFeature[]
 
-	name: string
-	description: string
+	localization: BuffLocalization
 
 	duration: number
 	baseDuration: number
@@ -29,8 +29,7 @@ export default class ClientBuff implements Buff {
 		this.buffFeatures = (message.buffFeatures || []).slice()
 		this.cardFeatures = (message.cardFeatures || []).slice()
 
-		this.name = message.name
-		this.description = message.description
+		this.localization = message.localization
 
 		this.duration = Number(message.duration)
 		this.baseDuration = Number(message.baseDuration)

@@ -135,6 +135,7 @@ export const getEntityName = (id: string, players: GameHistoryPlayerDatabaseEntr
 	} else if (id.startsWith('ai:')) {
 		return `AI Player [${id.substr(3, 4)}]`
 	} else if (id.startsWith('card:') && mode === 'admin') {
+		// TODO: Fix localization here
 		return `${Localization.get(`card.${id.split(':')[1]}.name`)} [${id.split(':')[2].substr(0, 8)}]`
 	} else if (id.startsWith('buff:') && mode === 'admin') {
 		return `${Localization.get(`buff.${id.split(':')[1]}.name`)} [${id.split(':')[2].substr(0, 8)}]`
@@ -151,7 +152,7 @@ export const getEntityName = (id: string, players: GameHistoryPlayerDatabaseEntr
 	} else if (id.startsWith('buff:') && mode === 'game') {
 		const buff = Core.game.findBuffById(id)
 		if (buff) {
-			return `${Localization.get(buff.name)}`
+			return Localization.getBuffName(buff)
 		}
 		return id
 	}

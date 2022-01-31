@@ -276,8 +276,8 @@
 	"card.keyword.healingRain": "Healing Rain (Row effect)",
 	"card.keyword.healingRain.search": "Healing Rain",
 	"card.keyword.healingRain.description": "At the end of the turn, Heal 3 on 3 weakest allies.",
-	"card.keyword.auto": "Auto",
-	"card.keyword.auto.description": "Trigger an effect at the end of the player's turn.",
+	"card.keyword.action": "Action",
+	"card.keyword.action.description": "Choose N active units at the start of the player's turn. Perform an effect after the player's turn, if possible.",
 
 	"card.feature.protector.text": "*Protector*",
 	"card.feature.prominent.text": "*Prominent*",
@@ -991,14 +991,6 @@
 
 	"card.unitAfflictedWerewolf.name": "Afflicted Werewolf",
 	"card.unitAfflictedWerewolf.description": "<i>No effect</i>",
-
-	"card.leaderLabyrinthPlayer.name": "<if inGame><c=black>*{playerName}*</c></if><ifn inGame>The Adventurer</if>",
-	"card.leaderLabyrinthPlayer.title": "<if inGame>The Adventurer</if>",
-	"card.leaderLabyrinthPlayer.description": "*Labyrinth Leader*",
-
-	"card.leaderLabyrinthOpponent.name": "The Watcher",
-	"card.leaderLabyrinthOpponent.title": "The Labyrinth Watcher",
-	"card.leaderLabyrinthOpponent.description": "<i>Watching your every move...</i>",
 
 	"card.spellLabyrinthStartRun.name": "New Run",
 	"card.spellLabyrinthStartRun.title": "Action",

@@ -2,8 +2,8 @@
 	<div class="list-item" :class="style">
 		<span v-if="!buff.buff.protected">* </span>
 		<span v-if="buff.intensity > 1">{{ buff.intensity }}x </span>
-		<span class="object-name">{{ $locale.get(buff.buff.name) }}: </span>
-		<span>{{ $locale.get(buff.buff.description) }}</span>
+		<span class="object-name">{{ $locale.getBuffName(buff.buff) }}: </span>
+		<span>{{ $locale.getBuffDescription(buff.buff) }}</span>
 		<span v-if="buff.buff.duration !== Infinity"> ({{ $locale.get('card.inspect.buffs.turnsRemaining') }}: {{ buff.buff.duration }}) </span>
 	</div>
 </template>

@@ -75,7 +75,7 @@ export default class ServerBoardRow implements BoardRow {
 		this.cards.splice(ordinal, 0, unit)
 	}
 
-	private insertUnit(unit: ServerUnit, ordinal: number): void {
+	public insertUnit(unit: ServerUnit, ordinal: number): void {
 		this.insertUnitLocally(unit, ordinal)
 		OutgoingMessageHandlers.notifyAboutUnitCreated(unit)
 	}

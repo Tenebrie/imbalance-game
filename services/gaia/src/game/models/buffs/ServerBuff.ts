@@ -6,6 +6,7 @@ import CardTribe from '@shared/enums/CardTribe'
 import GameEventType from '@shared/enums/GameEventType'
 import LeaderStatType from '@shared/enums/LeaderStatType'
 import Buff, { CardBuff, RowBuff } from '@shared/models/Buff'
+import { BuffLocalization, BuffLocalizationEntry, PartialCardLocalization } from '@shared/models/cardLocalization/CardLocalization'
 import OutgoingBoardUpdateMessages from '@src/game/handlers/outgoing/OutgoingBoardUpdateMessages'
 import { ServerBuffParent, ServerBuffSource } from '@src/game/models/buffs/ServerBuffContainer'
 import ServerGame from '@src/game/models/ServerGame'
@@ -55,6 +56,7 @@ import { CardSelector } from '../events/selectors/CardSelector'
 import { CardSelectorBuilder } from '../events/selectors/CardSelectorBuilder'
 import ServerBoardRow from '../ServerBoardRow'
 import ServerCard from '../ServerCard'
+import ServerRichTextVariables from '../ServerRichTextVariables'
 import { StatOverride, StatOverrideBuilder } from './StatOverride'
 
 export type ServerBuffProps = {
@@ -88,6 +90,9 @@ export default class ServerBuff implements Buff {
 	public readonly buffFeatures: BuffFeature[]
 	public readonly cardFeatures: CardFeature[]
 
+	public localization: BuffLocalization
+	public dynamicTextVariables: ServerRichTextVariables = {}
+
 	private maxPowerOverride: StatOverride | null = null
 	private maxArmorOverride: StatOverride | null = null
 	private unitCostOverride: StatOverride | null = null
@@ -99,8 +104,6 @@ export default class ServerBuff implements Buff {
 	private spellCostOverrideBuilder: StatOverrideBuilder | null = null
 	private leaderStatOverrideBuilders: { leaderStat: LeaderStatType; builder: StatOverrideBuilder }[] = []
 
-	public readonly name: string
-	public readonly description: string
 	public readonly baseDuration: number
 
 	private __duration: number
@@ -119,11 +122,17 @@ export default class ServerBuff implements Buff {
 		this.buffFeatures = props.features ? props.features.slice() : []
 		this.cardFeatures = props.cardFeatures ? props.cardFeatures.slice() : []
 
-		this.name = `buff.${this.class}.name`
-		this.description = `buff.${this.class}.description`
-
 		const duration = params.duration !== 'default' ? params.duration : props.duration !== undefined ? props.duration : Infinity
 		this.__duration = this.baseDuration = duration
+
+		const defaultLocalization: BuffLocalizationEntry = {
+			name: `buff.${this.class}.name`,
+			description: `buff.${this.class}.description`,
+		}
+		this.localization = {
+			en: defaultLocalization,
+			ru: defaultLocalization,
+		}
 
 		this.createCallback(GameEventType.TURN_STARTED)
 			.require(({ group }) => getOwnerGroup(this) === group)
@@ -244,6 +253,19 @@ export default class ServerBuff implements Buff {
 	protected createHook(hookType: GameHookType.UNIT_DESTROYED): EventHook<UnitDestroyedHookEditableValues, UnitDestroyedHookFixedValues>
 	protected createHook<HookValues, HookArgs>(hook: GameHookType): EventHook<HookValues, HookArgs> {
 		return this.game.events.createHook<HookValues, HookArgs>(this, hook)
+	}
+
+	protected createLocalization(localization: PartialCardLocalization): void {
+		this.localization = {
+			en: {
+				...this.localization.en,
+				...localization.en,
+			},
+			ru: {
+				...this.localization.ru,
+				...localization.ru,
+			},
+		}
 	}
 
 	/* Create an aura effect

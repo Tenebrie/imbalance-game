@@ -3,14 +3,19 @@ import GameMode from '@shared/enums/GameMode'
 import RulesetCategory from '@shared/enums/RulesetCategory'
 import { RitesPlayerCharacter } from '@shared/models/progression/RitesProgressionState'
 import GameVictoryCondition from '@src/enums/GameVictoryCondition'
+import UnitRitesEarthArcana from '@src/game/cards/12-rites/cards/UnitRitesEarthArcana'
 import UnitRitesFlameArcana from '@src/game/cards/12-rites/cards/UnitRitesFlameArcana'
+import UnitRitesFrostArcana from '@src/game/cards/12-rites/cards/UnitRitesFrostArcana'
 import UnitRitesMajorFlameArcana from '@src/game/cards/12-rites/cards/UnitRitesMajorFlameArcana'
 import UnitRitesPoisonArcana from '@src/game/cards/12-rites/cards/UnitRitesPoisonArcana'
 import UnitRitesWindArcana from '@src/game/cards/12-rites/cards/UnitRitesWindArcana'
 import { RitesItemTravelingGarb } from '@src/game/cards/12-rites/items/armor/RitesArmor_Basic'
+import SpellRitesBacktrack from '@src/game/cards/12-rites/racial/SpellRitesBacktrack'
+import SpellRitesPlainsWalking from '@src/game/cards/12-rites/racial/SpellRitesPlainsWalking'
+import SpellRitesRamIt from '@src/game/cards/12-rites/racial/SpellRitesRamIt'
 import { CardConstructor } from '@src/game/libraries/CardLibrary'
 import ServerGame from '@src/game/models/ServerGame'
-import { capitalize, getClassFromConstructor, plurify } from '@src/utils/Utils'
+import { capitalize, getClassFromConstructor, plurifyArticle } from '@src/utils/Utils'
 
 import BaseRulesetRitesEncounter from './service/BaseRulesetRitesEncounter'
 
@@ -51,7 +56,7 @@ export default class RulesetRitesIntro extends BaseRulesetRitesEncounter {
 			.startDialog(() => {
 				const isFirstPlay = game.progression.rites.state.meta.runCount === 0
 				const oldCharacter = game.progression.rites.state.meta.character
-				const oldCharacterDescription = `${capitalize(oldCharacter.appearance)} ${oldCharacter.body} with ${plurify(
+				const oldCharacterDescription = `${capitalize(oldCharacter.appearance)} ${oldCharacter.body} with ${plurifyArticle(
 					'a',
 					oldCharacter.heritage
 				)} heritage`
@@ -350,7 +355,10 @@ export default class RulesetRitesIntro extends BaseRulesetRitesEncounter {
 			`
 			)
 			.chapter('FinishQuickCharacterCreation', () => {
-				const summary = `${plurify('a', character.appearance)} ${character.body} of ${plurify('a', character.heritage)} heritage`
+				const summary = `${plurifyArticle('a', character.appearance)} ${character.body} of ${plurifyArticle(
+					'a',
+					character.heritage
+				)} heritage`
 				return `
 					> Alright, so you seem to be ${summary}.
 						> Is that about right? Assuming, of course, I haven't added a proper race descriptions yet. Those are coming later.
@@ -462,17 +470,27 @@ export default class RulesetRitesIntro extends BaseRulesetRitesEncounter {
 
 				/**
 				 * Minimal deck:
-				 * - Wind Arcana x1
+				 * - Wind Arcana x2
+				 * - Frost Arcana x3
 				 * - Flame Arcana x3
+				 * - Earth Arcana x3
 				 */
 
 				deck.push(
 					{
 						card: UnitRitesWindArcana,
-						count: 1,
+						count: 2,
 					},
 					{
 						card: UnitRitesFlameArcana,
+						count: 3,
+					},
+					{
+						card: UnitRitesEarthArcana,
+						count: 3,
+					},
+					{
+						card: UnitRitesFrostArcana,
 						count: 3,
 					}
 				)
@@ -528,8 +546,10 @@ export default class RulesetRitesIntro extends BaseRulesetRitesEncounter {
 
 				if (character.body === 'humanoid') {
 					// items.push(LabyrinthItemCasualDress)
+					items.push(SpellRitesPlainsWalking)
 				} else if (character.body === 'equine') {
-					// items.push(LabyrinthItemChainmail)
+					items.push(SpellRitesRamIt)
+					items.push(SpellRitesBacktrack)
 				} else if (character.body === 'avian') {
 					// items.push(LabyrinthItemDragonsteelSword)
 				}

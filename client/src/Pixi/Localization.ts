@@ -1,5 +1,7 @@
 import Language from '@shared/enums/Language'
+import Buff from '@shared/models/Buff'
 import Card from '@shared/models/Card'
+import BuffMessage from '@shared/models/network/buffs/BuffMessage'
 import CardMessage from '@shared/models/network/card/CardMessage'
 
 import en from '@/Pixi/locales/en.json'
@@ -42,6 +44,16 @@ class Localization {
 	public getCardDescription(card: Card | CardMessage): string {
 		const language = store.state.userPreferencesModule.userLanguage
 		return this.get(card.localization[language].description, 'key')
+	}
+
+	public getBuffName(buff: Buff | BuffMessage): string {
+		const language = store.state.userPreferencesModule.userLanguage
+		return this.get(buff.localization[language].name, 'key')
+	}
+
+	public getBuffDescription(buff: Buff | BuffMessage): string {
+		const language = store.state.userPreferencesModule.userLanguage
+		return this.get(buff.localization[language].description, 'key')
 	}
 
 	private static getValueOrNull(id: string): string | null {

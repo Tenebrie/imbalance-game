@@ -6,7 +6,7 @@ import ServerCard from '@src/game/models/ServerCard'
 import ServerGame from '@src/game/models/ServerGame'
 import { getLeaderTextVariables } from '@src/utils/Utils'
 
-export default class LeaderLabyrinthOpponent extends ServerCard {
+export default class LeaderRitesPlayer extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, {
 			type: CardType.UNIT,
@@ -17,5 +17,13 @@ export default class LeaderLabyrinthOpponent extends ServerCard {
 		this.dynamicTextVariables = {
 			...getLeaderTextVariables(this),
 		}
+
+		this.createLocalization({
+			en: {
+				name: '<if inGame><c=black>*{playerName}*</c></if><ifn inGame>The Adventurer</if>',
+				title: '<if inGame>The Adventurer</if>',
+				description: '*Rites Leader*',
+			},
+		})
 	}
 }

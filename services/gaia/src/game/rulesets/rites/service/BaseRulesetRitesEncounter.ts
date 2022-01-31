@@ -3,14 +3,16 @@ import GameEventType from '@shared/enums/GameEventType'
 import GameMode from '@shared/enums/GameMode'
 import RulesetCategory from '@shared/enums/RulesetCategory'
 import RulesetFeature from '@shared/enums/RulesetFeature'
-import LeaderLabyrinthOpponent from '@src/game/cards/12-rites/LeaderLabyrinthOpponent'
-import LeaderLabyrinthPlayer from '@src/game/cards/12-rites/LeaderLabyrinthPlayer'
+import LeaderRitesOpponent from '@src/game/cards/12-rites/LeaderRitesOpponent'
+import LeaderRitesPlayer from '@src/game/cards/12-rites/LeaderRitesPlayer'
+import LeaderRitesPlayerUnit from '@src/game/cards/12-rites/LeaderRitesPlayerUnit'
 import CardLibrary from '@src/game/libraries/CardLibrary'
 import RulesetLifecycleHook from '@src/game/models/rulesets/RulesetLifecycleHook'
 import { ServerRuleset, ServerRulesetProps } from '@src/game/models/rulesets/ServerRuleset'
 import ServerGame from '@src/game/models/ServerGame'
 import RulesetRitesMetaCamp from '@src/game/rulesets/rites/service/RulesetRitesMetaCamp'
 import RulesetRitesRunCamp from '@src/game/rulesets/rites/service/RulesetRitesRunCamp'
+import Keywords from '@src/utils/Keywords'
 
 export default abstract class BaseRulesetRitesEncounter extends ServerRuleset {
 	playersExpected = 1
@@ -42,10 +44,10 @@ export default abstract class BaseRulesetRitesEncounter extends ServerRuleset {
 
 		this.createSlots()
 			.addGroup([
-				{ type: 'player', deck: [LeaderLabyrinthPlayer] },
-				{ type: 'player', deck: [LeaderLabyrinthPlayer], require: () => this.playersExpected > 1 },
+				{ type: 'player', deck: [LeaderRitesPlayer] },
+				{ type: 'player', deck: [LeaderRitesPlayer], require: () => this.playersExpected > 1 },
 			])
-			.addGroup({ type: 'ai', deck: [LeaderLabyrinthOpponent], behaviour: AIBehaviour.DEFAULT })
+			.addGroup({ type: 'ai', deck: [LeaderRitesOpponent], behaviour: AIBehaviour.DEFAULT })
 
 		// Initialize coop player count
 		this.createCallback(GameEventType.GAME_CREATED).perform(({ game }) => {
@@ -73,6 +75,20 @@ export default abstract class BaseRulesetRitesEncounter extends ServerRuleset {
 				})
 				playerState.items.forEach((card) => {
 					playerInGame.cardHand.addSpell(CardLibrary.instantiateFromClass(game, card.cardClass))
+				})
+			})
+		})
+
+		// Spawn leader unit
+		this.createCallback(GameEventType.GAME_SETUP).perform(() => {
+			const group = game.getHumanGroup()
+			const targetRow = game.board.getRowWithDistanceToFront(group, 1)
+			group.players.forEach((player) => {
+				Keywords.summonUnit({
+					owner: player,
+					cardConstructor: LeaderRitesPlayerUnit,
+					rowIndex: targetRow.index,
+					unitIndex: 11,
 				})
 			})
 		})

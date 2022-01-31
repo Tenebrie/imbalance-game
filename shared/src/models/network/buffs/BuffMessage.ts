@@ -2,6 +2,7 @@ import BuffAlignment from '../../../enums/BuffAlignment'
 import BuffFeature from '../../../enums/BuffFeature'
 import CardFeature from '../../../enums/CardFeature'
 import CardTribe from '../../../enums/CardTribe'
+import { BuffLocalization } from '../../cardLocalization/CardLocalization'
 
 export default interface BuffMessage {
 	id: string
@@ -11,8 +12,7 @@ export default interface BuffMessage {
 	buffFeatures: BuffFeature[]
 	cardFeatures: CardFeature[]
 
-	name: string
-	description: string
+	localization: BuffLocalization
 
 	duration: string
 	baseDuration: string

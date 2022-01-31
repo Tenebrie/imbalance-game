@@ -56,7 +56,7 @@ router.post('/', (req: Request, res: Response) => {
 
 	let ruleset: ServerRuleset
 	try {
-		ruleset = RulesetLibrary.findTemplateByClass(rulesetClass)
+		ruleset = RulesetLibrary.findRedirectableTemplateByClass(rulesetClass)
 	} catch (err) {
 		throw { status: 400, error: 'Invalid ruleset class' }
 	}

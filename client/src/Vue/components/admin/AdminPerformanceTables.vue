@@ -80,7 +80,6 @@ export default defineComponent({
 
 	setup(props) {
 		const hasLoaded = ref(false)
-		console.log(props.performanceData)
 
 		return {
 			moment,

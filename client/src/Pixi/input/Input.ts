@@ -357,7 +357,7 @@ export default class Input {
 
 		if (event.button === LEFT_MOUSE_BUTTON && !this.grabbedCard && this.boardBoopStartedAt) {
 			boopTheBoard(event, this.boardBoopStartedAt, 'up')
-		} else if (event.button === RIGHT_MOUSE_BUTTON && !this.inspectedCard && !this.hoveredCard && !this.grabbedCard) {
+		} else if (event.button === RIGHT_MOUSE_BUTTON && !this.hoveredCard && !this.grabbedCard) {
 			boopTheBoard(event, this.boardBoopStartedAt, 'up')
 		} else if (event.button === MIDDLE_MOUSE_BUTTON) {
 			boopTheBoard(event, this.boardBoopStartedAt, 'up')

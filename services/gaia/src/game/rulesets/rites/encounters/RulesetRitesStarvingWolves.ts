@@ -1,6 +1,7 @@
 import GameEventType from '@shared/enums/GameEventType'
 import GameVictoryCondition from '@src/enums/GameVictoryCondition'
 import UnitRitesStarvingWolf from '@src/game/cards/12-rites/enemies/UnitRitesStarvingWolf'
+import UnitRitesWolfpackAlpha from '@src/game/cards/12-rites/enemies/UnitRitesWolfpackAlpha'
 import ServerGame from '@src/game/models/ServerGame'
 import BaseRulesetRitesEncounter from '@src/game/rulesets/rites/service/BaseRulesetRitesEncounter'
 import Keywords from '@src/utils/Keywords'
@@ -13,7 +14,11 @@ export default class RulesetRitesStarvingWolves extends BaseRulesetRitesEncounte
 			},
 		})
 
-		this.createBoard().bot([[UnitRitesStarvingWolf, UnitRitesStarvingWolf], [], [UnitRitesStarvingWolf, UnitRitesStarvingWolf]])
+		this.createBoard().bot([
+			[UnitRitesStarvingWolf, UnitRitesStarvingWolf],
+			[UnitRitesWolfpackAlpha],
+			[UnitRitesStarvingWolf, UnitRitesStarvingWolf],
+		])
 
 		this.createObjective({
 			en: {
@@ -31,7 +36,7 @@ export default class RulesetRitesStarvingWolves extends BaseRulesetRitesEncounte
 				Keywords.summonMultipleUnits({
 					owner: bot,
 					cardConstructor: UnitRitesStarvingWolf,
-					rowIndex: botRows[1].index,
+					rowIndex: botRows[0].index,
 					unitIndex: 2,
 					count: difficulty,
 				})
@@ -40,9 +45,9 @@ export default class RulesetRitesStarvingWolves extends BaseRulesetRitesEncounte
 				const character = game.progression.rites.state.meta.character
 
 				return `
-				> A bunch of wolves jump you in the forest!
-				@ [Start combat]
-			`
+					> A bunch of wolves jump you in the forest!
+					@ [Start combat]
+				`
 			})
 
 		this.createCallback(GameEventType.TURN_STARTED)

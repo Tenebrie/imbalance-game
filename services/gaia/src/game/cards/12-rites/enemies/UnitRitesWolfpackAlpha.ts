@@ -4,16 +4,20 @@ import CardFeature from '@shared/enums/CardFeature'
 import CardLocation from '@shared/enums/CardLocation'
 import CardTribe from '@shared/enums/CardTribe'
 import CardType from '@shared/enums/CardType'
+import DamageSource from '@shared/enums/DamageSource'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
-import { asRecurringUnitDamage } from '@src/utils/LeaderStats'
+import BuffStrength from '@src/game/buffs/BuffStrength'
+import { asRecurringBuffPotency, asRecurringUnitDamage } from '@src/utils/LeaderStats'
 
 import ServerCard from '../../../models/ServerCard'
 import { DamageInstance } from '../../../models/ServerDamageSource'
 import ServerGame from '../../../models/ServerGame'
+import UnitRitesStarvingWolf from './UnitRitesStarvingWolf'
 
-export default class UnitRitesStarvingWolf extends ServerCard {
-	damage = asRecurringUnitDamage(2)
+export default class UnitRitesWolfpackAlpha extends ServerCard {
+	damage = asRecurringUnitDamage(3)
+	powerGained = asRecurringBuffPotency(1)
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -23,21 +27,34 @@ export default class UnitRitesStarvingWolf extends ServerCard {
 			tribes: [CardTribe.BEAST],
 			features: [CardFeature.RITES_ACTIVE_ENEMY],
 			stats: {
-				power: 12,
+				power: 20,
 				armor: 0,
 			},
 			expansionSet: ExpansionSet.RITES,
 		})
 		this.dynamicTextVariables = {
 			damage: this.damage,
+			powerGained: this.powerGained,
 		}
 
 		this.createLocalization({
 			en: {
-				name: 'Starving Wolf',
-				description: '*Action:*\nDeal {damage} Damage to a closest enemy.',
+				name: 'Wolfpack Alpha',
+				description:
+					'Whenever an allied *Starving Wolf* deals Power damage to an enemy, gain +{powerGained} Power.<p>*Action:*\nDeal {damage} Damage to a closest enemy.',
 			},
 		})
+
+		this.createCallback(GameEventType.CARD_TAKES_DAMAGE, [CardLocation.BOARD])
+			.require(
+				({ powerDamageInstance }) =>
+					!!powerDamageInstance &&
+					powerDamageInstance.source === DamageSource.CARD &&
+					powerDamageInstance.sourceCard instanceof UnitRitesStarvingWolf
+			)
+			.perform(() => {
+				this.buffs.addMultiple(BuffStrength, this.powerGained, this)
+			})
 
 		this.createCallback(GameEventType.TURN_ENDED, [CardLocation.BOARD])
 			.require(({ group }) => group.isHuman)

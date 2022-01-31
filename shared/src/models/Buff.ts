@@ -4,6 +4,7 @@ import CardFeature from '../enums/CardFeature'
 import CardTribe from '../enums/CardTribe'
 import BoardRow from './BoardRow'
 import Card from './Card'
+import { BuffLocalization } from './cardLocalization/CardLocalization'
 
 export type BuffSource = Card | BoardRow | null
 
@@ -15,8 +16,7 @@ export default interface Buff {
 	buffFeatures: BuffFeature[]
 	cardFeatures: CardFeature[]
 
-	name: string
-	description: string
+	localization: BuffLocalization
 
 	duration: number
 	baseDuration: number

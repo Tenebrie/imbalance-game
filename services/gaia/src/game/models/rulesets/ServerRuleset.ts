@@ -64,6 +64,7 @@ export type ServerRulesetProps = {
 	sortPriority?: number
 	constants?: Partial<RulesetConstants>
 	hiddenFromMenu?: boolean
+	redirectTo?: RulesetConstructor
 }
 
 export abstract class ServerRuleset implements Ruleset {
@@ -74,6 +75,7 @@ export abstract class ServerRuleset implements Ruleset {
 	public readonly features: RulesetFeature[]
 	public readonly sortPriority: number
 	public readonly hiddenFromMenu: boolean
+	public readonly redirectTo: RulesetConstructor | null
 
 	public state: Record<string, any> = {}
 	public constants: RulesetConstants
@@ -93,6 +95,7 @@ export abstract class ServerRuleset implements Ruleset {
 		this.features = props.features || []
 		this.sortPriority = props.sortPriority || 0
 		this.hiddenFromMenu = props.hiddenFromMenu || false
+		this.redirectTo = props.redirectTo || null
 
 		this.constants = {
 			ROUND_WINS_REQUIRED: 2,

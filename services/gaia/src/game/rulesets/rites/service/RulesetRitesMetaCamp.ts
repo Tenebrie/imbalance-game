@@ -8,8 +8,8 @@ import SpellLabyrinthContinueRun from '@src/game/cards/12-rites/actions/SpellLab
 import SpellLabyrinthPreviousRun from '@src/game/cards/12-rites/actions/SpellLabyrinthPreviousRun'
 import SpellLabyrinthStartCoopRun from '@src/game/cards/12-rites/actions/SpellLabyrinthStartCoopRun'
 import SpellLabyrinthStartRun from '@src/game/cards/12-rites/actions/SpellLabyrinthStartRun'
-import LeaderLabyrinthOpponent from '@src/game/cards/12-rites/LeaderLabyrinthOpponent'
-import LeaderLabyrinthPlayer from '@src/game/cards/12-rites/LeaderLabyrinthPlayer'
+import LeaderRitesOpponent from '@src/game/cards/12-rites/LeaderRitesOpponent'
+import LeaderRitesPlayer from '@src/game/cards/12-rites/LeaderRitesPlayer'
 import OutgoingMessageHandlers from '@src/game/handlers/OutgoingMessageHandlers'
 import { RulesetConstructor } from '@src/game/libraries/RulesetLibrary'
 import { ServerRuleset } from '@src/game/models/rulesets/ServerRuleset'
@@ -42,8 +42,8 @@ export default class RulesetRitesMetaCamp extends ServerRuleset {
 			.setLinkGetter(getNextEncounter)
 
 		this.createSlots()
-			.addGroup({ type: 'player', deck: [LeaderLabyrinthPlayer, SpellLabyrinthStartRun, SpellLabyrinthStartCoopRun] })
-			.addGroup({ type: 'ai', deck: [LeaderLabyrinthOpponent], behaviour: AIBehaviour.PASSIVE })
+			.addGroup({ type: 'player', deck: [LeaderRitesPlayer, SpellLabyrinthStartRun, SpellLabyrinthStartCoopRun] })
+			.addGroup({ type: 'ai', deck: [LeaderRitesOpponent], behaviour: AIBehaviour.PASSIVE })
 
 		this.createCallback(GameEventType.GAME_SETUP).perform(() => {
 			game.getHumanGroup().players.forEach((playerInGame) => {

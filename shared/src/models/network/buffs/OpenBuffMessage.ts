@@ -3,6 +3,7 @@ import BuffFeature from '../../../enums/BuffFeature'
 import CardFeature from '../../../enums/CardFeature'
 import CardTribe from '../../../enums/CardTribe'
 import Buff from '../../Buff'
+import { BuffLocalization } from '../../cardLocalization/CardLocalization'
 import BuffMessage from './BuffMessage'
 
 export default class OpenBuffMessage implements BuffMessage {
@@ -13,8 +14,7 @@ export default class OpenBuffMessage implements BuffMessage {
 	buffFeatures: BuffFeature[]
 	cardFeatures: CardFeature[]
 
-	name: string
-	description: string
+	localization: BuffLocalization
 
 	duration: string
 	baseDuration: string
@@ -29,8 +29,7 @@ export default class OpenBuffMessage implements BuffMessage {
 		this.buffFeatures = buff.buffFeatures.slice()
 		this.cardFeatures = buff.cardFeatures.slice()
 
-		this.name = buff.name
-		this.description = buff.description
+		this.localization = buff.localization
 
 		this.duration = buff.duration.toString()
 		this.baseDuration = buff.baseDuration.toString()

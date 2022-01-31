@@ -383,8 +383,12 @@ export const collapseNumber = (valueOrGetter: number | (() => number)): number =
 
 export const capitalize = (value: string): string => value.substring(0, 1).toUpperCase() + value.substring(1).toLowerCase()
 
-export const plurify = (article: 'a', nextWord: string): string => {
+export const plurifyArticle = (article: 'a', nextWord: string): string => {
 	return `${nextWord.startsWith('aeio') ? 'an' : 'a'} ${nextWord}`
+}
+
+export const plurifyEnding = (count: number, word: string): string => {
+	return count === 1 ? word : `${word}s`
 }
 
 export const seededRandom = (str: string): (() => number) => {

@@ -31,7 +31,7 @@ export default class UnitRitesMajorFlameArcana extends ServerCard {
 		this.createLocalization({
 			en: {
 				name: 'Major Flame Arcana',
-				description: '*Auto:*\nDeal {damage} Damage to closest enemies.',
+				description: '*Turn end:*\nDeal {damage} Damage to closest enemies.',
 			},
 		})
 

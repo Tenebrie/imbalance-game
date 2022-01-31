@@ -6,7 +6,7 @@ import MoveDirection from '@shared/enums/MoveDirection'
 import Board from '@shared/models/Board'
 import UnitDestructionReason from '@src/enums/UnitDestructionReason'
 import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
-import { toRowIndex } from '@src/utils/Utils'
+import { getRandomArrayValue, toRowIndex } from '@src/utils/Utils'
 
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
@@ -97,19 +97,19 @@ export default class ServerBoard implements Board {
 	}
 
 	public getHorizontalUnitDistance(
-		first: ServerUnit | { rowIndex: number; unitIndex: number; extraUnits: number },
-		second: ServerUnit | { rowIndex: number; unitIndex: number; extraUnits: number }
+		first: ServerUnit | { rowIndex: number; unitIndex: number; extraUnits?: number },
+		second: ServerUnit | { rowIndex: number; unitIndex: number; extraUnits?: number }
 	): number {
 		return this.getHorizontalUnitDistanceForUnitCount(
 			{
 				rowIndex: first.rowIndex,
 				unitIndex: first.unitIndex,
-				unitCount: this.rows[first.rowIndex].cards.length + ('extraUnits' in first ? first.extraUnits : 0),
+				unitCount: this.rows[first.rowIndex].cards.length + ('extraUnits' in first ? first.extraUnits ?? 0 : 0),
 			},
 			{
 				rowIndex: second.rowIndex,
 				unitIndex: second.unitIndex,
-				unitCount: this.rows[second.rowIndex].cards.length + ('extraUnits' in second ? second.extraUnits : 0),
+				unitCount: this.rows[second.rowIndex].cards.length + ('extraUnits' in second ? second.extraUnits ?? 0 : 0),
 			}
 		)
 	}
@@ -212,6 +212,14 @@ export default class ServerBoard implements Board {
 
 		const shortestDistance = enemyUnitsWithDistance[0].distance
 		return enemyUnitsWithDistance.filter((unit) => unit.distance === shortestDistance).map((unitWithDistance) => unitWithDistance.unit)
+	}
+
+	public getRandomClosestEnemyUnit(thisUnit: ServerUnit): ServerUnit | null {
+		const closestEnemyUnits = this.getClosestEnemyUnits(thisUnit)
+		if (closestEnemyUnits.length === 0) {
+			return null
+		}
+		return getRandomArrayValue(closestEnemyUnits)
 	}
 
 	public getUnitsOwnedByPlayer(owner: ServerPlayerInGame | null): ServerUnit[] {

@@ -7,7 +7,7 @@
 		"build": "ttsc && node scripts/minify-dist.js && yarn build:jade && yarn build:assets",
 		"build:jade": "mkdir -p dist/services/gaia/src/views && cp src/views/*.jade dist/services/gaia/src/views",
 		"build:assets": "cp -r src/assets dist/services/gaia/src && cp -r public dist/services/gaia/public && cp -r migrations dist/services/gaia/migrations",
-		"serve": "yarn nodemon --legacy-watch --watch 'src' --watch '../../shared/src' -e 'ts,jade' --exec 'sh scripts/serve-exec.sh'",
+		"serve": "yarn nodemon --legacy-watch --watch 'src' --watch '../../shared/src' -e 'ts,jade' --exec 'sh scripts/serve-exec.sh || exit 1'",
 		"lint": "yarn eslint src/ --ext .ts",
 		"lint-fix": "yarn eslint src/ --ext .ts --fix",
 		"test": "yarn jest",

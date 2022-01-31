@@ -44,11 +44,22 @@ class InternalRulesetLibrary {
 	}
 
 	public findPrototypeByClass(rulesetClass: string): ServerRuleset {
-		const card = this.rulesets.find((ruleset) => ruleset.class === rulesetClass)
-		if (!card) {
+		const ruleset = this.rulesets.find((ruleset) => ruleset.class === rulesetClass)
+		if (!ruleset) {
 			throw new Error(`Unable to find ruleset ${rulesetClass}`)
 		}
-		return card
+		return ruleset
+	}
+
+	public findRedirectablePrototypeByClass(rulesetClass: string): ServerRuleset {
+		const ruleset = this.rulesets.find((ruleset) => ruleset.class === rulesetClass)
+		if (!ruleset) {
+			throw new Error(`Unable to find ruleset ${rulesetClass}`)
+		}
+		if (ruleset.redirectTo) {
+			return this.findRedirectablePrototypeByClass(getClassFromConstructor(ruleset.redirectTo))
+		}
+		return ruleset
 	}
 
 	public findTemplate(constructor: RulesetConstructor): ServerRuleset {
@@ -95,17 +106,22 @@ class RulesetLibrary {
 
 	public get rulesets(): ServerRuleset[] {
 		this.ensureLibraryLoaded()
-		return this.library!.rulesets.slice()
+		return this.library.rulesets.slice()
 	}
 
 	public findTemplateByClass(rulesetClass: string): ServerRuleset {
 		this.ensureLibraryLoaded()
-		return this.library!.findPrototypeByClass(rulesetClass)
+		return this.library.findPrototypeByClass(rulesetClass)
+	}
+
+	public findRedirectableTemplateByClass(rulesetClass: string): ServerRuleset {
+		this.ensureLibraryLoaded()
+		return this.library.findRedirectablePrototypeByClass(rulesetClass)
 	}
 
 	public findTemplate(constructor: RulesetConstructor): ServerRuleset {
 		this.ensureLibraryLoaded()
-		return this.library!.findTemplate(constructor)
+		return this.library.findTemplate(constructor)
 	}
 
 	public instantiate(game: ServerGame, constructor: RulesetConstructor): ServerRuleset {
