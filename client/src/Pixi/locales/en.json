@@ -69,6 +69,7 @@
 	"ui.profile.delete": "Delete profile",
 	"ui.profile.delete.progress": "Deleting...",
 
+	"ui.decks.sampleDraw": "Draw Sample Hand",
 	"ui.decks.saveDeck": "Save",
 	"ui.decks.saveDeck.progress": "Saving...",
 	"ui.decks.shareDeck": "Share",

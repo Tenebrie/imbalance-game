@@ -97,6 +97,7 @@ export default defineComponent({
 	opacity: 0;
 	pointer-events: none;
 	transition: opacity 0.3s;
+	height: 100%;
 
 	@supports ((-webkit-backdrop-filter: none) or (backdrop-filter: none)) {
 		background: rgba(black, 0.5);
@@ -107,14 +108,6 @@ export default defineComponent({
 		opacity: 1;
 		pointer-events: auto;
 		transition: opacity 0.15s;
-	}
-
-	&.game {
-		height: 100%;
-	}
-
-	&.editor {
-		height: calc(100% - #{$NAVIGATION-BAR-HEIGHT});
 	}
 
 	.content {

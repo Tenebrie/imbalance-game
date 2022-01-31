@@ -6,6 +6,7 @@
 			<router-view class="view" />
 		</div>
 		<the-popup-view v-if="!isInGame" />
+		<pixi-inspected-card v-if="!isInGame" />
 		<the-notification-view />
 	</div>
 </template>
@@ -19,12 +20,13 @@ import { editorCardRenderer } from '@/utils/editor/EditorCardRenderer'
 import LocalStorage from '@/utils/LocalStorage'
 import { electronHost, isElectron } from '@/utils/Utils'
 import TheNavigationBar from '@/Vue/components/navigationbar/TheNavigationBar.vue'
+import PixiInspectedCard from '@/Vue/components/pixi/PixiInspectedCard.vue'
 import TheNotificationView from '@/Vue/components/popup/connectionLostNotification/TheNotificationView.vue'
 import ThePopupView from '@/Vue/components/popup/ThePopupView.vue'
 import store from '@/Vue/store'
 
 export default defineComponent({
-	components: { TheNotificationView, ThePopupView, TheNavigationBar },
+	components: { TheNotificationView, ThePopupView, TheNavigationBar, PixiInspectedCard },
 
 	async mounted() {
 		if (isElectron()) {
@@ -116,6 +118,15 @@ body {
 	border-radius: 20px;
 }
 
+a {
+	color: $COLOR-SECONDARY;
+	text-decoration: none;
+
+	&:hover {
+		text-decoration: underline;
+	}
+}
+
 #app {
 	overflow: hidden;
 	font-family: Roboto, Helvetica, Arial, sans-serif;
@@ -153,15 +164,6 @@ body {
 					width: 100%;
 					height: 100%;
 				}
-			}
-		}
-
-		a {
-			color: $COLOR-SECONDARY;
-			text-decoration: none;
-
-			&:hover {
-				text-decoration: underline;
 			}
 		}
 	}

@@ -6,7 +6,6 @@
 		<div class="card-library">
 			<the-card-library />
 		</div>
-		<pixi-inspected-card />
 	</div>
 </template>
 
@@ -14,10 +13,9 @@
 import { defineComponent } from 'vue'
 
 import TheCardLibrary from '@/Vue/components/editor/TheCardLibrary.vue'
-import PixiInspectedCard from '@/Vue/components/pixi/PixiInspectedCard.vue'
 
 export default defineComponent({
-	components: { TheCardLibrary, PixiInspectedCard },
+	components: { TheCardLibrary },
 })
 </script>
 

@@ -33,6 +33,7 @@ export default defineComponent({
 
 		::v-deep(button) {
 			min-width: 100px;
+			margin-left: 8px;
 		}
 	}
 }

@@ -12,9 +12,16 @@
 			<editor-deck-card-list-item :card="card" v-for="card in bronzeCards" :key="card.id" />
 		</div>
 		<div class="buttons">
-			<editor-export-deck-button />
-			<editor-delete-deck-button />
-			<editor-leave-deck-button />
+			<div class="button-block">
+				<div class="fullsize">
+					<editor-sample-draw-button />
+				</div>
+				<editor-export-deck-button />
+				<editor-delete-deck-button />
+			</div>
+			<div class="fullsize">
+				<editor-leave-deck-button />
+			</div>
 		</div>
 		<the-editor-hovered-deck-card />
 	</div>
@@ -29,6 +36,7 @@ import PopulatedEditorDeck from '@/utils/editor/PopulatedEditorDeck'
 import EditorDeleteDeckButton from '@/Vue/components/editor/buttons/EditorDeleteDeckButton.vue'
 import EditorExportDeckButton from '@/Vue/components/editor/buttons/EditorExportDeckButton.vue'
 import EditorLeaveDeckButton from '@/Vue/components/editor/buttons/EditorLeaveDeckButton.vue'
+import EditorSampleDrawButton from '@/Vue/components/editor/buttons/EditorSampleDrawButton.vue'
 import EditorDeckCardListItem from '@/Vue/components/editor/EditorDeckCardListItem.vue'
 import EditorDeckCardListSeparator from '@/Vue/components/editor/EditorDeckCardListSeparator.vue'
 import EditorDeckName from '@/Vue/components/editor/EditorDeckName.vue'
@@ -39,6 +47,7 @@ import store from '@/Vue/store'
 export default defineComponent({
 	components: {
 		EditorDeckName,
+		EditorSampleDrawButton,
 		EditorExportDeckButton,
 		EditorDeleteDeckButton,
 		EditorLeaveDeckButton,
@@ -137,16 +146,28 @@ export default defineComponent({
 
 	.buttons {
 		width: calc(100% - 24px);
+
+		.button-container {
+			flex: 1;
+			margin: 0px 4px;
+			font-size: 1.2em;
+		}
+		margin: 24px 12px;
+	}
+
+	.button-block {
+		margin-bottom: 12px;
+	}
+
+	.buttons,
+	.button-block {
 		display: flex;
 		flex-wrap: wrap;
 		flex-direction: row;
 		justify-content: center;
-		margin: 24px 12px;
 
-		.button-container {
-			flex: 1;
-			margin: 4px 4px;
-			font-size: 1.2em;
+		.fullsize {
+			width: 100%;
 		}
 	}
 }

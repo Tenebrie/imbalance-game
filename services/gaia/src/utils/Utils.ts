@@ -27,6 +27,8 @@ import ServerUnit from '../game/models/ServerUnit'
 import ServerPlayer from '../game/players/ServerPlayer'
 import DeckUtils from './DeckUtils'
 
+export { shuffle } from '@shared/Utils'
+
 export const safeWhile = (
 	condition: () => boolean | null | undefined,
 	callback: (breakWhile: () => void) => void = () => {
@@ -351,21 +353,6 @@ export const validateEditorDeck = (unpopulatedDeck: EditorDeck): { valid: boolea
 
 export const snakeToCamelCase = (str: string): string =>
 	str.toLowerCase().replace(/([-_][a-z])/g, (group) => group.toUpperCase().replace('-', '').replace('_', ''))
-
-export function shuffle<T>(inputArray: T[]): T[] {
-	const array = inputArray.slice()
-	let currentIndex = array.length
-
-	while (currentIndex > 0) {
-		const randomIndex = Math.floor(Math.random() * currentIndex)
-		currentIndex -= 1
-		const temporaryValue = array[currentIndex]
-		array[currentIndex] = array[randomIndex]
-		array[randomIndex] = temporaryValue
-	}
-
-	return array
-}
 
 export const getRandomArrayValue = <T>(array: T[]): T => {
 	return array[Math.floor(Math.random() * array.length)]

@@ -2,7 +2,6 @@
 	<div class="tooltip" :class="rootClass" :style="rootStyle" v-if="parsedTooltip" @click="onClick">
 		<div class="hitbox" :style="{ width: tooltip.size.x + 'px', height: tooltip.size.y + 'px' }"></div>
 		<div class="text" :style="{ left: tooltip.size.x / 2 + 'px' }">
-			<!--			<div class="content">{{ displayedElement }}</div>-->
 			<div class="content">
 				<component :is="parsedTooltip?.component" v-bind="parsedTooltip?.props"></component>
 			</div>
@@ -101,6 +100,8 @@ export default defineComponent({
 			if (!isClickable.value || !tooltip) {
 				return
 			}
+
+			store.dispatch.popupModule.closeAll()
 
 			const isInGame = store.getters.gameStateModule.isInGame
 			if (tooltip.type === 'card' && (event.ctrlKey || isInGame)) {
