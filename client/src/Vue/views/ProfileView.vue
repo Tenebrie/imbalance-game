@@ -1,9 +1,7 @@
 <template>
 	<div class="profile-view">
 		<the-user-profile class="user-profile" />
-		<div class="profile-footer">
-			<span>State of Imbalance v0.18 (??.12.2021)</span>
-		</div>
+		<build-version-footer />
 	</div>
 </template>
 
@@ -12,9 +10,12 @@ import { defineComponent } from 'vue'
 
 import TheUserProfile from '@/Vue/components/profile/TheUserProfile.vue'
 
+import BuildVersionFooter from '../components/utils/BuildVersionFooter.vue'
+
 export default defineComponent({
 	components: {
 		TheUserProfile,
+		BuildVersionFooter,
 	},
 })
 </script>
@@ -31,20 +32,6 @@ export default defineComponent({
 		display: flex;
 		flex-direction: column;
 		background: $COLOR-BACKGROUND-TRANSPARENT;
-	}
-
-	& > .profile-footer {
-		height: auto !important;
-		position: absolute;
-		display: flex;
-		align-items: flex-end;
-		justify-content: flex-end;
-		font-family: monospace, monospace;
-
-		& > span {
-			color: gray;
-			padding: 4px;
-		}
 	}
 }
 </style>

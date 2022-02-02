@@ -52,6 +52,7 @@ import SessionRouter from './routers/SessionRouter'
 import StatusRouter from './routers/StatusRouter'
 import UserProfileRouter from './routers/UserProfileRouter'
 import UserRouter from './routers/UserRouter'
+import VersionRouter from './routers/VersionRouter'
 import WorkshopRouter from './routers/WorkshopRouter'
 
 /* Templating engine */
@@ -125,6 +126,7 @@ app.use('/api/user', UserRouter)
 app.use('/api/user/modals', ModalsRouter)
 app.use('/api/user/profile', UserProfileRouter)
 app.use('/api/feedback', FeedbackRouter)
+app.use('/api/version', VersionRouter)
 app.use('/api/workshop', WorkshopRouter)
 app.use('/api/overmind', OvermindRouter)
 

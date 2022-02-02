@@ -19,7 +19,7 @@
 			"@src/*": ["./src/*"],
 			"@shared/*": ["../../shared/src/*"]
 		},
-		"plugins": [{ "transform": "./src/transformers/profilerTransformer.ts" }]
+		"plugins": [{ "transform": "./src/transformers/macroTransformer.ts" }, { "transform": "./src/transformers/profilerTransformer.ts" }]
 	},
 	"include": ["./src/**/*.ts"],
 	"exclude": ["node_modules"]

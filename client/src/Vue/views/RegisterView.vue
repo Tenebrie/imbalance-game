@@ -1,6 +1,7 @@
 <template>
 	<div class="register">
 		<the-register-form />
+		<build-version-footer />
 	</div>
 </template>
 
@@ -8,9 +9,10 @@
 import { defineComponent } from 'vue'
 
 import TheRegisterForm from '../components/login/TheRegisterForm.vue'
+import BuildVersionFooter from '../components/utils/BuildVersionFooter.vue'
 
 export default defineComponent({
-	components: { TheRegisterForm },
+	components: { TheRegisterForm, BuildVersionFooter },
 
 	computed: {},
 })
