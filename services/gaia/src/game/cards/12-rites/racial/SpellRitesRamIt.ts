@@ -29,6 +29,7 @@ export default class SpellRitesRamIt extends ServerCard {
 			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
+			baseDamage: this.baseDamage,
 			damagePerRow: this.damagePerRow,
 			stunPerRow: this.stunPerRow,
 		}
@@ -37,7 +38,7 @@ export default class SpellRitesRamIt extends ServerCard {
 			en: {
 				name: 'Ram It!',
 				description:
-					'Charge at an enemy on a front row, dealing {baseDamage} + {damagePerRow} Damage per row charged.\nApply Stun for {stunPerRow} turn(s) per row charged.',
+					'Charge at an enemy on a front row, dealing {baseDamage} Damage, plus extra {damagePerRow} Damage per row charged.\nApply *Stun* for {stunPerRow} turn(s) per row charged.',
 			},
 		})
 

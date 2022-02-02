@@ -21,6 +21,6 @@
 		},
 		"plugins": [{ "transform": "./src/transformers/profilerTransformer.ts" }]
 	},
-	"include": ["./src/**/*.ts", "./src/**/*.tsx"],
-	"exclude": ["node_modules", "**/*.spec.ts"]
+	"include": ["./src/**/*.ts"],
+	"exclude": ["node_modules"]
 }

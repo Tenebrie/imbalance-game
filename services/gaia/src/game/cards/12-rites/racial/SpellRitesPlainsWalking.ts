@@ -17,7 +17,7 @@ export default class SpellRitesPlainsWalking extends ServerCard {
 			faction: CardFaction.HUMAN,
 			features: [CardFeature.HERO_POWER],
 			stats: {
-				cost: 2,
+				cost: 0,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

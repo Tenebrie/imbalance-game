@@ -4,7 +4,7 @@
 	"license": "GPL-3.0-or-later",
 	"private": true,
 	"scripts": {
-		"build": "ttsc && node scripts/minify-dist.js && yarn build:jade && yarn build:assets",
+		"build": "ttsc -p tsconfig.build.json && node scripts/minify-dist.js && yarn build:jade && yarn build:assets",
 		"build:jade": "mkdir -p dist/services/gaia/src/views && cp src/views/*.jade dist/services/gaia/src/views",
 		"build:assets": "cp -r src/assets dist/services/gaia/src && cp -r public dist/services/gaia/public && cp -r migrations dist/services/gaia/migrations",
 		"serve": "yarn nodemon --legacy-watch --watch 'src' --watch '../../shared/src' -e 'ts,jade' --exec 'sh scripts/serve-exec.sh || exit 1'",
@@ -62,6 +62,7 @@
 		"lzutf8": "^0.6.0",
 		"mock-fs": "^5.1.2",
 		"module-alias": "^2.2.2",
+		"moment": "^2.29.1",
 		"morgan": "~1.10.0",
 		"multer": "^1.4.2",
 		"njstrace": "^2.0.1",

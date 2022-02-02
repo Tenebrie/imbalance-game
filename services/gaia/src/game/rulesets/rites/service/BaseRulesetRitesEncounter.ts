@@ -19,7 +19,7 @@ export default abstract class BaseRulesetRitesEncounter extends ServerRuleset {
 
 	protected constructor(game: ServerGame, props?: Partial<ServerRulesetProps>) {
 		super(game, {
-			gameMode: GameMode.PVE,
+			gameMode: GameMode.COOP,
 			category: RulesetCategory.RITES,
 			features: [RulesetFeature.LABYRINTH_ENCOUNTER].concat(props?.features || []),
 			sortPriority: props?.sortPriority || 0,

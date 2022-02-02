@@ -23,7 +23,7 @@ export default class UnitRitesFrostArcana extends ServerCard {
 		this.createLocalization({
 			en: {
 				name: 'Frost Arcana',
-				description: '',
+				description: ' ',
 			},
 		})
 

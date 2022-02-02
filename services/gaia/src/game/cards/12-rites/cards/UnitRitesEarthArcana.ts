@@ -23,6 +23,7 @@ export default class UnitRitesEarthArcana extends ServerCard {
 				power: 0,
 				armor: 7,
 			},
+
 			expansionSet: ExpansionSet.RITES,
 		})
 		this.dynamicTextVariables = {

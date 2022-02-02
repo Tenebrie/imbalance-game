@@ -601,6 +601,21 @@ export default class ServerGame implements SourceGame {
 			})
 		)
 
+		const validChain =
+			ServerGame.VALID_CHAIN_VICTORY_CONDITIONS.includes(victoryCondition) &&
+			this.ruleset.chains.find((chain) =>
+				chain.isValid({
+					game: this,
+					victoriousPlayer,
+				})
+			)
+
+		if (validChain && this.getHumanGroup() && transitionToNextGame) {
+			this.allPlayers.forEach((playerInGame) => {
+				OutgoingMessageHandlers.commandSuppressEndScreen(playerInGame.player)
+			})
+		}
+
 		if (victoriousPlayer === null) {
 			OutgoingMessageHandlers.notifyAboutDraw(this)
 			console.info(`Game ${colorizeId(this.id)} finished with a draw: ${colorizeConsoleText(victoryCondition)}.`)
@@ -630,21 +645,6 @@ export default class ServerGame implements SourceGame {
 		})
 
 		GameLibrary.startGameCleanupTimer(this)
-
-		const validChain =
-			ServerGame.VALID_CHAIN_VICTORY_CONDITIONS.includes(victoryCondition) &&
-			this.ruleset.chains.find((chain) =>
-				chain.isValid({
-					game: this,
-					victoriousPlayer,
-				})
-			)
-
-		if (validChain && this.getHumanGroup() && transitionToNextGame) {
-			this.allPlayers.forEach((playerInGame) => {
-				OutgoingMessageHandlers.commandSuppressEndScreen(playerInGame.player)
-			})
-		}
 
 		this.progression.saveStates().then(() => {
 			if (validChain && this.getHumanGroup()) {

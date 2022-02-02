@@ -17,7 +17,7 @@ import { getReward } from '@src/game/rulesets/rites/service/RitesRewards'
 export default class RulesetRitesRunCamp extends ServerRuleset {
 	constructor(game: ServerGame) {
 		super(game, {
-			gameMode: GameMode.PVE,
+			gameMode: GameMode.COOP,
 			category: RulesetCategory.RITES,
 			constants: {
 				SKIP_MULLIGAN: true,

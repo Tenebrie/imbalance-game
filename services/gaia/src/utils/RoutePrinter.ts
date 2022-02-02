@@ -94,9 +94,18 @@ export const printAllRoutes = (app: Application): string => {
 				})
 		})
 		.flat(1)
-		.sort((a: { accessLevel: AccessLevel }, b: { accessLevel: AccessLevel }) => {
-			return Object.values(AccessLevel).indexOf(a.accessLevel) - Object.values(AccessLevel).indexOf(b.accessLevel)
-		})
+		.sort(
+			(
+				a: { path: string; methods: string[]; accessLevel: AccessLevel },
+				b: { path: string; methods: string[]; accessLevel: AccessLevel }
+			) => {
+				return (
+					Object.values(AccessLevel).indexOf(a.accessLevel) - Object.values(AccessLevel).indexOf(b.accessLevel) ||
+					(a.path.includes('.websocket') ? 1 : 0) - (b.path.includes('.websocket') ? 1 : 0) ||
+					a.path.localeCompare(b.path)
+				)
+			}
+		)
 		.reduce(
 			(
 				list: { path: string; accessLevel: AccessLevel; methods: string[] }[],
@@ -114,8 +123,8 @@ export const printAllRoutes = (app: Application): string => {
 		)
 		.map((value: { accessLevelString: string; methods: string[]; path: string }) => ({
 			accessLevel: value.accessLevelString,
-			method: colorize(value.methods.join('|'), AsciiColor.GREEN),
-			path: colorizeId(value.path),
+			method: colorize(getMethods(value.path, value.methods), AsciiColor.GREEN),
+			path: colorizeId(getPath(value.path)),
 		}))
 
 	const methodPadding = allRoutes.slice().sort((a: { method: string }, b: { method: string }) => b.method.length - a.method.length)[0]
@@ -147,4 +156,15 @@ export const printAllRoutes = (app: Application): string => {
 				return `${output}${comma()}\n  ${value}`
 			}, '[') + '\n]'
 	)
+}
+
+const getPath = (path: string): string => {
+	return path.replace('/.websocket', '')
+}
+
+const getMethods = (path: string, methods: string[]): string => {
+	if (path.includes('.websocket')) {
+		return 'WS'
+	}
+	return methods.join('|')
 }

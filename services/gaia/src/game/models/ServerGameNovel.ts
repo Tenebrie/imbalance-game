@@ -494,9 +494,9 @@ const getSayStatementMessage = (statement: TenScriptStatementSelector<StatementT
 	const filteredChildren = statement.children.filter(
 		(child) => child.type === StatementType.SAY
 	) as TenScriptStatementSelector<StatementType.SAY>[]
-	const childrenMessages = filteredChildren.map((child) => getSayStatementMessage(child)).join('<br>')
+	const childrenMessages = filteredChildren.map((child) => getSayStatementMessage(child)).join(' ')
 	if (childrenMessages) {
-		return `${statement.data}<br>${childrenMessages}`
+		return `${statement.data} ${childrenMessages}`
 	}
 	return statement.data
 }

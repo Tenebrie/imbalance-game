@@ -20,7 +20,7 @@ import Keywords from '@src/utils/Keywords'
 export default class RulesetRitesMetaCamp extends ServerRuleset {
 	constructor(game: ServerGame) {
 		super(game, {
-			gameMode: GameMode.PVE,
+			gameMode: GameMode.COOP,
 			category: RulesetCategory.RITES,
 			constants: {
 				SKIP_MULLIGAN: true,

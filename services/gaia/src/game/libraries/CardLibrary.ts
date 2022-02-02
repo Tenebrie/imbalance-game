@@ -1,7 +1,6 @@
-import CardColor from '@shared/enums/CardColor'
-import CardFaction from '@shared/enums/CardFaction'
-import CardType from '@shared/enums/CardType'
-import { colorize, getClassFromConstructor } from '@src/utils/Utils'
+import { printLibraryBreakdown } from '@src/utils/LibraryPrinter'
+import { colorize, colorizeId, getClassFromConstructor } from '@src/utils/Utils'
+import moment from 'moment'
 
 import AsciiColor from '../../enums/AsciiColor'
 import ServerCard from '../models/ServerCard'
@@ -22,6 +21,8 @@ class InternalCardLibrary {
 			return
 		}
 
+		console.info(colorize('Loading card definitions...', AsciiColor.YELLOW))
+
 		const { prototypes, upToDateModules } = loadModules<CardConstructor>({
 			path: '../cards',
 			objectLogName: 'card',
@@ -40,85 +41,28 @@ class InternalCardLibrary {
 			console.info(`- ${colorize(prototypes.length - filteredCards.length, AsciiColor.CYAN)} ignored definitions`)
 		}
 
-		console.info('Card library breakdown:')
-		console.table({
-			Human: {
-				Leaders: filteredCards.filter((card) => card.faction === CardFaction.HUMAN && card.isCollectible && card.color === CardColor.LEADER)
-					.length,
-				Units: filteredCards.filter((card) => card.faction === CardFaction.HUMAN && card.isCollectible && card.color !== CardColor.LEADER)
-					.length,
-				Spells: filteredCards.filter(
-					(card) =>
-						card.faction === CardFaction.HUMAN && !card.isCollectible && card.type === CardType.SPELL && card.color !== CardColor.TOKEN
-				).length,
-				Tokens: filteredCards.filter(
-					(card) =>
-						card.faction === CardFaction.HUMAN && !card.isCollectible && (card.type !== CardType.SPELL || card.color === CardColor.TOKEN)
-				).length,
-				Total: filteredCards.filter((card) => card.faction === CardFaction.HUMAN).length,
-			},
-			Arcane: {
-				Leaders: filteredCards.filter(
-					(card) => card.faction === CardFaction.ARCANE && card.isCollectible && card.color === CardColor.LEADER
-				).length,
-				Units: filteredCards.filter((card) => card.faction === CardFaction.ARCANE && card.isCollectible && card.color !== CardColor.LEADER)
-					.length,
-				Spells: filteredCards.filter(
-					(card) =>
-						card.faction === CardFaction.ARCANE && !card.isCollectible && card.type === CardType.SPELL && card.color !== CardColor.TOKEN
-				).length,
-				Tokens: filteredCards.filter(
-					(card) =>
-						card.faction === CardFaction.ARCANE && !card.isCollectible && (card.type !== CardType.SPELL || card.color === CardColor.TOKEN)
-				).length,
-				Total: filteredCards.filter((card) => card.faction === CardFaction.ARCANE).length,
-			},
-			Wild: {
-				Leaders: filteredCards.filter((card) => card.faction === CardFaction.WILD && card.isCollectible && card.color === CardColor.LEADER)
-					.length,
-				Units: filteredCards.filter((card) => card.faction === CardFaction.WILD && card.isCollectible && card.color !== CardColor.LEADER)
-					.length,
-				Spells: filteredCards.filter(
-					(card) =>
-						card.faction === CardFaction.WILD && !card.isCollectible && card.type === CardType.SPELL && card.color !== CardColor.TOKEN
-				).length,
-				Tokens: filteredCards.filter(
-					(card) =>
-						card.faction === CardFaction.WILD && !card.isCollectible && (card.type !== CardType.SPELL || card.color === CardColor.TOKEN)
-				).length,
-				Total: filteredCards.filter((card) => card.faction === CardFaction.WILD).length,
-			},
-			Neutral: {
-				Leaders: filteredCards.filter(
-					(card) => card.faction === CardFaction.NEUTRAL && card.isCollectible && card.color === CardColor.LEADER
-				).length,
-				Units: filteredCards.filter((card) => card.faction === CardFaction.NEUTRAL && card.isCollectible && card.color !== CardColor.LEADER)
-					.length,
-				Spells: filteredCards.filter(
-					(card) =>
-						card.faction === CardFaction.NEUTRAL && !card.isCollectible && card.type === CardType.SPELL && card.color !== CardColor.TOKEN
-				).length,
-				Tokens: filteredCards.filter(
-					(card) =>
-						card.faction === CardFaction.NEUTRAL && !card.isCollectible && (card.type !== CardType.SPELL || card.color === CardColor.TOKEN)
-				).length,
-				Total: filteredCards.filter((card) => card.faction === CardFaction.NEUTRAL).length,
-			},
-		})
-
 		const oldestTimestamp = upToDateModules.sort((a, b) => a.timestamp - b.timestamp)[0].timestamp
-		const newModules = upToDateModules.filter((module) => module.timestamp - oldestTimestamp > 1000000)
-		if (newModules.length === 0) {
-			return
+		const newModules = upToDateModules.filter((module) => module.timestamp - oldestTimestamp > 1000)
+		if (newModules.length > 0) {
+			const sortedNewModules = newModules
+				.filter((module) => !module.filename.toLowerCase().startsWith('testing'))
+				.sort((a, b) => b.timestamp - a.timestamp)
+				.slice(0, 5)
+			console.info(
+				'Latest updated card definitions: [',
+				sortedNewModules
+					.map(
+						(module) =>
+							`\n  [${colorize(moment(new Date(module.timestamp)).format('yyyy.MM.DD | HH:mm:ss'), AsciiColor.BLUE)}]: ${colorizeId(
+								module.filename
+							)}`
+					)
+					.join('') + '\n]'
+			)
 		}
-		const sortedNewModules = newModules
-			.filter((module) => !module.filename.toLowerCase().startsWith('testing'))
-			.sort((a, b) => b.timestamp - a.timestamp)
-			.slice(0, 5)
-		console.info(
-			'Latest updated card definitions:',
-			sortedNewModules.map((module) => module.filename)
-		)
+
+		console.info('Card library breakdown:', printLibraryBreakdown(filteredCards))
+		console.info(colorize('Card library loaded successfully', AsciiColor.GREEN) + '\n')
 	}
 
 	public forceLoadCards(cards: CardConstructor[]): void {

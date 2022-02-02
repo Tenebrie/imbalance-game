@@ -1,10 +1,10 @@
+import StoryCharacter from '@shared/enums/StoryCharacter'
 import {
 	AnimationMessageType,
 	NovelMessageType,
 	ServerToClientGameMessage,
 } from '@shared/models/network/messageHandlers/ServerToClientGameMessages'
 
-import StoryCharacter from '../../../../../shared/src/enums/StoryCharacter'
 import { setupTestGame } from '../../utils/TestGame'
 import { safeWhile } from '../../utils/Utils'
 import TestingRulesetPVP from '../rulesets/testing/TestingRulesetPVP'

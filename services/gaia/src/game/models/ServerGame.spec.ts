@@ -1,3 +1,5 @@
+import { PlayerUpdateMessageType, ServerToClientGameMessage } from '@shared/models/network/messageHandlers/ServerToClientGameMessages'
+
 import { enumToArray } from '../../../../../shared/src/Utils'
 import GameCloseReason from '../../enums/GameCloseReason'
 import GameVictoryCondition from '../../enums/GameVictoryCondition'
@@ -128,6 +130,42 @@ describe('ServerGame Game finishing', () => {
 
 				await new Promise(process.nextTick)
 				expect(GameLibrary.games.length).toEqual(0)
+			})
+		})
+
+		describe('when transitioning to the chained game', () => {
+			let sendSpy: jest.SpyInstance<void, [json: ServerToClientGameMessage]>
+
+			const getSentMessages = () => sendSpy.mock.calls.map((call) => call[0])
+
+			beforeEach(async () => {
+				game = setupTestGame(TestingRulesetChain)
+				sendSpy.mockClear()
+				sendSpy = jest.spyOn(game.player.handle.player, 'sendGameMessage')
+				game.handle.systemFinish(game.player.handle.group, GameVictoryCondition.STORY_TRIGGER, true)
+
+				await new Promise(process.nextTick)
+			})
+
+			it('suppresses end screen', () => {
+				expect(sendSpy).toHaveBeenCalledWith({
+					type: PlayerUpdateMessageType.SUPPRESS_END_SCREEN,
+					data: null,
+				})
+			})
+
+			it('notifies player about victory', () => {
+				expect(sendSpy).toHaveBeenCalledWith({
+					type: PlayerUpdateMessageType.GAME_END_VICTORY,
+					data: null,
+				})
+			})
+
+			it('suppresses end screen before notifying about victory', () => {
+				const messages = getSentMessages()
+				const suppressEndScreenMessage = messages.find((message) => message.type === PlayerUpdateMessageType.SUPPRESS_END_SCREEN)!
+				const gameVictoryMessage = messages.find((message) => message.type === PlayerUpdateMessageType.GAME_END_VICTORY)!
+				expect(messages.indexOf(suppressEndScreenMessage)).toBeLessThan(messages.indexOf(gameVictoryMessage))
 			})
 		})
 

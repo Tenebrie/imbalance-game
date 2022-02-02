@@ -1,7 +1,8 @@
 import { ServerRuleset } from '@src/game/models/rulesets/ServerRuleset'
 import ServerGame from '@src/game/models/ServerGame'
 import CardLibraryPlaceholderGame from '@src/game/utils/CardLibraryPlaceholderGame'
-import { colorize, getClassFromConstructor } from '@src/utils/Utils'
+import { colorize, colorizeId, getClassFromConstructor } from '@src/utils/Utils'
+import moment from 'moment'
 
 import AsciiColor from '../../enums/AsciiColor'
 import { loadModules } from './ModuleLoader'
@@ -18,8 +19,9 @@ class InternalRulesetLibrary {
 		if (process.env.JEST_WORKER_ID !== undefined) {
 			return
 		}
+		console.info(colorize('Loading ruleset definitions...', AsciiColor.YELLOW))
 
-		const { prototypes } = loadModules<RulesetConstructor>({
+		const { prototypes, upToDateModules } = loadModules<RulesetConstructor>({
 			path: '../rulesets',
 			objectLogName: 'ruleset',
 		})
@@ -30,17 +32,32 @@ class InternalRulesetLibrary {
 		if (prototypes.length === 0) {
 			return
 		}
+
+		const oldestTimestamp = upToDateModules.sort((a, b) => a.timestamp - b.timestamp)[0].timestamp
+		const newModules = upToDateModules.filter((module) => module.timestamp - oldestTimestamp > 1000)
+		const sortedNewModules = newModules
+			.filter((module) => !module.filename.toLowerCase().startsWith('testing'))
+			.sort((a, b) => b.timestamp - a.timestamp)
+			.slice(0, 5)
+		console.info(
+			'Latest updated ruleset definitions: [',
+			sortedNewModules
+				.map(
+					(module) =>
+						`\n  [${colorize(moment(new Date(module.timestamp)).format('yyyy.MM.DD | HH:mm:ss'), AsciiColor.BLUE)}]: ${colorizeId(
+							module.filename
+						)}`
+				)
+				.join('') + '\n]'
+		)
+		console.info(colorize('Ruleset library loaded successfully', AsciiColor.GREEN) + '\n')
 	}
 
 	public forceLoadRulesets(rulesets: RulesetConstructor[]): void {
 		const newRulesets = rulesets
-			.filter((ruleset) => !this.rulesets.some((existingRuleset) => existingRuleset.class === this.getClassFromConstructor(ruleset)))
+			.filter((ruleset) => !this.rulesets.some((existingRuleset) => existingRuleset.class === getClassFromConstructor(ruleset)))
 			.filter((ruleset) => !getClassFromConstructor(ruleset).startsWith('base') && !getClassFromConstructor(ruleset).startsWith('testing'))
 		this.rulesets = this.rulesets.concat(newRulesets.map((prototype) => new prototype(CardLibraryPlaceholderGame.get())))
-	}
-
-	public getClassFromConstructor(constructor: RulesetConstructor): string {
-		return constructor.name.substr(0, 1).toLowerCase() + constructor.name.substr(1)
 	}
 
 	public findPrototypeByClass(rulesetClass: string): ServerRuleset {
@@ -63,7 +80,7 @@ class InternalRulesetLibrary {
 	}
 
 	public findTemplate(constructor: RulesetConstructor): ServerRuleset {
-		return this.findPrototypeByClass(this.getClassFromConstructor(constructor))
+		return this.findPrototypeByClass(getClassFromConstructor(constructor))
 	}
 
 	public instantiate(game: ServerGame, constructor: RulesetConstructor): ServerRuleset {
