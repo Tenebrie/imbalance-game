@@ -41,7 +41,7 @@
 		"js-easing-functions": "^1.0.3",
 		"lzutf8": "^0.6.0",
 		"moment": "^2.27.0",
-		"node-sass": "^5.0.0",
+		"node-sass": "^7.0.0",
 		"pixi-particles": "^4.2.1",
 		"pixi.js": "^6.1.2",
 		"sass-loader": "^10.1.0",
