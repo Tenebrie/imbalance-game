@@ -40,7 +40,7 @@
 		"howler": "^2.2.0",
 		"js-easing-functions": "^1.0.3",
 		"lzutf8": "^0.6.0",
-		"moment": "^2.27.0",
+		"moment": "^2.29.2",
 		"node-sass": "^5.0.0",
 		"pixi-particles": "^4.2.1",
 		"pixi.js": "^6.1.2",
