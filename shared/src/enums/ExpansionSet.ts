@@ -4,6 +4,7 @@ enum ExpansionSet {
 	SPECIAL,
 	TESTING,
 	TUTORIAL,
+	GWENT,
 }
 
 export default ExpansionSet

@@ -43,6 +43,8 @@ export default defineComponent({
 					return 'wild'
 				case CardFaction.NEUTRAL:
 					return 'neutral'
+				case CardFaction.MONSTER:
+					return 'monster'
 				default:
 					return props.faction
 			}

@@ -127,6 +127,7 @@ interface ServerCardSpellProps extends ServerCardBaseProps {
 	color: CardColor.GOLDEN | CardColor.SILVER | CardColor.BRONZE | CardColor.TOKEN
 	stats: {
 		cost: number
+		unitCost?: number
 	} & LeaderStatsCardProps
 }
 
@@ -185,6 +186,7 @@ export default class ServerCard implements Card {
 		this.stats = new ServerCardStats(this, {
 			power: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.power || 0 : 0,
 			armor: props.color !== CardColor.LEADER && props.type === CardType.UNIT ? props.stats.armor || 0 : 0,
+			unitCost: props.color !== CardColor.LEADER && props.type === CardType.SPELL ? props.stats.unitCost || 0 : 1,
 			spellCost: props.color !== CardColor.LEADER && props.type === CardType.SPELL ? props.stats.cost || 0 : 0,
 			leaderStats: initializeEnumRecord(LeaderStatType, (value) => {
 				if (props.stats) {
@@ -746,8 +748,10 @@ export default class ServerCard implements Card {
 	 */
 	protected createEffect(event: GameEventType.CARD_DRAWN): EventSubscription<CardDrawnEventArgs>
 	protected createEffect(event: GameEventType.CARD_RETURNED): EventSubscription<CardReturnedEventArgs>
+	protected createEffect(event: GameEventType.UNIT_CREATED): EventSubscription<UnitCreatedEventArgs>
 	protected createEffect(event: GameEventType.UNIT_DEPLOYED): EventSubscription<UnitDeployedEventArgs>
 	protected createEffect(event: GameEventType.SPELL_DEPLOYED): EventSubscription<SpellDeployedEventArgs>
+	protected createEffect(event: GameEventType.UNIT_MOVED): EventSubscription<UnitMovedEventArgs>
 	/**
 	 * @deprecated
 	 * Use `createDeployTargets(...).perform` instead

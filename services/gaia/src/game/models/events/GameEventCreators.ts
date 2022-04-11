@@ -227,6 +227,7 @@ export default {
 	unitCreated: (args: UnitCreatedEventArgs): GameEvent => ({
 		type: GameEventType.UNIT_CREATED,
 		args: args,
+		effectSource: args.triggeringUnit.card,
 		logVariables: {
 			triggeringUnit: args.triggeringUnit.card.id,
 		},
@@ -234,6 +235,7 @@ export default {
 	unitMoved: (args: UnitMovedEventArgs): GameEvent => ({
 		type: GameEventType.UNIT_MOVED,
 		args: args,
+		effectSource: args.triggeringUnit.card,
 		logSubtype: args.direction === MoveDirection.FORWARD ? 'forward' : args.direction === MoveDirection.BACK ? 'backward' : 'sameRow',
 		logVariables: {
 			triggeringUnit: args.triggeringUnit.card.id,

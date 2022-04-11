@@ -1,5 +1,4 @@
 import CardFeature from '@shared/enums/CardFeature'
-import CardType from '@shared/enums/CardType'
 import LeaderStatType from '@shared/enums/LeaderStatType'
 import CardStats from '@shared/models/CardStats'
 import { initializeEnumRecord } from '@shared/Utils'
@@ -13,6 +12,7 @@ import ServerGame from './ServerGame'
 interface ServerCardStatsProps {
 	power: number
 	armor: number
+	unitCost: number
 	spellCost: number
 	leaderStats: Record<LeaderStatType, number>
 }
@@ -45,14 +45,14 @@ export default class ServerCardStats implements CardStats {
 
 		this.__power = props.power
 		this.__armor = props.armor
-		this.__unitCost = card.type === CardType.UNIT ? 1 : 0
+		this.__unitCost = props.unitCost
 		this.__spellCost = props.spellCost
 
 		this.__maxPower = props.power
 		this.__maxArmor = props.armor
 		this.__basePower = props.power
 		this.__baseArmor = props.armor
-		this.__baseUnitCost = card.type === CardType.UNIT ? 1 : 0
+		this.__baseUnitCost = props.unitCost
 		this.__baseSpellCost = props.spellCost
 
 		this.__baseLeaderStatValue = props.leaderStats

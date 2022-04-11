@@ -179,6 +179,24 @@ export default class ServerBoard implements Board {
 		return row.cards.filter((card) => requiredDistances.includes(Math.abs(card.unitIndex - unitIndex)))
 	}
 
+	public getLeftAdjacentUnit(reference: ServerUnit | { targetRow: ServerBoardRow; targetPosition: number } | null): ServerUnit | null {
+		if (!reference) {
+			return null
+		}
+		const unitIndex = reference instanceof ServerUnit ? reference.unitIndex : reference.targetPosition
+		const adjacentUnits = this.getAdjacentUnits(reference)
+		return adjacentUnits.find((unit) => unit.unitIndex < unitIndex) || null
+	}
+
+	public getRightAdjacentUnit(reference: ServerUnit | { targetRow: ServerBoardRow; targetPosition: number } | null): ServerUnit | null {
+		if (!reference) {
+			return null
+		}
+		const unitIndex = reference instanceof ServerUnit ? reference.unitIndex : reference.targetPosition
+		const adjacentUnits = this.getAdjacentUnits(reference)
+		return adjacentUnits.find((unit) => unit.unitIndex > unitIndex) || null
+	}
+
 	public getOpposingUnits(thisUnit: ServerUnit): ServerUnit[] {
 		return this.game.board
 			.getUnitsOwnedByOpponent(thisUnit.card.ownerPlayer)

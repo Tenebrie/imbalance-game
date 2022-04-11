@@ -18,6 +18,16 @@ enum CardTribe {
 	VOIDSPAWN = 'voidspawn',
 	MANIFESTATION = 'manifestation',
 
+	DRACONID = 'draconid',
+	WILD_HUNT = 'wildHunt',
+	CONSTRUCT = 'construct',
+	MACHINE = 'machine',
+	CURSED = 'cursed',
+	VAMPIRE = 'vampire',
+	NECROPHAGE = 'necrophage',
+	BOON = 'BOON',
+	HAZARD = 'HAZARD',
+
 	LOST = 'lost',
 	RITES_WEAPON = 'ritesWeapon',
 	RITES_ARMOR = 'ritesArmor',
