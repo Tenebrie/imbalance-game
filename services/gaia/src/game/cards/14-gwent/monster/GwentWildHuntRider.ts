@@ -3,42 +3,35 @@ import CardFaction from '@shared/enums/CardFaction'
 import CardTribe from '@shared/enums/CardTribe'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import TargetType from '@shared/enums/TargetType'
 
 import ServerCard from '../../../models/ServerCard'
-import { DamageInstance } from '../../../models/ServerDamageSource'
 import ServerGame from '../../../models/ServerGame'
 
-export default class GwentWyvern extends ServerCard {
-	public static readonly DAMAGE = 5
+export default class GwentWildHuntRider extends ServerCard {
+	public static readonly EXTRA_DAMAGE = 1
 
 	constructor(game: ServerGame) {
 		super(game, {
 			type: CardType.UNIT,
 			color: CardColor.BRONZE,
 			faction: CardFaction.MONSTER,
-			tribes: [CardTribe.DRACONID],
+			tribes: [CardTribe.WILD_HUNT, CardTribe.SOLDIER],
 			stats: {
-				power: 6,
+				power: 10,
 			},
 			expansionSet: ExpansionSet.GWENT,
 		})
 		this.dynamicTextVariables = {
-			damage: GwentWyvern.DAMAGE,
+			extraDamage: GwentWildHuntRider.EXTRA_DAMAGE,
 		}
 
 		this.createLocalization({
 			en: {
-				name: 'Wyvern',
-				description: 'Deal {damage} damage to an enemy.',
-				flavor: 'Imagine a cross between a winged snake and a nightmare. Wyverns are worse.',
+				name: 'Wild Hunt Rider',
+				description: 'Increase the damage dealt by *Biting Frost* on the opposite row by {extraDamage}.',
+				flavor:
+					"First the buffalo horns atop their helms penetrate one's view, then the crest betwixt them, and finally the skull-like face exposed beneath their visors.",
 			},
 		})
-
-		this.createDeployTargets(TargetType.UNIT)
-			.requireEnemy()
-			.perform(({ targetUnit }) => {
-				targetUnit.dealDamage(DamageInstance.fromCard(GwentWyvern.DAMAGE, this))
-			})
 	}
 }

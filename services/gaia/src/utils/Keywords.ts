@@ -425,7 +425,19 @@ const Keywords = {
 				consumer.game.animation.instantThread(() => {
 					const power = unit.card.stats.power
 					const extraPower = unit.card.buffs.getIntensity(BuffGwentExtraConsumePower)
+
+					const consumeEventArgs = {
+						game: consumer.game,
+						triggeringCard: unit.card,
+						triggeringUnit: unit,
+						owner: unit.originalOwner,
+						rowIndex: unit.rowIndex,
+						unitIndex: unit.unitIndex,
+						consumer,
+					}
+
 					Keywords.destroyUnit({ unit, affectedCards: [consumer] })
+					consumer.game.events.postEvent(GameEventCreators.unitConsumed(consumeEventArgs))
 					consumer.buffs.addMultiple(BuffStrength, power + extraPower, null, 'default', true)
 				})
 			})

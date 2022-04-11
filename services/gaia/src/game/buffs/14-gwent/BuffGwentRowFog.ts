@@ -1,12 +1,11 @@
 import BuffAlignment from '@shared/enums/BuffAlignment'
 import GameEventType from '@shared/enums/GameEventType'
 import { shuffle } from '@shared/Utils'
-import GwentWildHuntRider from '@src/game/cards/14-gwent/monster/GwentWildHuntRider'
 
 import { BuffConstructorParams, ServerRowBuff } from '../../models/buffs/ServerBuff'
 import { DamageInstance } from '../../models/ServerDamageSource'
 
-export default class BuffGwentRowFrost extends ServerRowBuff {
+export default class BuffGwentRowFog extends ServerRowBuff {
 	public static DAMAGE = 2
 
 	constructor(params: BuffConstructorParams) {
@@ -25,13 +24,9 @@ export default class BuffGwentRowFrost extends ServerRowBuff {
 			return
 		}
 
-		const oppositeRow = this.game.board.getOppositeRow(this.parent)
-		const wildHuntRidersCount = oppositeRow.cards.filter((card) => card instanceof GwentWildHuntRider).length
-		const damage = BuffGwentRowFrost.DAMAGE + wildHuntRidersCount * GwentWildHuntRider.EXTRA_DAMAGE
-
-		const lowestPower = cards.sort((a, b) => a.card.stats.power - b.card.stats.power)[0].card.stats.power
+		const lowestPower = cards.sort((a, b) => b.card.stats.power - a.card.stats.power)[0].card.stats.power
 		const lowestUnits = cards.filter((unit) => unit.card.stats.power === lowestPower)
 		const targetUnit = shuffle(lowestUnits)[0]
-		targetUnit.dealDamage(DamageInstance.fromRow(damage, this.parent))
+		targetUnit.dealDamage(DamageInstance.fromRow(BuffGwentRowFog.DAMAGE, this.parent))
 	}
 }

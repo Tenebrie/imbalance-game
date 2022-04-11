@@ -4,31 +4,36 @@ import CardTribe from '@shared/enums/CardTribe'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import TargetType from '@shared/enums/TargetType'
-import UnitDestructionReason from '@src/enums/UnitDestructionReason'
-import GameEventCreators from '@src/game/models/events/GameEventCreators'
+import ServerAnimation from '@src/game/models/ServerAnimation'
 import Keywords from '@src/utils/Keywords'
+import { getConstructorFromCard } from '@src/utils/Utils'
 
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
 
-export default class GwentGriffin extends ServerCard {
+export default class GwentNekkerWarrior extends ServerCard {
+	public static readonly EXTRA_COPIES = 2
+
 	constructor(game: ServerGame) {
 		super(game, {
 			type: CardType.UNIT,
 			color: CardColor.BRONZE,
 			faction: CardFaction.MONSTER,
-			tribes: [CardTribe.BEAST],
+			tribes: [CardTribe.OGROID],
 			stats: {
 				power: 9,
 			},
 			expansionSet: ExpansionSet.GWENT,
 		})
+		this.dynamicTextVariables = {
+			extraCopies: GwentNekkerWarrior.EXTRA_COPIES,
+		}
 
 		this.createLocalization({
 			en: {
-				name: 'Griffin',
-				description: 'Trigger the *Deathwish* of a Bronze ally.',
-				flavor: "Griffins like to toy with their prey. Eat 'em alive, piece by piece.",
+				name: 'Nekker Warrior',
+				description: 'Choose a Bronze ally and add {copiesToAdd} copies of it to the bottom of your deck.',
+				flavor: "Take heed, gents, there's nekkers under this here bridge.",
 			},
 		})
 
@@ -37,19 +42,10 @@ export default class GwentGriffin extends ServerCard {
 			.requireNotSelf()
 			.require(({ targetUnit }) => targetUnit.card.color === CardColor.BRONZE)
 			.perform(({ targetUnit }) => {
-				Keywords.triggerEvent(
-					targetUnit.card,
-					GameEventCreators.unitDestroyed({
-						game,
-						triggeringCard: targetUnit.card,
-						triggeringUnit: targetUnit,
-						reason: UnitDestructionReason.CARD_EFFECT,
-						destroyer: this,
-						owner: targetUnit.originalOwner,
-						rowIndex: targetUnit.rowIndex,
-						unitIndex: targetUnit.unitIndex,
-					})
-				)
+				game.animation.play(ServerAnimation.cardInfuse(this))
+				for (let i = 0; i < GwentNekkerWarrior.EXTRA_COPIES; i++) {
+					Keywords.addCardToDeck(this.ownerPlayer, getConstructorFromCard(targetUnit.card))
+				}
 			})
 	}
 }

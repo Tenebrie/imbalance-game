@@ -4,41 +4,43 @@ import CardTribe from '@shared/enums/CardTribe'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import TargetType from '@shared/enums/TargetType'
+import BuffStrength from '@src/game/buffs/BuffStrength'
+import { DamageInstance } from '@src/game/models/ServerDamageSource'
 
 import ServerCard from '../../../models/ServerCard'
-import { DamageInstance } from '../../../models/ServerDamageSource'
 import ServerGame from '../../../models/ServerGame'
 
-export default class GwentWyvern extends ServerCard {
-	public static readonly DAMAGE = 5
+export default class GwentEkimarra extends ServerCard {
+	private static readonly DAMAGE = 3
 
 	constructor(game: ServerGame) {
 		super(game, {
 			type: CardType.UNIT,
 			color: CardColor.BRONZE,
 			faction: CardFaction.MONSTER,
-			tribes: [CardTribe.DRACONID],
+			tribes: [CardTribe.VAMPIRE],
 			stats: {
-				power: 6,
+				power: 5,
 			},
 			expansionSet: ExpansionSet.GWENT,
 		})
 		this.dynamicTextVariables = {
-			damage: GwentWyvern.DAMAGE,
+			damage: GwentEkimarra.DAMAGE,
 		}
 
 		this.createLocalization({
 			en: {
-				name: 'Wyvern',
-				description: 'Deal {damage} damage to an enemy.',
-				flavor: 'Imagine a cross between a winged snake and a nightmare. Wyverns are worse.',
+				name: 'Ekimarra',
+				description: '*Drain* a unit by 3.',
+				flavor: 'Who would think that overgrown bats would have a taste for gaudy jewelry?',
 			},
 		})
 
 		this.createDeployTargets(TargetType.UNIT)
 			.requireEnemy()
 			.perform(({ targetUnit }) => {
-				targetUnit.dealDamage(DamageInstance.fromCard(GwentWyvern.DAMAGE, this))
+				targetUnit.dealDamage(DamageInstance.fromCard(GwentEkimarra.DAMAGE, this))
+				this.buffs.addMultiple(BuffStrength, GwentEkimarra.DAMAGE, this)
 			})
 	}
 }

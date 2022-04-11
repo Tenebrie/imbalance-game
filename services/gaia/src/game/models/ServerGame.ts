@@ -477,7 +477,9 @@ export default class ServerGame implements SourceGame {
 				unit.card.buffs.add(BuffMorningApathy, null)
 			})
 
-		const unitsToDestroy = this.board.getAllUnits().filter((unit) => !unit.card.features.includes(CardFeature.NIGHTWATCH))
+		const unitsToDestroy = this.board
+			.getAllUnits()
+			.filter((unit) => !unit.card.features.includes(CardFeature.NIGHTWATCH) && !unit.card.features.includes(CardFeature.RESILIENCE))
 
 		unitsToDestroy.forEach((unit) => {
 			this.animation.thread(() => {
@@ -497,6 +499,13 @@ export default class ServerGame implements SourceGame {
 				this.board.destroyUnit(unit, {
 					reason: UnitDestructionReason.ROUND_END,
 				})
+			})
+		})
+
+		const unitsToCleanse = this.board.getAllUnits().filter((unit) => unit.card.features.includes(CardFeature.RESILIENCE))
+		unitsToCleanse.forEach((unit) => {
+			this.animation.thread(() => {
+				unit.buffs.removeAllSystemDispellable()
 			})
 		})
 

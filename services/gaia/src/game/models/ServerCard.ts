@@ -59,6 +59,7 @@ import GameEventCreators, {
 	SpellManaGeneratedEventArgs,
 	TurnEndedEventArgs,
 	TurnStartedEventArgs,
+	UnitConsumedEventArgs,
 	UnitCreatedEventArgs,
 	UnitDeployedEventArgs,
 	UnitDestroyedEventArgs,
@@ -708,6 +709,7 @@ export default class ServerCard implements Card {
 	): EventSubscription<UnitOrderedRowEventArgs>
 	protected createCallback(event: GameEventType.UNIT_CREATED, location: CardLocation[] | 'any'): EventSubscription<UnitCreatedEventArgs>
 	protected createCallback(event: GameEventType.CARD_DESTROYED, location: CardLocation[] | 'any'): EventSubscription<CardDestroyedEventArgs>
+	protected createCallback(event: GameEventType.UNIT_CONSUMED, location: CardLocation[] | 'any'): EventSubscription<UnitConsumedEventArgs>
 	protected createCallback(event: GameEventType.UNIT_DESTROYED, location: CardLocation[] | 'any'): EventSubscription<UnitDestroyedEventArgs>
 	protected createCallback(
 		event: GameEventType.AFTER_UNIT_DESTROYED,
@@ -784,6 +786,7 @@ export default class ServerCard implements Card {
 	protected createEffect(event: GameEventType.UNIT_ORDERED_ROW): EventSubscription<UnitOrderedRowEventArgs>
 	protected createEffect(event: GameEventType.UNIT_NIGHTFALL): EventSubscription<UnitNightfallEventArgs>
 	protected createEffect(event: GameEventType.UNIT_DESTROYED): EventSubscription<UnitDestroyedEventArgs>
+	protected createEffect(event: GameEventType.AFTER_UNIT_DESTROYED): EventSubscription<UnitDestroyedEventArgs>
 	protected createEffect(event: GameEventType.CARD_DESTROYED): EventSubscription<CardDestroyedEventArgs>
 	protected createEffect<ArgsType extends SharedEventArgs>(event: GameEventType): EventSubscription<ArgsType> {
 		return this.game.events

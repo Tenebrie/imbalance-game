@@ -371,6 +371,15 @@ export default class ServerBoard implements Board {
 		return targetRow
 	}
 
+	public getOppositeRow(rowOrIndex: ServerBoardRow | number): ServerBoardRow {
+		const row = rowOrIndex instanceof ServerBoardRow ? rowOrIndex : this.rows[rowOrIndex]
+		if (!row.owner) {
+			throw new Error(`Row ${row.index} has no owner.`)
+		}
+		const relativeDistance = this.getDistanceToFront(row.owner, row)
+		return this.getControlledRows(row.owner.opponent)[relativeDistance]
+	}
+
 	public createUnit(card: ServerCard, createdBy: ServerPlayerInGame, rowIndex: number, unitIndex: number): ServerUnit | null {
 		const targetRow = this.rows[rowIndex]
 		return targetRow.createUnit(card, createdBy, unitIndex)

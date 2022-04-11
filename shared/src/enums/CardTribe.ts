@@ -26,6 +26,9 @@ enum CardTribe {
 	VAMPIRE = 'vampire',
 	NECROPHAGE = 'necrophage',
 	OGROID = 'ogroid',
+	RELICT = 'relict',
+	INSECTOID = 'insectoid',
+	MAGE = 'mage',
 	BOON = 'boon',
 	HAZARD = 'hazard',
 

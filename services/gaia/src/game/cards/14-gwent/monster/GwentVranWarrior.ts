@@ -54,11 +54,13 @@ export default class GwentVranWarrior extends ServerCard {
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(() => doAbility())
 
-		this.createCallback(GameEventType.TURN_STARTED, [CardLocation.BOARD]).perform(() => {
-			this.turnsCounted += 1
-			if (this.turnsCounted >= GwentVranWarrior.TURNS_TO_REPEAT) {
-				doAbility()
-			}
-		})
+		this.createCallback(GameEventType.TURN_STARTED, [CardLocation.BOARD])
+			.require(({ group }) => group.owns(this))
+			.perform(() => {
+				this.turnsCounted += 1
+				if (this.turnsCounted >= GwentVranWarrior.TURNS_TO_REPEAT) {
+					doAbility()
+				}
+			})
 	}
 }

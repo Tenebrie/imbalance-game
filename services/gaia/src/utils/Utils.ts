@@ -286,6 +286,10 @@ export const getClassFromConstructor = (constructor: BuffConstructor | CardConst
 	return constructor.name.substr(0, 1).toLowerCase() + constructor.name.substr(1)
 }
 
+export const getConstructorFromBuff = (buff: ServerBuff): BuffConstructor => {
+	return buff.constructor as BuffConstructor
+}
+
 export const getConstructorFromCard = (card: ServerCard): CardConstructor => {
 	return card.constructor as CardConstructor
 }

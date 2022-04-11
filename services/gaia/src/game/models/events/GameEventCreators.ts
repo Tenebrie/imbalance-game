@@ -280,8 +280,8 @@ export default {
 			targetPosition: args.targetArguments.targetPosition,
 		},
 	}),
-	unitNightfall: (args: UnitNightfallEventArgs): GameEvent => ({
-		type: GameEventType.UNIT_NIGHTFALL,
+	unitConsumed: (args: UnitConsumedEventArgs): GameEvent => ({
+		type: GameEventType.UNIT_CONSUMED,
 		args: args,
 		effectSource: args.triggeringCard,
 		logVariables: {
@@ -298,6 +298,15 @@ export default {
 	}),
 	afterUnitDestroyed: (args: UnitDestroyedEventArgs): GameEvent => ({
 		type: GameEventType.UNIT_DESTROYED,
+		args: args,
+		effectSource: args.triggeringCard,
+		logVariables: {
+			triggeringUnit: args.triggeringUnit.card.id,
+		},
+	}),
+
+	unitNightfall: (args: UnitNightfallEventArgs): GameEvent => ({
+		type: GameEventType.UNIT_NIGHTFALL,
 		args: args,
 		effectSource: args.triggeringCard,
 		logVariables: {
@@ -562,9 +571,13 @@ export interface UnitOrderedPositionEventArgs extends SharedEventArgs {
 	targetPosition: number
 	targetArguments: ServerCardTargetPosition
 }
-export interface UnitNightfallEventArgs extends SharedEventArgs {
+export interface UnitConsumedEventArgs extends SharedEventArgs {
 	triggeringCard: ServerCard
 	triggeringUnit: ServerUnit
+	consumer: ServerCard
+	owner: ServerPlayerInGame
+	rowIndex: number
+	unitIndex: number
 }
 export interface UnitDestroyedEventArgs extends SharedEventArgs {
 	triggeringCard: ServerCard
@@ -574,6 +587,11 @@ export interface UnitDestroyedEventArgs extends SharedEventArgs {
 	owner: ServerPlayerInGame
 	rowIndex: number
 	unitIndex: number
+}
+
+export interface UnitNightfallEventArgs extends SharedEventArgs {
+	triggeringCard: ServerCard
+	triggeringUnit: ServerUnit
 }
 
 export interface UnitDeployedEventArgs extends SharedEventArgs {

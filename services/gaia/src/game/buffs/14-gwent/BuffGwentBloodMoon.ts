@@ -9,7 +9,7 @@ export default class BuffGwentBloodMoon extends ServerRowBuff {
 
 	constructor(params: BuffConstructorParams) {
 		super(params, {
-			alignment: BuffAlignment.POSITIVE,
+			alignment: BuffAlignment.NEGATIVE,
 		})
 
 		this.createEffect(GameEventType.ROW_BUFF_CREATED).perform(() => {

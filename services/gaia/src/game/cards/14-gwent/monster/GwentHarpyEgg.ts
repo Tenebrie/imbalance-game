@@ -38,7 +38,7 @@ export default class GwentHarpyEgg extends ServerCard {
 			},
 		})
 
-		this.createEffect(GameEventType.UNIT_DESTROYED)
+		this.createEffect(GameEventType.AFTER_UNIT_DESTROYED)
 			.require(({ reason }) => reason === UnitDestructionReason.CARD_EFFECT)
 			.perform(() => {
 				const targetRow = shuffle(game.board.getControlledRows(this.ownerGroup))[0]

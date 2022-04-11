@@ -39,12 +39,12 @@ export default class GwentIceTroll extends ServerCard {
 					const isDoubleDamage = game.board.rows[targetUnit.rowIndex].buffs.has(BuffGwentRowFrost)
 					const damageMultiplier = isDoubleDamage ? 2 : 1
 					targetUnit.dealDamage(DamageInstance.fromCard(this.stats.power * damageMultiplier, this))
-					if (targetUnit.card.isDead) {
+					if (targetUnit.card.stats.power <= 0) {
 						break
 					}
 
 					this.dealDamage(DamageInstance.fromCard(targetUnit.card.stats.power, targetUnit.card))
-					if (this.isDead) {
+					if (this.stats.power <= 0) {
 						break
 					}
 				}

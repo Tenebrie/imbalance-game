@@ -4,14 +4,14 @@ import CardTribe from '@shared/enums/CardTribe'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import TargetType from '@shared/enums/TargetType'
+import ServerAnimation from '@src/game/models/ServerAnimation'
+import Keywords from '@src/utils/Keywords'
+import { getConstructorFromCard } from '@src/utils/Utils'
 
 import ServerCard from '../../../models/ServerCard'
-import { DamageInstance } from '../../../models/ServerDamageSource'
 import ServerGame from '../../../models/ServerGame'
 
-export default class GwentWyvern extends ServerCard {
-	public static readonly DAMAGE = 5
-
+export default class GwentCockatrice extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, {
 			type: CardType.UNIT,
@@ -23,22 +23,21 @@ export default class GwentWyvern extends ServerCard {
 			},
 			expansionSet: ExpansionSet.GWENT,
 		})
-		this.dynamicTextVariables = {
-			damage: GwentWyvern.DAMAGE,
-		}
 
 		this.createLocalization({
 			en: {
-				name: 'Wyvern',
-				description: 'Deal {damage} damage to an enemy.',
-				flavor: 'Imagine a cross between a winged snake and a nightmare. Wyverns are worse.',
+				name: 'Cockatrice',
+				description: '*Reset* a unit.',
+				flavor:
+					'Always strikes between the vertebrae, under your left kidney or straight into your aorta. That way, it only needs to strike once.',
 			},
 		})
 
 		this.createDeployTargets(TargetType.UNIT)
-			.requireEnemy()
+			.requireNotSelf()
 			.perform(({ targetUnit }) => {
-				targetUnit.dealDamage(DamageInstance.fromCard(GwentWyvern.DAMAGE, this))
+				game.animation.play(ServerAnimation.cardAffectsCards(this, [targetUnit.card]))
+				Keywords.transformUnit(targetUnit, getConstructorFromCard(targetUnit.card))
 			})
 	}
 }
