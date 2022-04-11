@@ -1,6 +1,7 @@
 import Constants from '@shared/Constants'
 import CardLocation from '@shared/enums/CardLocation'
 import CardType from '@shared/enums/CardType'
+import BuffGwentExtraConsumePower from '@src/game/buffs/14-gwent/BuffGwentExtraConsumePower'
 import BuffStrength from '@src/game/buffs/BuffStrength'
 import UnitShatteredSpace from '@src/game/cards/01-arcane/tokens/UnitShatteredSpace'
 import GameEventCreators, { GameEvent } from '@src/game/models/events/GameEventCreators'
@@ -77,6 +78,18 @@ const Keywords = {
 		const unit = game.board.createUnit(card, owner, rowIndex, unitIndex)
 		if (!unit) {
 			owner.cardHand.addUnit(card)
+		}
+		return unit
+	},
+
+	summonUnitFromDeck: (args: { card: ServerCard; owner: ServerPlayerInGame; rowIndex: number; unitIndex: number }): ServerUnit | null => {
+		const { card, owner, rowIndex, unitIndex } = args
+
+		const game = owner.game
+		owner.cardDeck.removeCard(card)
+		const unit = game.board.createUnit(card, owner, rowIndex, unitIndex)
+		if (!unit) {
+			owner.cardDeck.addUnitToTop(card)
 		}
 		return unit
 	},
@@ -379,6 +392,26 @@ const Keywords = {
 	}),
 
 	consume: {
+		cards: (args: { targets: ServerCard[]; consumer: ServerCard }): void => {
+			const { targets, consumer } = args
+
+			targets.forEach((card) => {
+				consumer.game.animation.instantThread(() => {
+					const power = card.stats.power
+					const extraPower = card.buffs.getIntensity(BuffGwentExtraConsumePower)
+					if (card.location === CardLocation.DECK) {
+						card.ownerPlayer.cardDeck.removeCard(card)
+					} else if (card.location === CardLocation.GRAVEYARD) {
+						card.ownerPlayer.cardGraveyard.removeCard(card)
+					} else {
+						throw new Error(`Unable to consume card in location ${card.localization}`)
+					}
+					consumer.buffs.addMultiple(BuffStrength, power + extraPower, null, 'default', true)
+				})
+			})
+			consumer.game.animation.syncAnimationThreads()
+		},
+
 		units: (args: { targets: ServerUnit[]; consumer: ServerCard }): void => {
 			const { targets, consumer } = args
 
@@ -391,8 +424,9 @@ const Keywords = {
 			targets.forEach((unit) => {
 				consumer.game.animation.instantThread(() => {
 					const power = unit.card.stats.power
+					const extraPower = unit.card.buffs.getIntensity(BuffGwentExtraConsumePower)
 					Keywords.destroyUnit({ unit, affectedCards: [consumer] })
-					consumer.buffs.addMultiple(BuffStrength, power, null, 'default', true)
+					consumer.buffs.addMultiple(BuffStrength, power + extraPower, null, 'default', true)
 				})
 			})
 			consumer.game.animation.syncAnimationThreads()

@@ -25,8 +25,9 @@ enum CardTribe {
 	CURSED = 'cursed',
 	VAMPIRE = 'vampire',
 	NECROPHAGE = 'necrophage',
-	BOON = 'BOON',
-	HAZARD = 'HAZARD',
+	OGROID = 'ogroid',
+	BOON = 'boon',
+	HAZARD = 'hazard',
 
 	LOST = 'lost',
 	RITES_WEAPON = 'ritesWeapon',

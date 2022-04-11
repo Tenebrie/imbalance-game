@@ -494,22 +494,27 @@ export default class ServerBoard implements Board {
 			this.game.animation.play(ServerAnimation.cardAffectsCards(args.destroyer, [unit.card]))
 		}
 
-		this.game.events.postEvent(
-			GameEventCreators.unitDestroyed({
-				game: this.game,
-				triggeringCard: unit.card,
-				triggeringUnit: unit,
-				reason,
-			})
-		)
+		const destroyEventArgs = {
+			game: this.game,
+			triggeringCard: unit.card,
+			triggeringUnit: unit,
+			destroyer: args.destroyer || null,
+			owner: unit.originalOwner,
+			rowIndex: unit.rowIndex,
+			unitIndex: unit.unitIndex,
+			reason,
+		}
+
+		this.game.events.postEvent(GameEventCreators.unitDestroyed(destroyEventArgs))
 
 		if (args.affectedCards) {
 			this.game.animation.play(ServerAnimation.unitDestroyWithAffect(card, args.affectedCards))
 		} else {
 			this.game.animation.play(ServerAnimation.unitDestroy(card))
 		}
-		// card.cleanse()
 		this.removeUnit(unit)
+
+		this.game.events.postEvent(GameEventCreators.afterUnitDestroyed(destroyEventArgs))
 
 		if (card.features.includes(CardFeature.HERO_POWER)) {
 			card.cleanse()

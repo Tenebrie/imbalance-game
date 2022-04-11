@@ -36,6 +36,7 @@ enum GameEventType {
 	UNIT_ORDERED_ROW = 'unitOrderedRow',
 	UNIT_ORDERED_POSITION = 'unitOrderedPosition',
 	UNIT_DESTROYED = 'unitDestroyed',
+	AFTER_UNIT_DESTROYED = 'afterUnitDestroyed',
 
 	UNIT_NIGHTFALL = 'unitNightfall',
 

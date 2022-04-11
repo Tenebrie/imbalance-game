@@ -296,6 +296,14 @@ export default {
 			triggeringUnit: args.triggeringUnit.card.id,
 		},
 	}),
+	afterUnitDestroyed: (args: UnitDestroyedEventArgs): GameEvent => ({
+		type: GameEventType.UNIT_DESTROYED,
+		args: args,
+		effectSource: args.triggeringCard,
+		logVariables: {
+			triggeringUnit: args.triggeringUnit.card.id,
+		},
+	}),
 
 	unitDeployed: (args: UnitDeployedEventArgs): GameEvent => ({
 		type: GameEventType.UNIT_DEPLOYED,
@@ -562,6 +570,10 @@ export interface UnitDestroyedEventArgs extends SharedEventArgs {
 	triggeringCard: ServerCard
 	triggeringUnit: ServerUnit
 	reason: UnitDestructionReason
+	destroyer: ServerCard | null
+	owner: ServerPlayerInGame
+	rowIndex: number
+	unitIndex: number
 }
 
 export interface UnitDeployedEventArgs extends SharedEventArgs {

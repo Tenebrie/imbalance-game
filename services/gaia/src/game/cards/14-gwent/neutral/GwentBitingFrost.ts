@@ -16,6 +16,7 @@ export default class GwentBitingFrost extends ServerCard {
 			faction: CardFaction.NEUTRAL,
 			stats: {
 				cost: 0,
+				unitCost: 1,
 			},
 			expansionSet: ExpansionSet.GWENT,
 		})

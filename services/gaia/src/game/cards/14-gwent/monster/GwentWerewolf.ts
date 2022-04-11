@@ -32,7 +32,7 @@ export default class GwentWerewolf extends ServerCard {
 		this.createLocalization({
 			en: {
 				name: 'Werewolf',
-				description: 'Boost this unit by 7 on first contact with *Full Moon*.',
+				description: '*Immune*<p>Boost this unit by 7 on first contact with *Full Moon*.',
 				flavor:
 					"Some say lycanthropy's contagious - get bit by a werewolf, you turn into one yourself. Witchers know that's nonsense, of course - only a powerful curse can bring on this condition.",
 			},

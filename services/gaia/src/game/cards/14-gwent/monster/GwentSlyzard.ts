@@ -37,6 +37,8 @@ export default class GwentSlyzard extends ServerCard {
 
 		// TODO: Test me, probably borken
 		this.createDeployTargets(TargetType.CARD_IN_UNIT_GRAVEYARD)
+			.targetCount(1)
+			.totalTargetCount(2)
 			.require(() => this.deployEffectStage === 'consume')
 			.requireSamePlayer()
 			.require(({ targetCard }) => targetCard.type === CardType.UNIT)
@@ -57,7 +59,8 @@ export default class GwentSlyzard extends ServerCard {
 			})
 
 		this.createDeployTargets(TargetType.CARD_IN_UNIT_DECK)
-			.targetCount(2)
+			.targetCount(1)
+			.totalTargetCount(2)
 			.require(() => this.deployEffectStage === 'play')
 			.require(({ targetCard }) => this.cardsToChoose.includes(targetCard))
 			.perform(({ targetCard }) => {

@@ -234,11 +234,12 @@ export default class ServerCard implements Card {
 		this.sortPriority = props.sortPriority !== undefined ? props.sortPriority : 99
 		this.expansionSet = props.expansionSet
 
+		// TODO: Generalize?
 		this.isCollectible = props.hiddenFromLibrary
 			? false
-			: this.expansionSet !== ExpansionSet.BASE
+			: this.expansionSet !== ExpansionSet.GWENT
 			? false
-			: props.color === CardColor.LEADER || (props.color !== CardColor.TOKEN && props.type === CardType.UNIT)
+			: props.color !== CardColor.TOKEN
 
 		this.isCommunity = props.isCommunity !== undefined ? props.isCommunity : false
 		this.isExperimental = props.isExperimental !== undefined ? props.isExperimental : false
@@ -708,6 +709,10 @@ export default class ServerCard implements Card {
 	protected createCallback(event: GameEventType.UNIT_CREATED, location: CardLocation[] | 'any'): EventSubscription<UnitCreatedEventArgs>
 	protected createCallback(event: GameEventType.CARD_DESTROYED, location: CardLocation[] | 'any'): EventSubscription<CardDestroyedEventArgs>
 	protected createCallback(event: GameEventType.UNIT_DESTROYED, location: CardLocation[] | 'any'): EventSubscription<UnitDestroyedEventArgs>
+	protected createCallback(
+		event: GameEventType.AFTER_UNIT_DESTROYED,
+		location: CardLocation[] | 'any'
+	): EventSubscription<UnitDestroyedEventArgs>
 	protected createCallback(event: GameEventType.CARD_PLAYED, location: CardLocation[] | 'any'): EventSubscription<CardPlayedEventArgs>
 	protected createCallback(event: GameEventType.CARD_RESOLVED, location: CardLocation[] | 'any'): EventSubscription<CardResolvedEventArgs>
 	protected createCallback(
