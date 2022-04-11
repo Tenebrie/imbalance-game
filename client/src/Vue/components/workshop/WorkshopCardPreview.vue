@@ -90,7 +90,7 @@ export default defineComponent({
 			const value = imageRef.value
 			if (value) {
 				imageScaleRef.value = 584 / value.height
-				imageOffsetRef.value = { x: 0, y: 0 }
+				imageOffsetRef.value = { x: -300, y: -410 }
 				value.onload = () => {
 					imageScaleRef.value = 584 / value.height
 					renderFinalCanvas()

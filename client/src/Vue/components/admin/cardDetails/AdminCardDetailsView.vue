@@ -41,7 +41,6 @@
 				</div>
 			</div>
 		</div>
-		<h2>Dev Tools</h2>
 		<div v-if="hasLoaded">
 			<admin-card-art-editor :card="card" />
 		</div>
