@@ -781,6 +781,8 @@ export default class ServerCard implements Card {
 	protected createEffect(event: GameEventType.CARD_TARGETS_CONFIRMED): EventSubscription<CardTargetsConfirmedEventArgs>
 	protected createEffect(event: GameEventType.CARD_PRE_RESOLVED): EventSubscription<CardPreResolvedEventArgs>
 	protected createEffect(event: GameEventType.CARD_RESOLVED): EventSubscription<CardResolvedEventArgs>
+	protected createEffect(event: GameEventType.BEFORE_CARD_TAKES_DAMAGE): EventSubscription<BeforeCardTakesDamageEventArgs>
+	protected createEffect(event: GameEventType.CARD_TAKES_DAMAGE): EventSubscription<CardTakesDamageEventArgs>
 	protected createEffect(event: GameEventType.UNIT_ORDERED_CARD): EventSubscription<UnitOrderedCardEventArgs>
 	protected createEffect(event: GameEventType.UNIT_ORDERED_UNIT): EventSubscription<UnitOrderedUnitEventArgs>
 	protected createEffect(event: GameEventType.UNIT_ORDERED_ROW): EventSubscription<UnitOrderedRowEventArgs>

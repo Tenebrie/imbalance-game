@@ -4,6 +4,7 @@ import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
 import ServerPlayerInGame from '@src/game/players/ServerPlayerInGame'
 
 import ServerBuffContainer from './buffs/ServerBuffContainer'
+import ServerBoardRow from './ServerBoardRow'
 import ServerCard from './ServerCard'
 import ServerDamageInstance from './ServerDamageSource'
 import ServerGame from './ServerGame'
@@ -19,6 +20,14 @@ export default class ServerUnit implements Unit {
 		this.card = card
 		this.owner = owner
 		this.originalOwner = originalOwner
+	}
+
+	public get boardRow(): ServerBoardRow {
+		const row = this.game.board.getRowWithUnit(this)
+		if (!row) {
+			throw new Error(`Unit ${this.card.class} is not on a board row!`)
+		}
+		return row
 	}
 
 	public get rowIndex(): number {

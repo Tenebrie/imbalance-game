@@ -35,6 +35,10 @@ export default class ServerBoardRow implements BoardRow {
 		return this.cards.length === Constants.MAX_CARDS_PER_ROW
 	}
 
+	public isNotFull(): boolean {
+		return !this.isFull()
+	}
+
 	public get farRightUnitIndex(): number {
 		return this.cards.length
 	}
