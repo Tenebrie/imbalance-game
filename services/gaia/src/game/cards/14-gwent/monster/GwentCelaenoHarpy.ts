@@ -41,7 +41,7 @@ export default class GwentCelaenoHarpy extends ServerCard {
 				owner: this.ownerPlayer,
 				cardConstructor: GwentHarpyEgg,
 				rowIndex: triggeringUnit.rowIndex,
-				unitIndex: triggeringUnit.unitIndex - 1,
+				unitIndex: triggeringUnit.unitIndex,
 				count: GwentCelaenoHarpy.EGGS_SPAWNED,
 			})
 		)

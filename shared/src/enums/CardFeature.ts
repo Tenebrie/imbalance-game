@@ -25,6 +25,7 @@ enum CardFeature {
 	RITES_ACTIVE_ENEMY,
 	RITES_UNIT_COOLDOWN,
 	RITES_UNIT_CAN_ATTACK,
+	HAS_DEATHWISH,
 }
 
 export default CardFeature

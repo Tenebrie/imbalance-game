@@ -47,6 +47,7 @@ export default class GwentWildHuntDrakkar extends ServerCard {
 
 		this.createCallback(GameEventType.UNIT_CREATED, [CardLocation.BOARD])
 			.require(({ owner }) => owner.owns(this))
+			.require(({ triggeringCard }) => triggeringCard.tribes.includes(CardTribe.WILD_HUNT))
 			.perform(({ triggeringCard }) => {
 				triggeringCard.buffs.add(BuffStrength, this)
 			})

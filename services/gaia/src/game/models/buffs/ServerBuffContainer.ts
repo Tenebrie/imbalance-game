@@ -5,6 +5,7 @@ import BuffContainer from '@shared/models/BuffContainer'
 import OutgoingBoardUpdateMessages from '@src/game/handlers/outgoing/OutgoingBoardUpdateMessages'
 import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
 import { LeaderStatValueGetter } from '@src/utils/LeaderStats'
+import { getClassFromConstructor } from '@src/utils/Utils'
 
 import OutgoingCardUpdateMessages from '../../handlers/outgoing/OutgoingCardUpdateMessages'
 import OutgoingMessageHandlers from '../../handlers/OutgoingMessageHandlers'
@@ -299,7 +300,7 @@ export default class ServerBuffContainer implements BuffContainer {
 	}
 
 	public removeBySelector(prototype: BuffConstructor, selector: CardSelector, count = Infinity): void {
-		const buffClass = prototype.name.substr(0, 1).toLowerCase() + prototype.name.substr(1)
+		const buffClass = getClassFromConstructor(prototype)
 
 		let stacksLeftToRemove = count
 		let buffsOfType = this.buffs
@@ -318,9 +319,25 @@ export default class ServerBuffContainer implements BuffContainer {
 		}
 	}
 
-	public removeAll(prototype: BuffConstructor): void {
-		const buffClass = prototype.name.substr(0, 1).toLowerCase() + prototype.name.substr(1)
+	public removeAll(prototype: BuffConstructor, source: ServerBuffSource): void {
+		const buffClass = getClassFromConstructor(prototype)
 		const buffsOfType = this.buffs.filter((buff) => buff.class === buffClass)
+		if (buffsOfType.length === 0) {
+			return
+		}
+
+		if (source && !this.buffSkipsAnimation(buffsOfType[0])) {
+			if (this.parent instanceof ServerCard && source instanceof ServerCard && this.parent.isVisuallyRendered) {
+				this.game.animation.play(ServerAnimation.cardAffectsCards(source, [this.parent]))
+			} else if (this.parent instanceof ServerBoardRow && source instanceof ServerCard) {
+				this.game.animation.play(ServerAnimation.cardAffectsRows(source, [this.parent]))
+			} else if (this.parent instanceof ServerCard && source instanceof ServerBoardRow && this.parent.isVisuallyRendered) {
+				this.game.animation.play(ServerAnimation.rowAffectsCards(source, [this.parent]))
+			} else if (this.parent instanceof ServerBoardRow && source instanceof ServerBoardRow) {
+				this.game.animation.play(ServerAnimation.rowAffectsRows(source, [this.parent]))
+			}
+		}
+
 		buffsOfType.forEach((buffToRemove) => {
 			this.removeByReference(buffToRemove)
 		})

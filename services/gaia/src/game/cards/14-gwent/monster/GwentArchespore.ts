@@ -1,5 +1,6 @@
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
+import CardFeature from '@shared/enums/CardFeature'
 import CardLocation from '@shared/enums/CardLocation'
 import CardTribe from '@shared/enums/CardTribe'
 import CardType from '@shared/enums/CardType'
@@ -23,6 +24,7 @@ export default class GwentArchespore extends ServerCard {
 			color: CardColor.BRONZE,
 			faction: CardFaction.MONSTER,
 			tribes: [CardTribe.CURSED],
+			features: [CardFeature.HAS_DEATHWISH],
 			stats: {
 				power: 7,
 			},

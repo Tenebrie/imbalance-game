@@ -93,11 +93,13 @@ export default class ServerBuff implements Buff {
 	public localization: BuffLocalization
 	public dynamicTextVariables: ServerRichTextVariables = {}
 
+	private basePowerOverride: StatOverride | null = null
 	private maxPowerOverride: StatOverride | null = null
 	private maxArmorOverride: StatOverride | null = null
 	private unitCostOverride: StatOverride | null = null
 	private spellCostOverride: StatOverride | null = null
 	private leaderStatOverrides: Map<LeaderStatType, StatOverride | null> = new Map<LeaderStatType, StatOverride | null>()
+	private basePowerOverrideBuilder: StatOverrideBuilder | null = null
 	private maxPowerOverrideBuilder: StatOverrideBuilder | null = null
 	private maxArmorOverrideBuilder: StatOverrideBuilder | null = null
 	private unitCostOverrideBuilder: StatOverrideBuilder | null = null
@@ -276,6 +278,11 @@ export default class ServerBuff implements Buff {
 		return this.game.events.createSelector(this)
 	}
 
+	protected createBasePowerOverride(): StatOverrideBuilder {
+		const builder = new StatOverrideBuilder()
+		this.basePowerOverrideBuilder = builder
+		return builder
+	}
 	protected createMaxPowerOverride(): StatOverrideBuilder {
 		const builder = new StatOverrideBuilder()
 		this.maxPowerOverrideBuilder = builder
@@ -305,6 +312,17 @@ export default class ServerBuff implements Buff {
 		return builder
 	}
 
+	public getBasePowerOverride(baseValue: number): number {
+		if (this.basePowerOverrideBuilder) {
+			this.basePowerOverride = this.basePowerOverrideBuilder.__build()
+			this.basePowerOverrideBuilder = null
+		}
+		if (!this.basePowerOverride) {
+			return baseValue
+		}
+
+		return this.basePowerOverride.apply(baseValue)
+	}
 	public getMaxPowerOverride(baseValue: number): number {
 		if (this.maxPowerOverrideBuilder) {
 			this.maxPowerOverride = this.maxPowerOverrideBuilder.__build()

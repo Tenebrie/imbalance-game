@@ -29,6 +29,7 @@ enum CardTribe {
 	RELICT = 'relict',
 	INSECTOID = 'insectoid',
 	MAGE = 'mage',
+	ORGANIC = 'organic',
 	BOON = 'boon',
 	HAZARD = 'hazard',
 

@@ -2,6 +2,7 @@ import Constants from '@shared/Constants'
 import CardLocation from '@shared/enums/CardLocation'
 import CardType from '@shared/enums/CardType'
 import BuffGwentExtraConsumePower from '@src/game/buffs/14-gwent/BuffGwentExtraConsumePower'
+import BuffGwentLock from '@src/game/buffs/14-gwent/BuffGwentLock'
 import BuffStrength from '@src/game/buffs/BuffStrength'
 import UnitShatteredSpace from '@src/game/cards/01-arcane/tokens/UnitShatteredSpace'
 import GameEventCreators, { GameEvent } from '@src/game/models/events/GameEventCreators'
@@ -245,6 +246,14 @@ const Keywords = {
 
 	triggerEvent: (card: ServerCard, event: GameEvent): void => {
 		card.game.events.postEvent(event, [card])
+	},
+
+	toggleLock: ({ card, source }: { card: ServerCard; source: ServerCard }): void => {
+		if (card.buffs.has(BuffGwentLock)) {
+			card.buffs.removeAll(BuffGwentLock, source)
+		} else {
+			card.buffs.add(BuffGwentLock, source)
+		}
 	},
 
 	addCardToHand: {

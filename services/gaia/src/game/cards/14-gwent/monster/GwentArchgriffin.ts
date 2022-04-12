@@ -5,9 +5,7 @@ import CardTribe from '@shared/enums/CardTribe'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
-import TargetType from '@shared/enums/TargetType'
 import ServerAnimation from '@src/game/models/ServerAnimation'
-import Keywords from '@src/utils/Keywords'
 
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
@@ -42,15 +40,5 @@ export default class GwentArchgriffin extends ServerCard {
 			game.animation.play(ServerAnimation.cardAffectsRows(this, [targetRow]))
 			hazards.forEach((hazard) => targetRow.buffs.removeByReference(hazard))
 		})
-
-		this.createDeployTargets(TargetType.UNIT)
-			.requireAllied()
-			.requireNotSelf()
-			.perform(({ targetUnit }) => {
-				Keywords.consume.units({
-					consumer: this,
-					targets: [targetUnit],
-				})
-			})
 	}
 }
