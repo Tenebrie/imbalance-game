@@ -4,6 +4,7 @@ enum CardFaction {
 	WILD,
 	NEUTRAL,
 
+	SCOIATAEL,
 	MONSTER,
 }
 

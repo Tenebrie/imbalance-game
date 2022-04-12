@@ -8,6 +8,7 @@
 
 <script lang="ts">
 import CardFaction from '@shared/enums/CardFaction'
+import { cardFactionToString } from '@shared/Utils'
 import { computed, defineComponent, PropType } from 'vue'
 
 import Localization from '@/Pixi/Localization'
@@ -34,20 +35,7 @@ export default defineComponent({
 
 	setup(props) {
 		const factionAsString = computed<string>(() => {
-			switch (props.faction) {
-				case CardFaction.HUMAN:
-					return 'human'
-				case CardFaction.ARCANE:
-					return 'arcane'
-				case CardFaction.WILD:
-					return 'wild'
-				case CardFaction.NEUTRAL:
-					return 'neutral'
-				case CardFaction.MONSTER:
-					return 'monster'
-				default:
-					return props.faction
-			}
+			return cardFactionToString(props.faction)
 		})
 
 		const separatorText = computed<string>(() => {

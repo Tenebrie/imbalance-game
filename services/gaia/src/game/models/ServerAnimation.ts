@@ -8,6 +8,7 @@ import RowReceivedBuffAnimParams from '@shared/models/animations/RowReceivedBuff
 import UnitDestroyedWithAffectAnimParams from '@shared/models/animations/UnitDestroyedWithAffectAnimParams'
 import BoardRow from '@shared/models/BoardRow'
 import Card from '@shared/models/Card'
+import AmbushCardMessage from '@shared/models/network/card/AmbushCardMessage'
 import OpenCardMessage from '@shared/models/network/card/OpenCardMessage'
 import Unit from '@shared/models/Unit'
 
@@ -51,7 +52,7 @@ export default class ServerAnimation implements Animation {
 
 	public static cardAnnounce(targetCard: ServerCard): ServerAnimation {
 		const params: CardAnnounceAnimParams = {
-			cardMessage: new OpenCardMessage(targetCard),
+			cardMessage: targetCard.isAmbush ? new AmbushCardMessage(targetCard) : new OpenCardMessage(targetCard),
 		}
 		const animation = new ServerAnimation(AnimationType.CARD_ANNOUNCE, params)
 		animation.targetCard = targetCard
@@ -59,10 +60,7 @@ export default class ServerAnimation implements Animation {
 	}
 
 	public static clearAnnouncedCard(targetCard: ServerCard): ServerAnimation {
-		const params: CardAnnounceAnimParams = {
-			cardMessage: new OpenCardMessage(targetCard),
-		}
-		const animation = new ServerAnimation(AnimationType.CARD_ANNOUNCE_CLEAR, params)
+		const animation = new ServerAnimation(AnimationType.CARD_ANNOUNCE_CLEAR, {})
 		animation.targetCard = targetCard
 		return animation
 	}

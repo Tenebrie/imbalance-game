@@ -27,6 +27,7 @@ export default interface Card {
 	sortPriority: number
 	expansionSet: ExpansionSet
 
+	isAmbush: boolean
 	isCommunity: boolean
 	isCollectible: boolean
 	isExperimental: boolean

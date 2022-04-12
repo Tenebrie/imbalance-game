@@ -307,6 +307,7 @@ export default defineComponent({
 			isCollectible: false,
 			isExperimental: false,
 
+			isAmbush: false,
 			isHidden: false,
 
 			workshopTitle: cardTitle.value,

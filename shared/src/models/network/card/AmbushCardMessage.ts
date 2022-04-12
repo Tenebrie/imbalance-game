@@ -11,14 +11,14 @@ import HiddenCardStatsMessage from '../cardStats/HiddenCardStatsMessage'
 import CardMessage from './CardMessage'
 
 const defaultLocalization: CardLocalizationEntry = {
-	name: '',
+	name: 'Ambush',
 	title: '',
-	flavor: '',
+	flavor: 'Traps are fun, right? Right? Right...',
 	listName: '',
-	description: '',
+	description: "*Ambush:* Played face down, then flips over when the ability's condition is met.",
 }
 
-export default class HiddenCardMessage implements CardMessage {
+export default class AmbushCardMessage implements CardMessage {
 	id: string
 	type: CardType
 	class: string
@@ -40,8 +40,8 @@ export default class HiddenCardMessage implements CardMessage {
 	isCollectible: boolean
 	isExperimental: boolean
 
-	isAmbush: boolean
-	isHidden = true
+	isAmbush = true
+	isHidden = false
 
 	constructor(card: Card) {
 		this.id = card.id
@@ -68,7 +68,5 @@ export default class HiddenCardMessage implements CardMessage {
 		this.isCommunity = false
 		this.isCollectible = false
 		this.isExperimental = false
-
-		this.isAmbush = card.isAmbush
 	}
 }

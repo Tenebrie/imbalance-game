@@ -57,6 +57,7 @@ export default class RenderedCard implements Card {
 	public readonly isCollectible: boolean
 	public readonly isExperimental: boolean
 
+	public isAmbush: boolean
 	public isHidden: boolean
 
 	public coreContainer: PIXI.Container
@@ -112,6 +113,7 @@ export default class RenderedCard implements Card {
 		this.isCollectible = message.isCollectible
 		this.isExperimental = message.isExperimental
 
+		this.isAmbush = message.isAmbush
 		this.isHidden = message.isHidden
 
 		const artworkTexture = message.workshopImage ? message.workshopImage : TextureAtlas.getTexture(`cards/${this.artworkClass}`)

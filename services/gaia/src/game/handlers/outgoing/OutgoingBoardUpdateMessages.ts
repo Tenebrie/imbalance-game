@@ -2,7 +2,7 @@ import BoardRowMessage from '@shared/models/network/BoardRowMessage'
 import OpenRowBuffMessage from '@shared/models/network/buffs/OpenRowBuffMessage'
 import CardRefMessage from '@shared/models/network/card/CardRefMessage'
 import { BoardUpdateMessageType } from '@shared/models/network/messageHandlers/ServerToClientGameMessages'
-import UnitMessage from '@shared/models/network/UnitMessage'
+import UnitMessage from '@shared/models/network/unit/UnitMessage'
 import { ServerRowBuff } from '@src/game/models/buffs/ServerBuff'
 
 import ServerBoardRow from '../../models/ServerBoardRow'
@@ -15,7 +15,7 @@ export default {
 			.forEach((playerInGame) => {
 				playerInGame.player.sendGameMessage({
 					type: BoardUpdateMessageType.UNIT_INSERT,
-					data: new UnitMessage(unit),
+					data: new UnitMessage(unit, playerInGame),
 				})
 			})
 	},
@@ -24,9 +24,10 @@ export default {
 		unit.game.players
 			.flatMap((playerGroup) => playerGroup.players)
 			.forEach((playerInGame) => {
+				// TODO: Send minimal message
 				playerInGame.player.sendGameMessage({
 					type: BoardUpdateMessageType.UNIT_MOVE,
-					data: new UnitMessage(unit),
+					data: new UnitMessage(unit, playerInGame),
 				})
 			})
 	},

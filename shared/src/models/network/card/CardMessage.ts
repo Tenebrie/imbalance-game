@@ -31,5 +31,6 @@ export default interface CardMessage {
 	isCollectible: boolean
 	isExperimental: boolean
 
+	isAmbush: boolean
 	isHidden: boolean
 }

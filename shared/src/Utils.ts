@@ -57,6 +57,8 @@ export const cardFactionToString = (faction: CardFaction): string => {
 			return 'neutral'
 		case CardFaction.MONSTER:
 			return 'monster'
+		case CardFaction.SCOIATAEL:
+			return 'scoiatael'
 		default:
 			throw new Error(`No string specified for faction ${faction}`)
 	}

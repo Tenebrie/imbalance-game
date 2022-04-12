@@ -34,7 +34,7 @@ import PlayerInGameMessage from '../playerInGame/PlayerInGameMessage'
 import PlayersInLobbyMessage from '../PlayersInLobbyMessage'
 import ResolveStackMessage from '../resolveStack/ResolveStackMessage'
 import ResolvingCardTargetsMessage from '../ResolvingCardTargetsMessage'
-import UnitMessage from '../UnitMessage'
+import OpenUnitMessage from '../unit/OpenUnitMessage'
 
 export enum PlayerUpdateMessageType {
 	MORALE = 'pl_morale',
@@ -185,8 +185,8 @@ export enum BoardUpdateMessageType {
 }
 
 export type BoardUpdateMessageTypeMapping = {
-	[BoardUpdateMessageType.UNIT_INSERT]: UnitMessage
-	[BoardUpdateMessageType.UNIT_MOVE]: UnitMessage
+	[BoardUpdateMessageType.UNIT_INSERT]: OpenUnitMessage
+	[BoardUpdateMessageType.UNIT_MOVE]: OpenUnitMessage
 	[BoardUpdateMessageType.UNIT_DESTROY]: CardRefMessage
 	[BoardUpdateMessageType.ROW_OWNER]: BoardRowMessage
 	[BoardUpdateMessageType.ROW_BUFF_ADD]: OpenRowBuffMessage

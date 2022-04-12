@@ -33,6 +33,7 @@ export default class OpenCardMessage implements CardMessage {
 	isCollectible: boolean
 	isExperimental: boolean
 
+	isAmbush = false
 	isHidden = false
 
 	constructor(card: Card) {

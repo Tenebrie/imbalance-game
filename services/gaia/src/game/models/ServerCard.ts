@@ -393,6 +393,10 @@ export default class ServerCard implements Card {
 		return owner.cardDeck.getCardIndex(this)
 	}
 
+	public get isAmbush(): boolean {
+		return this.features.includes(CardFeature.AMBUSH) && !this.isRevealed
+	}
+
 	public dealDamage(damageInstance: ServerDamageInstance): void {
 		this.game.events.postEvent(
 			GameEventCreators.beforeCardTakesDamage({

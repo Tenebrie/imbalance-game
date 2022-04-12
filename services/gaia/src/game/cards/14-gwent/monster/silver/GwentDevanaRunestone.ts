@@ -12,7 +12,7 @@ import Keywords from '@src/utils/Keywords'
 import ServerCard from '../../../../models/ServerCard'
 import ServerGame from '../../../../models/ServerGame'
 
-export default class GwentDewanaRunestone extends ServerCard {
+export default class GwentDevanaRunestone extends ServerCard {
 	public static readonly CARDS_TO_EXPLORE = 3
 
 	exploredCards: ServerCard[] = []
@@ -44,7 +44,7 @@ export default class GwentDewanaRunestone extends ServerCard {
 				.filter((card) => card.color === CardColor.SILVER || card.color === CardColor.BRONZE)
 				.filter((card) => card.faction === CardFaction.MONSTER)
 				.slice()
-			this.exploredCards = shuffle(validCards).slice(0, GwentDewanaRunestone.CARDS_TO_EXPLORE)
+			this.exploredCards = shuffle(validCards).slice(0, GwentDevanaRunestone.CARDS_TO_EXPLORE)
 		})
 
 		this.createDeployTargets(TargetType.CARD_IN_LIBRARY)
