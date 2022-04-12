@@ -70,7 +70,13 @@
 					flavorTextLines.length > 0
 				"
 			/>
-			<a :href="`/workshop?from=${inspectedCard.class.toLowerCase()}`" target="_blank">Open in Workshop</a>
+			<div class="links">
+				<div>
+					<a :href="`/workshop?from=${inspectedCard.class.toLowerCase()}`" target="_blank">Open in Workshop</a>
+				</div>
+				<div v-if="adminLinkVisible" class="menu-separator-horizontal" />
+				<a v-if="adminLinkVisible" :href="`/admin/cards/${inspectedCard.class.toLowerCase()}`">Open in Admin panel</a>
+			</div>
 		</div>
 	</div>
 </template>
@@ -210,6 +216,8 @@ export default defineComponent({
 			return value.split('\n')
 		})
 
+		const adminLinkVisible = process.env.NODE_ENV === 'development'
+
 		return {
 			isInGame,
 			overlayRef,
@@ -225,6 +233,7 @@ export default defineComponent({
 			displayLeaderPowersLabel,
 			onOverlayClick,
 			flavorTextLines,
+			adminLinkVisible,
 			CardType: CardType,
 			CardFeature: CardFeature,
 			snakeToCamelCase: snakeToCamelCase,
@@ -289,6 +298,11 @@ export default defineComponent({
 			font-style: italic;
 		}
 
+		&.workshop-section > .links {
+			display: flex;
+			gap: 16px;
+		}
+
 		.object-name {
 			font-weight: bold;
 			color: $COLOR_SECONDARY;
@@ -300,6 +314,11 @@ export default defineComponent({
 		height: 1px;
 		background: rgba(white, 0.5);
 		margin: 8px 0;
+	}
+
+	.menu-separator-horizontal {
+		width: 1px;
+		background: rgba(white, 0.5);
 	}
 }
 </style>

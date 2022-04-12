@@ -26,7 +26,7 @@ export default class GwentHarpy extends ServerCard {
 		this.createLocalization({
 			en: {
 				name: 'Harpy',
-				description: 'Whenever you destroy an allied Beast, Summon a copy of this unit to the same position.',
+				description: 'Whenever you destroy an allied Beast, *Summon* a copy of this unit to the same position.',
 				flavor: 'There are many species of harpy, and all are kleptomaniacs.',
 			},
 		})

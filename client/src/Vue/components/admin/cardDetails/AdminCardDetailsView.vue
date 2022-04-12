@@ -1,7 +1,7 @@
 <template>
 	<div class="admin-card-details-view">
-		<h2>Card Information</h2>
 		<div class="info" v-if="hasLoaded">
+			<h2>Card Information</h2>
 			<table>
 				<tr>
 					<td class="header">Name:</td>
@@ -32,14 +32,6 @@
 					<td :class="`card-faction ${card.readableFaction}`">{{ card.localizedFaction }}</td>
 				</tr>
 			</table>
-			<div class="card-previews">
-				<div class="preview-container">
-					<pixi-pre-rendered-card :card="card" />
-				</div>
-				<div class="related-preview-container" v-for="relatedCard in card.mappedRelatedCards" :key="relatedCard.class">
-					<pixi-pre-rendered-card :card="relatedCard" />
-				</div>
-			</div>
 		</div>
 		<div v-if="hasLoaded">
 			<admin-card-art-editor :card="card" />
@@ -60,7 +52,6 @@ import { parseRichText } from '@/utils/RichTextParser'
 import { useAdminRouteParams } from '@/Vue/components/editor/AdminRouteParams'
 import store from '@/Vue/store'
 
-import PixiPreRenderedCard from '../../pixi/preRenderedCard/PixiPreRenderedCard.vue'
 import AdminCardArtEditor from './AdminCardArtEditor.vue'
 
 type ExtendedCardMessage = CardMessage & {
@@ -77,7 +68,7 @@ type ExtendedCardMessage = CardMessage & {
 }
 
 export default defineComponent({
-	components: { PixiPreRenderedCard, AdminCardArtEditor },
+	components: { AdminCardArtEditor },
 
 	setup() {
 		const hasLoaded = ref(false)

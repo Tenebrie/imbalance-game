@@ -1,5 +1,12 @@
 <template>
 	<div class="admin-card-art-editor">
+		<workshop-card-preview
+			v-if="card"
+			:card="card"
+			:custom-art="imageRef"
+			:render-overlay="currentState === 'edit'"
+			@canvasReady="onCanvasReady"
+		/>
 		<div class="controls">
 			<div class="file-selector">
 				<label for="myfile" class="button primary"><i class="fas fa-upload" /> Select a file</label>
@@ -8,13 +15,6 @@
 			<button class="primary" @click="onSubmitArt"><i class="fas fa-save" /> Save</button>
 			<button class="primary destructive" @click="onDeleteArt"><i class="fas fa-trash" /> Delete Current Artwork</button>
 		</div>
-		<workshop-card-preview
-			v-if="card"
-			:card="card"
-			:custom-art="imageRef"
-			:render-overlay="currentState === 'edit'"
-			@canvasReady="onCanvasReady"
-		/>
 	</div>
 </template>
 
@@ -125,10 +125,17 @@ export default defineComponent({
 	align-items: center;
 	justify-content: center;
 	padding: 16px;
+	flex-direction: column;
 
 	.controls {
 		flex: 1;
-		margin-right: 16px;
+		display: flex;
+		gap: 8px;
+		width: 100%;
+
+		& > * {
+			flex: 1;
+		}
 
 		input[type='file'] {
 			display: none;
@@ -138,17 +145,19 @@ export default defineComponent({
 	.canvas-container {
 		flex: 3;
 		height: 100%;
-		min-height: calc(584px * 2);
+		width: 100%;
+		border-radius: 8px;
+		min-height: calc(584px * 1.2);
 		background: gray;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		cursor: grab;
-		background-color: #fff;
+		background-color: #292929;
 		background-size: 16px 16px;
 		background-position: 0 0, 8px 8px;
-		background-image: linear-gradient(45deg, #d7d7d7 25%, transparent 25%, transparent 75%, #d7d7d7 75%, #d7d7d7),
-			linear-gradient(45deg, #d7d7d7 25%, transparent 25%, transparent 75%, #d7d7d7 75%, #d7d7d7);
+		background-image: linear-gradient(45deg, #333333 25%, transparent 25%, transparent 75%, #333333 75%, #333333),
+			linear-gradient(45deg, #333333 25%, transparent 25%, transparent 75%, #333333 75%, #333333);
 	}
 
 	.canvas-container:active {

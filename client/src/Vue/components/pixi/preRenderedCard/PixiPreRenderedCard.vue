@@ -37,8 +37,8 @@ export default defineComponent({
 				appendImageNode()
 			} else {
 				const o = new IntersectionObserver(([entry]) => {
-					if (entry.intersectionRatio === 1) {
-						isVisibleOnScreen.value = entry.intersectionRatio === 1
+					if (entry.isIntersecting) {
+						isVisibleOnScreen.value = true
 						o.disconnect()
 					}
 				})
@@ -96,4 +96,8 @@ export default defineComponent({
 
 <style scoped lang="scss">
 @import 'src/Vue/styles/generic';
+
+.pixi-library-card {
+	height: 100%;
+}
 </style>

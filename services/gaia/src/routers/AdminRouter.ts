@@ -32,7 +32,7 @@ router.get(
 	'/cards/:cardClass',
 	AsyncHandler(async (req, res: Response) => {
 		const targetCardClass = req.params['cardClass']
-		const targetCard = CardLibrary.cards.find((card) => card.class === targetCardClass)
+		const targetCard = CardLibrary.cards.find((card) => card.class.toLowerCase() === targetCardClass.toLowerCase())
 		if (!targetCard) {
 			throw { status: 500, error: `No card exists with class ${targetCardClass}` }
 		}

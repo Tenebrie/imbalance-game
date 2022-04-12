@@ -32,7 +32,7 @@ export default class GwentDao extends ServerCard {
 		this.createLocalization({
 			en: {
 				name: "D'ao",
-				description: "*Deathwish:* *Spawn* 2 *Lesser D'ao* on this row.",
+				description: "*Deathwish:*\n*Spawn* {summonCount} *Lesser D'ao* on this row.",
 				flavor: "How do you fight an earth elemental? You don't. You run. Fast as you can.",
 			},
 		})

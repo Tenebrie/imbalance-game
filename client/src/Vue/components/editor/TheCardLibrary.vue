@@ -3,7 +3,7 @@
 		<div class="header">
 			<the-card-library-header />
 		</div>
-		<div class="cards">
+		<div class="cards" ref="scrollerRef" @scroll="onScroll">
 			<div v-for="card in library" :key="`${userLanguage}-${card.id}`">
 				<the-card-library-item :card="card" class="card" :mode="'library'" />
 			</div>
@@ -31,6 +31,8 @@ import TenebrieLogo from '@/Vue/components/utils/TenebrieLogo.vue'
 import store from '@/Vue/store'
 import InspectedCardStore from '@/Vue/store/InspectedCardStore'
 
+import usePreserveTableScrollState from '../admin/utils/usePreserveTableScrollState'
+
 export default defineComponent({
 	components: {
 		TenebrieLogo,
@@ -39,8 +41,10 @@ export default defineComponent({
 	},
 
 	setup() {
+		const { scrollerRef, onScroll, restoreScrollState } = usePreserveTableScrollState()
 		onMounted(() => {
 			window.addEventListener('keydown', onKeyPress)
+			restoreScrollState()
 		})
 
 		onUnmounted(() => {
@@ -175,6 +179,8 @@ export default defineComponent({
 		return {
 			library,
 			userLanguage,
+			scrollerRef,
+			onScroll,
 		}
 	},
 })
