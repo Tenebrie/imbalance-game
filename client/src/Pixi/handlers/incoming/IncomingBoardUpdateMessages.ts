@@ -2,7 +2,7 @@ import BoardRowMessage from '@shared/models/network/BoardRowMessage'
 import OpenRowBuffMessage from '@shared/models/network/buffs/OpenRowBuffMessage'
 import CardRefMessage from '@shared/models/network/card/CardRefMessage'
 import { BoardUpdateMessageHandlers, BoardUpdateMessageType } from '@shared/models/network/messageHandlers/ServerToClientGameMessages'
-import UnitMessage from '@shared/models/network/UnitMessage'
+import UnitMessage from '@shared/models/network/unit/UnitMessage'
 
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import RenderedUnit from '@/Pixi/cards/RenderedUnit'
