@@ -28,6 +28,7 @@ export default class GwentIncineratingTrap extends ServerCard {
 			},
 			expansionSet: ExpansionSet.GWENT,
 			relatedCards: [GwentDolBlathannaBomber],
+			hiddenFromLibrary: true,
 		})
 		this.dynamicTextVariables = {
 			damage: GwentIncineratingTrap.DAMAGE,
