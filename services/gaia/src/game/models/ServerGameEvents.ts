@@ -9,6 +9,8 @@ import { EventHook } from '@src/game/models/events/EventHook'
 import { EventSubscription } from '@src/game/models/events/EventSubscription'
 import { GameEvent, SharedEventArgs } from '@src/game/models/events/GameEventCreators'
 import GameHookType, {
+	CardDeployedHookEditableValues,
+	CardDeployedHookFixedValues,
 	CardDestroyedHookEditableValues,
 	CardDestroyedHookFixedValues,
 	CardPlayedHookEditableValues,
@@ -170,6 +172,11 @@ export default class ServerGameEvents {
 		editableValues: CardPlayedHookEditableValues,
 		fixedValues: CardPlayedHookFixedValues
 	): CardPlayedHookEditableValues
+	public applyHooks(
+		hook: GameHookType.CARD_DEPLOYED,
+		editableValues: CardDeployedHookEditableValues,
+		fixedValues: CardDeployedHookFixedValues
+	): CardDeployedHookEditableValues
 	public applyHooks(
 		hook: GameHookType.CARD_TAKES_DAMAGE,
 		editableValues: CardTakesDamageHookEditableValues,

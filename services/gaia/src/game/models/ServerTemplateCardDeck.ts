@@ -45,8 +45,8 @@ export default class ServerTemplateCardDeck implements CardDeck {
 		const inflatedSpellDeck: ServerCard[] = []
 		temporaryDeck.forEach((card) => {
 			const inflatedCards = card.deckAddedCards.map((cardPrototype) => CardLibrary.instantiate(game, cardPrototype))
-			const inflatedUnitCards = inflatedCards.filter((card) => card.type === CardType.UNIT)
-			const inflatedSpellCards = inflatedCards.filter((card) => card.type === CardType.SPELL)
+			const inflatedUnitCards = inflatedCards.filter((card) => card.type === CardType.UNIT || card.isCollectible)
+			const inflatedSpellCards = inflatedCards.filter((card) => card.type === CardType.SPELL && !card.isCollectible)
 			inflatedUnitCards.forEach((cardPrototype) => inflatedUnitDeck.push(cardPrototype))
 			inflatedSpellCards.forEach((cardPrototype) => inflatedSpellDeck.push(cardPrototype))
 			if (card.color === CardColor.LEADER) {

@@ -41,6 +41,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	cardHand: ServerHand
 	cardDeck: ServerDeck
 	cardGraveyard: ServerGraveyard
+	startingDeck: ServerTemplateCardDeck
 	unitMana: number
 	spellMana: number
 	isMulliganMode: boolean
@@ -63,6 +64,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 		const templateDeck = ServerTemplateCardDeck.fromEditorDeck(game, props.deck)
 		this.cardDeck.instantiateFrom(templateDeck)
 		this.leader = templateDeck.leader
+		this.startingDeck = templateDeck
 	}
 
 	public get group(): ServerPlayerGroup {
@@ -129,7 +131,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 				continue
 			}
 
-			this.cardHand.addCardAsDraw(card)
+			this.cardHand.addUnitCardAsDraw(card)
 			drawnCards.push(card)
 		}
 		return drawnCards
@@ -144,7 +146,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 				continue
 			}
 
-			this.cardHand.addCardAsDraw(card)
+			this.cardHand.addSpellCardAsDraw(card)
 			drawnCards.push(card)
 		}
 		return drawnCards

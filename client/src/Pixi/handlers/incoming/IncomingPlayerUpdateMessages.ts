@@ -116,12 +116,18 @@ const IncomingPlayerUpdateMessages: PlayerUpdateMessageHandlers = {
 	},
 
 	[PlayerUpdateMessageType.CARD_REVEALED]: (data: CardMessage) => {
-		const playerWithCard = Core.opponent.players.find((player) => player.cardHand.allCards.find((card) => card.id === data.id))
-		if (!playerWithCard) {
+		const playerWithCardInHand = Core.opponent.players.find((player) => player.cardHand.allCards.find((card) => card.id === data.id))
+		if (playerWithCardInHand) {
+			playerWithCardInHand.cardHand.reveal(data)
+			playerWithCardInHand.cardHand.sortCards()
 			return
 		}
-		playerWithCard.cardHand.reveal(data)
-		playerWithCard.cardHand.sortCards()
+		const cardOnBoard = Core.board.findUnitById(data.id)
+		if (cardOnBoard) {
+			Core.board.revealUnit(cardOnBoard, data)
+			return
+		}
+		console.error(`Trying to reveal unit with ID '${data.id}', but it can't be found.`)
 	},
 
 	[PlayerUpdateMessageType.PLAY_DECLINED]: (data: CardRefMessage) => {

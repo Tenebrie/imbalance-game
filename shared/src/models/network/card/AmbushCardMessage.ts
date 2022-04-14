@@ -46,11 +46,7 @@ export default class AmbushCardMessage implements CardMessage {
 	constructor(card: Card) {
 		this.id = card.id
 		this.type = card.type
-		if (card.type === CardType.UNIT) {
-			this.class = 'unitHidden'
-		} else {
-			this.class = 'spellHidden'
-		}
+		this.class = 'gwentAmbush'
 		this.artworkClass = this.class
 
 		this.stats = new HiddenCardStatsMessage(card.stats)

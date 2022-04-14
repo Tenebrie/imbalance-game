@@ -17,12 +17,18 @@ class ServerResolveStackEntry implements ResolveStackEntry {
 	public readonly ownedCard: ServerOwnedCard
 	public readonly previousTargets: ResolutionStackTarget[]
 	public onResumeResolving: () => void
+	public isEffectPrevented: boolean
 
 	constructor(ownedCard: ServerOwnedCard, targetMode: TargetMode, onResumeResolving: () => void) {
 		this.targetMode = targetMode
 		this.ownedCard = ownedCard
 		this.onResumeResolving = onResumeResolving
 		this.previousTargets = []
+		this.isEffectPrevented = false
+	}
+
+	public preventEffect(): void {
+		this.isEffectPrevented = true
 	}
 }
 
@@ -63,16 +69,24 @@ export default class ServerResolveStack implements ResolveStack {
 		return this.entries[this.entries.length - 1].previousTargets
 	}
 
-	public startResolving(ownedCard: ServerOwnedCard, targetMode: TargetMode, onResumeResolving: () => void): void {
+	public startResolving(ownedCard: ServerOwnedCard, targetMode: TargetMode, onResumeResolving: () => void): ServerResolveStackEntry {
 		/* Create card in stack */
-		this.entries.unshift(new ServerResolveStackEntry(ownedCard, targetMode, onResumeResolving))
+		const stackEntry = new ServerResolveStackEntry(ownedCard, targetMode, onResumeResolving)
+		this.entries.unshift(stackEntry)
 		OutgoingMessageHandlers.notifyAboutCardResolving(ownedCard)
+		return stackEntry
 	}
 
-	public startResolvingImmediately(ownedCard: ServerOwnedCard, targetMode: TargetMode, onResumeResolving: () => void): void {
+	public startResolvingImmediately(
+		ownedCard: ServerOwnedCard,
+		targetMode: TargetMode,
+		onResumeResolving: () => void
+	): ServerResolveStackEntry {
 		/* Create card in stack */
-		this.entries.push(new ServerResolveStackEntry(ownedCard, targetMode, onResumeResolving))
+		const stackEntry = new ServerResolveStackEntry(ownedCard, targetMode, onResumeResolving)
+		this.entries.push(stackEntry)
 		OutgoingMessageHandlers.notifyAboutCardResolving(ownedCard)
+		return stackEntry
 	}
 
 	public resumeResolving(): void {

@@ -1,4 +1,5 @@
 import Board from '@shared/models/Board'
+import CardMessage from '@shared/models/network/card/CardMessage'
 import CardTargetMessage from '@shared/models/network/CardTargetMessage'
 
 import RenderedGameBoardRow from '@/Pixi/cards/RenderedGameBoardRow'
@@ -6,6 +7,7 @@ import RenderedUnit from '@/Pixi/cards/RenderedUnit'
 import ClientPlayerGroup from '@/Pixi/models/ClientPlayerGroup'
 
 import Core from '../Core'
+import RenderedCard from './RenderedCard'
 
 export default class RenderedGameBoard implements Board {
 	public rows: RenderedGameBoardRow[]
@@ -30,6 +32,16 @@ export default class RenderedGameBoard implements Board {
 
 	public removeUnit(unit: RenderedUnit): void {
 		this.rows[unit.rowIndex].removeUnit(unit)
+	}
+
+	public revealUnit(unit: RenderedUnit, data: CardMessage): void {
+		const rowIndex = unit.rowIndex
+		const unitIndex = unit.unitIndex
+		this.removeUnit(unit)
+		const newCard = new RenderedCard(data)
+		this.insertUnit(new RenderedUnit(newCard, unit.owner), rowIndex, unitIndex)
+		Core.registerCard(newCard)
+		Core.destroyCard(unit.card)
 	}
 
 	public insertUnitFromHold(unitId: string, rowIndex: number, unitIndex: number): void {

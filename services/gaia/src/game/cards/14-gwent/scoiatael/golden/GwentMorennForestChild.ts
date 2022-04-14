@@ -1,9 +1,12 @@
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
+import CardLocation from '@shared/enums/CardLocation'
 import CardTribe from '@shared/enums/CardTribe'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import BuffGwentAmbush from '@src/game/buffs/14-gwent/BuffGwentAmbush'
+import GameHookType from '@src/game/models/events/GameHookType'
+import Keywords from '@src/utils/Keywords'
 
 import ServerCard from '../../../../models/ServerCard'
 import ServerGame from '../../../../models/ServerGame'
@@ -30,5 +33,18 @@ export default class GwentMorennForestChild extends ServerCard {
 					'I hold Brokilon dearer than my own life. She is a mother who cares for her children. I will defend her to my final breath.',
 			},
 		})
+
+		this.createHook(GameHookType.CARD_DEPLOYED, [CardLocation.BOARD])
+			.require(() => this.isAmbush)
+			.require(({ card }) => card.type === CardType.SPELL)
+			.require((_, { effectPrevented }) => effectPrevented === false)
+			.require(({ owner }) => !owner.group.owns(this))
+			.replace((values) => {
+				Keywords.revealCard(this)
+				return {
+					...values,
+					effectPrevented: true,
+				}
+			})
 	}
 }

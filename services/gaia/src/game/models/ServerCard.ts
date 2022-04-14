@@ -70,8 +70,12 @@ import GameEventCreators, {
 	UnitOrderedUnitEventArgs,
 } from './events/GameEventCreators'
 import GameHookType, {
+	CardDeployedHookEditableValues,
+	CardDeployedHookFixedValues,
 	CardDestroyedHookEditableValues,
 	CardDestroyedHookFixedValues,
+	CardPlayedHookEditableValues,
+	CardPlayedHookFixedValues,
 	CardTakesDamageHookEditableValues,
 	CardTakesDamageHookFixedValues,
 	GameFinishedHookEditableValues,
@@ -756,6 +760,9 @@ export default class ServerCard implements Card {
 	 * ------------------------------------------------
 	 * `createEffect` is equivalent to `createCallback`, but it will only trigger when
 	 * the `effectSource` is set to the subscriber.
+	 *
+	 * In other words, this callback will trigger only if the event is originating from this card,
+	 * such as this card beind drawn or deployed.
 	 */
 	protected createEffect(event: GameEventType.CARD_DRAWN): EventSubscription<CardDrawnEventArgs>
 	protected createEffect(event: GameEventType.CARD_RETURNED): EventSubscription<CardReturnedEventArgs>
@@ -808,6 +815,14 @@ export default class ServerCard implements Card {
 	 *
 	 * The hook will only trigger if the subscriber is located in one of the locations specified by `location` argument.
 	 */
+	protected createHook(
+		hookType: GameHookType.CARD_PLAYED,
+		location: CardLocation[] | 'any'
+	): EventHook<CardPlayedHookEditableValues, CardPlayedHookFixedValues>
+	protected createHook(
+		hookType: GameHookType.CARD_DEPLOYED,
+		location: CardLocation[] | 'any'
+	): EventHook<CardDeployedHookEditableValues, CardDeployedHookFixedValues>
 	protected createHook(
 		hookType: GameHookType.CARD_TAKES_DAMAGE,
 		location: CardLocation[] | 'any'
