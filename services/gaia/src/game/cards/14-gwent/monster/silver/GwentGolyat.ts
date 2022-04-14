@@ -33,7 +33,7 @@ export default class GwentGolyat extends ServerCard {
 		this.createLocalization({
 			en: {
 				name: 'Golyat',
-				description: '*Spawn* {summonCount} *Lesser Ifrits* to the right of this unit.',
+				description: `Boost self by {boost}. Whenever this unit is damaged, deal {damage} damage to self.`,
 				flavor:
 					'Some claim Golyat was once a famous knight. Sadly, one day he earned the wrath of the Lady of the Lake, who turned him into a monster.',
 			},
