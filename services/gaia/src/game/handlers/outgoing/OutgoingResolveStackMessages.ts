@@ -1,16 +1,18 @@
 import CardRefMessage from '@shared/models/network/card/CardRefMessage'
 import { ResolveStackMessageType } from '@shared/models/network/messageHandlers/ServerToClientGameMessages'
+import AmbushOwnedCardMessage from '@shared/models/network/ownedCard/AmbushOwnedCardMessage'
 import OpenOwnedCardMessage from '@shared/models/network/ownedCard/OpenOwnedCardMessage'
 
 import ServerOwnedCard from '../../models/ServerOwnedCard'
 
 export default {
 	notifyAboutCardResolving(ownedCard: ServerOwnedCard): void {
-		const data = new OpenOwnedCardMessage(ownedCard)
+		const friendlyData = new OpenOwnedCardMessage(ownedCard)
+		const opponentData = ownedCard.card.isAmbush ? new AmbushOwnedCardMessage(ownedCard) : friendlyData
 
 		ownedCard.owner.player.sendGameMessage({
 			type: ResolveStackMessageType.ADD,
-			data: data,
+			data: friendlyData,
 			skipQueue: true,
 		})
 
@@ -19,7 +21,7 @@ export default {
 			opponentGroup.players.forEach((playerInGame) =>
 				playerInGame.player.sendGameMessage({
 					type: ResolveStackMessageType.ADD,
-					data: data,
+					data: opponentData,
 					skipQueue: ownedCard.card.game.activePlayer === ownedCard.owner.opponentNullable,
 				})
 			)

@@ -67,7 +67,7 @@ const Keywords = {
 
 	drawExactCard: (player: ServerPlayerInGame, card: ServerCard): ServerCard => {
 		player.cardDeck.removeCard(card)
-		player.cardHand.addCardAsDraw(card)
+		player.cardHand.addUnitCardAsDraw(card)
 		return card
 	},
 
@@ -254,6 +254,10 @@ const Keywords = {
 		} else {
 			card.buffs.add(BuffGwentLock, source)
 		}
+	},
+
+	revealCard: (card: ServerCard): void => {
+		card.reveal()
 	},
 
 	addCardToHand: {

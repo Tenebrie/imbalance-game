@@ -4,7 +4,7 @@ import TargetMode from '@shared/enums/TargetMode'
 import TargetType from '@shared/enums/TargetType'
 import CardTarget from '@shared/models/CardTarget'
 import CardTargetMessage from '@shared/models/network/CardTargetMessage'
-import GameHookType from '@src/game/models/events/GameHookType'
+import GameHookType, { CardDeployedHookEditableValues } from '@src/game/models/events/GameHookType'
 import { DeployTarget, PlayTarget } from '@src/game/models/ServerCardTargeting'
 import DeployTargetDefinition from '@src/game/models/targetDefinitions/DeployTargetDefinition'
 import {
@@ -113,7 +113,9 @@ export default class ServerGameCardPlay {
 	public playCardToResolutionStack(ownedCard: ServerOwnedCard): void {
 		/* Start resolving */
 		const targetMode = ownedCard.card.type === CardType.UNIT ? TargetMode.CARD_PLAY : TargetMode.DEPLOY_EFFECT
-		this.cardResolveStack.startResolvingImmediately(ownedCard, targetMode, () => this.updateResolvingCardTargetingStatus())
+		this.cardResolveStack.startResolvingImmediately(ownedCard, targetMode, () =>
+			this.startResolvingCardTargetingStatus({ effectPrevented: false })
+		)
 
 		this.game.events.postEvent(
 			GameEventCreators.cardPlayed({
@@ -194,13 +196,32 @@ export default class ServerGameCardPlay {
 	private playUnit(ownedCard: ServerOwnedCard, rowIndex: number, unitIndex: number): void {
 		const card = ownedCard.card
 
+		const hookValues = this.game.events.applyHooks(
+			GameHookType.CARD_DEPLOYED,
+			{
+				effectPrevented: false,
+			},
+			{
+				game: this.game,
+				owner: ownedCard.owner,
+				card: ownedCard.card,
+			}
+		)
+
 		/* Start resolving */
-		this.cardResolveStack.startResolvingImmediately(ownedCard, TargetMode.DEPLOY_EFFECT, () => this.updateResolvingCardTargetingStatus())
+		const stackEntry = this.cardResolveStack.startResolvingImmediately(ownedCard, TargetMode.DEPLOY_EFFECT, () =>
+			this.updateResolvingCardTargetingStatus()
+		)
 
 		/* Insert the card into the board */
 		const unit = this.game.board.createUnit(card, ownedCard.owner, rowIndex, unitIndex)
 		if (unit === null) {
 			this.cardResolveStack.finishResolving()
+			return
+		}
+
+		if (hookValues.effectPrevented) {
+			stackEntry.preventEffect()
 			return
 		}
 
@@ -217,10 +238,29 @@ export default class ServerGameCardPlay {
 	private playSpell(ownedCard: ServerOwnedCard): void {
 		const card = ownedCard.card
 
-		/* Start resolving */
-		this.cardResolveStack.startResolvingImmediately(ownedCard, TargetMode.DEPLOY_EFFECT, () => this.updateResolvingCardTargetingStatus())
-
 		/* Invoke the card onPlay effect */
+		const hookValues = this.game.events.applyHooks(
+			GameHookType.CARD_DEPLOYED,
+			{
+				effectPrevented: false,
+			},
+			{
+				game: this.game,
+				owner: ownedCard.owner,
+				card: ownedCard.card,
+			}
+		)
+
+		/* Start resolving */
+		const stackEntry = this.cardResolveStack.startResolvingImmediately(ownedCard, TargetMode.DEPLOY_EFFECT, () =>
+			this.updateResolvingCardTargetingStatus()
+		)
+
+		if (hookValues.effectPrevented) {
+			stackEntry.preventEffect()
+			return
+		}
+
 		this.game.events.postEvent(
 			GameEventCreators.spellDeployed({
 				game: this.game,
@@ -228,6 +268,19 @@ export default class ServerGameCardPlay {
 				owner: ownedCard.owner,
 			})
 		)
+	}
+
+	public startResolvingCardTargetingStatus({ effectPrevented }: CardDeployedHookEditableValues): void {
+		const currentEntry = this.cardResolveStack.currentEntry
+		if (!currentEntry) {
+			return
+		}
+
+		if (effectPrevented) {
+			currentEntry.preventEffect()
+		}
+
+		this.updateResolvingCardTargetingStatus()
 	}
 
 	public updateResolvingCardTargetingStatus(): void {
@@ -251,7 +304,7 @@ export default class ServerGameCardPlay {
 
 	public getResolvingCardTargets(): (PlayTarget | DeployTarget)[] {
 		const currentEntry = this.cardResolveStack.currentEntry
-		if (!currentEntry) {
+		if (!currentEntry || currentEntry.isEffectPrevented) {
 			return []
 		}
 

@@ -10,6 +10,7 @@ import ServerUnit from '../ServerUnit'
 
 enum GameHookType {
 	CARD_PLAYED = 'cardPlayed',
+	CARD_DEPLOYED = 'cardDeployed',
 	CARD_TAKES_DAMAGE = 'cardTakesDamage',
 	CARD_DESTROYED = 'cardDestroyed',
 	UNIT_DESTROYED = 'unitDestroyed',
@@ -28,6 +29,14 @@ export interface CardPlayedHookFixedValues extends SharedHookFixedValues {
 }
 export interface CardPlayedHookEditableValues {
 	playPrevented: boolean
+}
+
+export interface CardDeployedHookFixedValues extends SharedHookFixedValues {
+	card: ServerCard
+	owner: ServerPlayerInGame
+}
+export interface CardDeployedHookEditableValues {
+	effectPrevented: boolean
 }
 
 export interface CardTakesDamageHookFixedValues {
