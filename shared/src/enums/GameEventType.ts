@@ -8,6 +8,8 @@ enum GameEventType {
 	POST_ROUND_STARTED = 'postRoundStarted',
 	TURN_STARTED = 'turnStarted',
 
+	CARD_REVEALED = 'cardRevealed',
+
 	CARD_DRAWN = 'cardDrawn',
 	CARD_RETURNED = 'cardReturned',
 	CARD_PLAYED = 'cardPlayed',

@@ -356,6 +356,11 @@
 	"card.tribe.construct": "Construct",
 	"card.tribe.boon": "Boon",
 	"card.tribe.hazard": "Hazard",
+	"card.tribe.elf": "Elf",
+	"card.tribe.machine": "Machine",
+	"card.tribe.doomed": "Doomed",
+	"card.tribe.support": "Support",
+	"card.tribe.dwarf": "Dwarf",
 
 	"buff.buffProtector.name": "Protector (Service buff)",
 	"buff.buffProtector.description": "This card is a protector.",

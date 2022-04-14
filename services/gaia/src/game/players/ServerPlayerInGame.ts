@@ -346,7 +346,8 @@ export class ServerBotPlayerInGame extends ServerPlayerInGame {
 
 			try {
 				safeWhile(
-					() => this.canPlayUnitCard() || (this.hasHighValueSpellPlays() && this.game.turnPhase === GameTurnPhase.DEPLOY),
+					() =>
+						this.canPlayUnitCard() || (this.hasHighValueSpellPlays() && this.game.turnPhase === GameTurnPhase.DEPLOY && this.unitMana > 0),
 					() => {
 						this.botPlaysCard(false)
 					}

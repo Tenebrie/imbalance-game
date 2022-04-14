@@ -256,6 +256,7 @@ export default class ServerGameEvents {
 				}
 			)
 		}
+		this.callbackQueue = []
 		resolveCards()
 
 		const filterOutEvents = () => {
@@ -269,7 +270,6 @@ export default class ServerGameEvents {
 		}
 		filterOutEvents()
 
-		this.callbackQueue = []
 		safeWhile(
 			() => currentCallbacks.length > 0,
 			() => {

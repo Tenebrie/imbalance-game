@@ -60,6 +60,15 @@ export default {
 		},
 	}),
 
+	cardRevealed: (args: CardRevealedEventArgs): GameEvent => ({
+		type: GameEventType.CARD_REVEALED,
+		args: args,
+		effectSource: args.triggeringCard,
+		logVariables: {
+			triggeringCard: args.triggeringCard.id,
+		},
+	}),
+
 	cardDrawn: (args: CardDrawnEventArgs): GameEvent => ({
 		type: GameEventType.CARD_DRAWN,
 		args: args,
@@ -441,6 +450,10 @@ export interface RoundStartedEventArgs extends SharedEventArgs {
 }
 export interface TurnStartedEventArgs extends SharedEventArgs {
 	group: ServerPlayerGroup
+}
+
+export interface CardRevealedEventArgs extends SharedEventArgs {
+	triggeringCard: ServerCard
 }
 
 export interface CardDrawnEventArgs extends SharedEventArgs {

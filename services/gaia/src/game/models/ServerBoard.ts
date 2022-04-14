@@ -525,14 +525,16 @@ export default class ServerBoard implements Board {
 
 		this.game.events.postEvent(GameEventCreators.afterUnitDestroyed(destroyEventArgs))
 
-		if (card.features.includes(CardFeature.HERO_POWER)) {
-			card.cleanse()
-			// card.stats.power = card.stats.basePower
-			unit.originalOwner.cardDeck.addSpellToTop(card)
-		} else if (card.type === CardType.UNIT) {
-			unit.originalOwner.cardGraveyard.addUnit(card)
-		} else if (card.type === CardType.SPELL) {
-			unit.originalOwner.cardGraveyard.addSpell(card)
+		if (!card.tribes.includes(CardTribe.DOOMED)) {
+			if (card.features.includes(CardFeature.HERO_POWER)) {
+				card.cleanse()
+				// card.stats.power = card.stats.basePower
+				unit.originalOwner.cardDeck.addSpellToTop(card)
+			} else if (card.type === CardType.UNIT) {
+				unit.originalOwner.cardGraveyard.addUnit(card)
+			} else if (card.type === CardType.SPELL) {
+				unit.originalOwner.cardGraveyard.addSpell(card)
+			}
 		}
 
 		this.unitsBeingDestroyed.splice(this.unitsBeingDestroyed.indexOf(unit), 1)

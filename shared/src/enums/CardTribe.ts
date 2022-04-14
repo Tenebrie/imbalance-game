@@ -34,6 +34,10 @@ enum CardTribe {
 	ITEM = 'item',
 	BOON = 'boon',
 	HAZARD = 'hazard',
+	ELF = 'elf',
+	DOOMED = 'doomed',
+	SUPPORT = 'support',
+	DWARF = 'dwarf',
 
 	LOST = 'lost',
 	RITES_WEAPON = 'ritesWeapon',

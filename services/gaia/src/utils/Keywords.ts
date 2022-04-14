@@ -331,6 +331,7 @@ const Keywords = {
 			}),
 		}),
 
+		// TODO: Tianara, MAKE THIS WORK FOR SPIES PLSSSSSSSS
 		for: (player: ServerPlayerInGame) => ({
 			fromClass: (cardClass: string): ServerCard => {
 				const newCard = CardLibrary.instantiateFromClass(player.game, cardClass)

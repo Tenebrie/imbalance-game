@@ -612,6 +612,12 @@ export default class ServerCard implements Card {
 		}
 
 		this.isRevealed = true
+		this.game.events.postEvent(
+			GameEventCreators.cardRevealed({
+				game: this.game,
+				triggeringCard: this,
+			})
+		)
 		OutgoingMessageHandlers.notifyAboutCardRevealed(opponent, this)
 	}
 
@@ -725,6 +731,10 @@ export default class ServerCard implements Card {
 	): EventSubscription<UnitDestroyedEventArgs>
 	protected createCallback(event: GameEventType.CARD_PLAYED, location: CardLocation[] | 'any'): EventSubscription<CardPlayedEventArgs>
 	protected createCallback(event: GameEventType.CARD_RESOLVED, location: CardLocation[] | 'any'): EventSubscription<CardResolvedEventArgs>
+	protected createCallback(
+		event: GameEventType.CARD_PRE_RESOLVED,
+		location: CardLocation[] | 'any'
+	): EventSubscription<CardResolvedEventArgs>
 	protected createCallback(
 		event: GameEventType.CARD_BUFF_CREATED,
 		location: CardLocation[] | 'any'
