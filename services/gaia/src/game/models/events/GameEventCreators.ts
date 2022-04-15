@@ -306,7 +306,7 @@ export default {
 		},
 	}),
 	afterUnitDestroyed: (args: UnitDestroyedEventArgs): GameEvent => ({
-		type: GameEventType.UNIT_DESTROYED,
+		type: GameEventType.AFTER_UNIT_DESTROYED,
 		args: args,
 		effectSource: args.triggeringCard,
 		logVariables: {

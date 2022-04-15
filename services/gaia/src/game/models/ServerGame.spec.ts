@@ -140,7 +140,6 @@ describe('ServerGame Game finishing', () => {
 
 			beforeEach(async () => {
 				game = setupTestGame(TestingRulesetChain)
-				sendSpy.mockClear()
 				sendSpy = jest.spyOn(game.player.handle.player, 'sendGameMessage')
 				game.handle.systemFinish(game.player.handle.group, GameVictoryCondition.STORY_TRIGGER, true)
 

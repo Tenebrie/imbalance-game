@@ -30,7 +30,7 @@ describe('ServerCard', () => {
 				game.cardPlay.playCardFromHand(new ServerOwnedCard(opponentsCard, player.opponent.players[0]), 0, 0)
 				game.cardPlay.selectCardTarget(player.opponent.players[0], game.cardPlay.getDeployTargets()[0].target)
 			})
-			expect(hookSpy).toBeCalledTimes(11)
+			expect(hookSpy).toBeCalledTimes(12)
 		})
 	})
 })
