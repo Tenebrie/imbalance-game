@@ -16,6 +16,7 @@ export default class GwentAmbush extends ServerCard {
 				power: 0,
 			},
 			expansionSet: ExpansionSet.GWENT,
+			hiddenFromLibrary: true,
 		})
 
 		this.createLocalization({

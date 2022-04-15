@@ -6,6 +6,7 @@ import ExpansionSet from '@shared/enums/ExpansionSet'
 
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
+import GwentHarpyEgg from './GwentHarpyEgg'
 
 export default class GwentHarpyHatchling extends ServerCard {
 	constructor(game: ServerGame) {
@@ -18,6 +19,8 @@ export default class GwentHarpyHatchling extends ServerCard {
 				power: 1,
 			},
 			expansionSet: ExpansionSet.GWENT,
+			relatedCards: [GwentHarpyEgg],
+			hiddenFromLibrary: true,
 		})
 
 		this.createLocalization({

@@ -33,7 +33,13 @@ class Localization {
 
 	public getCardFlavor(card: Card | CardMessage): string | null {
 		const language = store.state.userPreferencesModule.userLanguage
-		return this.get(card.localization[language].flavor, 'null')
+		const key = card.localization[language].flavor
+		if (key.match(localizationIdRegex)) {
+			return this.get(key, 'null')
+		} else if (key.length > 0) {
+			return key
+		}
+		return null
 	}
 
 	public getCardListName(card: Card | CardMessage): string | null {

@@ -104,13 +104,13 @@ export default defineComponent({
 			store.dispatch.popupModule.closeAll()
 
 			const isInGame = store.getters.gameStateModule.isInGame
-			if (tooltip.type === 'card' && (event.ctrlKey || isInGame)) {
+			if (tooltip.type === 'card' && (!event.ctrlKey || isInGame)) {
 				InspectedCardStore.dispatch.setCard({
 					message: tooltip.props.card,
 				})
 				event.preventDefault()
 				event.stopPropagation()
-			} else if (tooltip.type === 'card' && !event.ctrlKey && !isInGame) {
+			} else if (tooltip.type === 'card' && event.ctrlKey && !isInGame) {
 				const query = Localization.getCardName(tooltip.props.card)
 				routeQuery.value.searchQuery = query
 				InspectedCardStore.dispatch.clear()

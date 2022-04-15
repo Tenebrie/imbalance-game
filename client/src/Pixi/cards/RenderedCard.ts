@@ -479,10 +479,10 @@ export default class RenderedCard implements Card {
 		this.unitModeContainer.visible = false
 		this.cardModeContainer.visible = true
 		this.cardModeTextContainer.visible = true
-		this.powerText.visible = this.type === CardType.UNIT || this.type === CardType.SPELL
+		this.powerText.visible = this.type === CardType.UNIT
 		this.powerTextBackground.visible = this.type === CardType.UNIT
 		this.armorTextBackground.visible = true
-		this.manacostTextBackground.visible = this.type === CardType.SPELL
+		this.manacostTextBackground.visible = false
 
 		const powerTextValue = this.type === CardType.UNIT ? this.stats.power : this.stats.spellCost
 		this.powerText.position.set(60, 45)

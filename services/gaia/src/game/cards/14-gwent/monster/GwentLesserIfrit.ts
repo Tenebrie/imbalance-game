@@ -10,6 +10,7 @@ import { DamageInstance } from '@src/game/models/ServerDamageSource'
 
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
+import GwentIfrit from './silver/GwentIfrit'
 
 export default class GwentLesserIfrit extends ServerCard {
 	public static readonly DAMAGE = 1
@@ -25,6 +26,7 @@ export default class GwentLesserIfrit extends ServerCard {
 				power: 1,
 			},
 			expansionSet: ExpansionSet.GWENT,
+			relatedCards: [GwentIfrit],
 		})
 
 		this.createLocalization({
