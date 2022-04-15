@@ -32,7 +32,7 @@ export default class GwentDolBlathannaArcher extends ServerCard {
 		this.createLocalization({
 			en: {
 				name: 'Dol Blathanna Archer',
-				description: 'Deal *{firstAttackPower}* damage, then deal *{secondAttackPower}* damage.',
+				description: 'Deal {firstAttackPower} damage, then deal {secondAttackPower} damage.',
 				flavor: "Take another step, dh'oine. You'd look better with an arrow between your eyes.",
 			},
 		})

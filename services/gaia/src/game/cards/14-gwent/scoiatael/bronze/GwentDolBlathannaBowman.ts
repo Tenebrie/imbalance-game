@@ -34,7 +34,7 @@ export default class GwentDolBlathannaBowman extends ServerCard {
 			en: {
 				name: 'Dol Blathanna Bowman',
 				description:
-					'Deal *{damage}* damage to an enemy.<p>Whenever an enemy moves, deal *{damage}* damage to it.<p>Whenever this unit moves, deal *{damage}* damage to a random enemy.',
+					'Deal {damage} damage to an enemy.<p>Whenever an enemy moves, deal {damage} damage to it.<p>Whenever this unit moves, deal {damage} damage to a random enemy.',
 				flavor: "You might manage to hide from them, but once spotted, don't bother trying to run.",
 			},
 		})
