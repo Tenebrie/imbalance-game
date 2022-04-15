@@ -31,7 +31,7 @@ export default class GwentDolBlathannaSentry extends ServerCard {
 		this.createLocalization({
 			en: {
 				name: 'Dol Blathanna Sentry',
-				description: 'If in hand, deck or on board, boost self by *{boost}* whenever you play a special card.',
+				description: 'If in hand, deck or on board, boost self by {boost} whenever you play a special card.',
 				flavor: "As long as we stand, no human foot shall trample Dol Blathanna's meadows.",
 			},
 		})

@@ -31,7 +31,7 @@ export default class GwentBlueMountainElite extends ServerCard {
 		this.createLocalization({
 			en: {
 				name: 'Blue Mountain Elite',
-				description: '*Summon* all copies of this unit to this row. Whenever this unit moves, boost it by *{power}*.',
+				description: '*Summon* all copies of this unit to this row. Whenever this unit moves, boost it by {power}.',
 				flavor: "By the time we'd heard them, it was already too late…",
 			},
 		})

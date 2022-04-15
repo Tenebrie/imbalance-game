@@ -37,7 +37,7 @@ export default class GwentIncineratingTrap extends ServerCard {
 		this.createLocalization({
 			en: {
 				name: 'Incinerating Trap',
-				description: `*Spying*.<p>Damage all other units on its row by *{damage}* and *Banish* self on turn end.`,
+				description: `Damage all other units on its row by {damage} and *Banish* self on turn end.`,
 				flavor: "Careful…! One more step and you'll be turned into molten glass.",
 			},
 		})

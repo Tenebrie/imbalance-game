@@ -21,13 +21,12 @@ export default class GwentDolBlathannaBomber extends ServerCard {
 				power: 6,
 			},
 			expansionSet: ExpansionSet.GWENT,
-			relatedCards: [GwentIncineratingTrap],
 		})
 
 		this.createLocalization({
 			en: {
 				name: 'Dol Blathanna Bomber',
-				description: `*Spawn* an Incinerating Trap on an enemy row.`,
+				description: `*Spawn* an *Incinerating Trap* on an enemy row.`,
 				flavor: "Take another step, dh'oine. You'd look better with an arrow between your eyes.",
 			},
 		})

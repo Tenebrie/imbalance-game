@@ -31,7 +31,7 @@ export default class GwentDwarvenMercenary extends ServerCard {
 		this.createLocalization({
 			en: {
 				name: 'Dwarven Mercenary',
-				description: "Move a unit to this row on its side. If it's an ally, boost it by 3.",
+				description: "Move a unit to this row on its side. If it's an ally, boost it by {boost}.",
 				flavor: "The key's mixin' pleasure an' business – like smackin' foes and gettin' coin for it.",
 			},
 		})
