@@ -46,6 +46,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	spellMana: number
 	isMulliganMode: boolean
 	cardsMulliganed: number
+	leaderCardUsed: boolean
 
 	private __leader: ServerCard | null
 
@@ -60,6 +61,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 		this.spellMana = 0
 		this.isMulliganMode = false
 		this.cardsMulliganed = 0
+		this.leaderCardUsed = false
 
 		const templateDeck = ServerTemplateCardDeck.fromEditorDeck(game, props.deck)
 		this.cardDeck.instantiateFrom(templateDeck)
@@ -223,6 +225,9 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	public startMulligan(): void {
 		this.isMulliganMode = true
 		this.showMulliganCards()
+		if (this.cardHand.unitCards.length === 0) {
+			IncomingMessageHandlers[GenericActionMessageType.CONFIRM_TARGETS](TargetMode.MULLIGAN, this.game, this)
+		}
 		OutgoingMessageHandlers.notifyAboutCardsMulliganed(this.player, this)
 	}
 
@@ -239,6 +244,10 @@ export default class ServerPlayerInGame implements PlayerInGame {
 
 	public resetMulliganState(): void {
 		this.cardsMulliganed = 0
+	}
+
+	public markLeaderAsUsed(): void {
+		this.leaderCardUsed = true
 	}
 
 	public disconnect(): void {
@@ -268,10 +277,6 @@ export class ServerBotPlayerInGame extends ServerPlayerInGame {
 	}
 
 	public startTurn(): void {
-		// if (this.behaviour === AIBehaviour.OVERMIND) {
-		// 	this.overmindTakesTheirTurn()
-		// 	return
-		// }
 		// TODO: Validate that set timeout is not required anymore
 		this.botTakesTheirTurn().then(() => {
 			OutgoingMessageHandlers.executeMessageQueue(this.game)
@@ -294,7 +299,6 @@ export class ServerBotPlayerInGame extends ServerPlayerInGame {
 		const playableCards = this.cardHand.unitCards.filter((card) => card.targeting.getPlayTargets(this, { checkMana: true }).length > 0)
 
 		if (playableCards.length === 0) {
-			console.log(`Skipping move for agent ${this.overmindId}`)
 			return
 		}
 
@@ -310,14 +314,12 @@ export class ServerBotPlayerInGame extends ServerPlayerInGame {
 			.map((row) => row.cards.map((unit) => unit.card))
 			.flatMap((arr) => padArray<ServerCard>(arr, Constants.MAX_CARDS_PER_ROW))
 
-		// console.log(`Requesting move for agent ${this.overmindId}`)
 		const cardToPlay = await OvermindClient.getMove(this.overmindId, {
 			playableCards,
 			allCardsInHand: this.cardHand.unitCards,
 			alliedUnits,
 			enemyUnits,
 		})
-		// console.log(`Received Overmind response: ${cardToPlay}.`)
 		this.botPlaysCard(false, cardToPlay)
 	}
 

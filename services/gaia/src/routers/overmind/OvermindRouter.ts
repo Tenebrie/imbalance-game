@@ -18,7 +18,7 @@ router.post(
 	'/simulate',
 	AsyncHandler(async (req: Request, res: Response, _next: () => void) => {
 		const data = req.body['data'] as InputData
-		console.log('Requested game simulation for agents: ', data)
+		console.info('Requested game simulation for agents: ', data)
 
 		const promises = data.map((d) =>
 			(GameLibrary.createServiceGame(RulesetOvermindTraining).ruleset as RulesetOvermindTraining).runSimulation({
@@ -29,7 +29,7 @@ router.post(
 		try {
 			const responses = await Promise.all(promises)
 			const mappedResponses = responses.map((r) => r.victoriousAgent || 'draw')
-			console.log('Responding to /api/overmind/simulate', mappedResponses)
+			console.info('Responding to /api/overmind/simulate', mappedResponses)
 
 			res.json(mappedResponses)
 		} catch (err) {
@@ -44,7 +44,7 @@ router.get(
 	'/evaluate/:id',
 	AsyncHandler(async (req: Request, res: Response, _next: () => void) => {
 		const data = req.params.id as string
-		console.log('Requested evaluation for agent: ', data)
+		console.info('Requested evaluation for agent: ', data)
 
 		const gamesTotal = 100
 		const promises = Array(gamesTotal)
@@ -58,7 +58,7 @@ router.get(
 			const responses = await Promise.all(promises)
 			const gamesWon = responses.filter((r) => r.victoriousAgent === 'overmind')
 			const winrate = gamesWon.length / gamesTotal
-			console.log('Responding to /api/overmind/evaluate', winrate)
+			console.info('Responding to /api/overmind/evaluate', winrate)
 
 			res.json({
 				data: winrate,

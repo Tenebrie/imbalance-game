@@ -426,12 +426,18 @@ const Keywords = {
 				consumer.game.animation.instantThread(() => {
 					const power = card.stats.power
 					const extraPower = card.buffs.getIntensity(BuffGwentExtraConsumePower)
-					if (card.location === CardLocation.DECK) {
-						card.ownerPlayer.cardDeck.removeCard(card)
-					} else if (card.location === CardLocation.GRAVEYARD) {
-						card.ownerPlayer.cardGraveyard.removeCard(card)
+					const location = card.location
+					const owner = card.ownerPlayer
+					if (location === CardLocation.HAND) {
+						owner.cardHand.removeCard(card)
+						owner.cardGraveyard.addUnit(card)
+					} else if (location === CardLocation.DECK) {
+						owner.cardDeck.removeCard(card)
+						owner.cardGraveyard.addUnit(card)
+					} else if (location === CardLocation.GRAVEYARD) {
+						owner.cardGraveyard.removeCard(card)
 					} else {
-						throw new Error(`Unable to consume card in location ${card.localization}`)
+						throw new Error(`Unable to consume card in location ${location}`)
 					}
 					consumer.buffs.addMultiple(BuffStrength, power + extraPower, null, 'default', true)
 				})

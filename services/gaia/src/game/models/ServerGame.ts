@@ -347,6 +347,10 @@ export default class ServerGame implements SourceGame {
 			return
 		}
 
+		if (this.players.some((group) => group.mulliganMode)) {
+			return
+		}
+
 		let playerToMove = this.playersToMove.shift()
 		if (playerToMove && playerToMove.roundEnded) {
 			playerToMove.onTurnStart()
@@ -364,7 +368,7 @@ export default class ServerGame implements SourceGame {
 	}
 
 	private advancePhase(): void {
-		if (this.turnPhase === GameTurnPhase.MULLIGAN) {
+		if (this.turnPhase === GameTurnPhase.MULLIGAN && this.players.every((group) => !group.mulliganMode)) {
 			this.startNextRound()
 		} else if (this.turnPhase === GameTurnPhase.ROUND_START) {
 			this.startNextTurn()

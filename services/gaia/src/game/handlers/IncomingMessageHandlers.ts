@@ -1,3 +1,4 @@
+import CardColor from '@shared/enums/CardColor'
 import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import TargetMode from '@shared/enums/TargetMode'
 import AnonymousTargetMessage from '@shared/models/network/AnonymousTargetMessage'
@@ -12,6 +13,8 @@ import GameVictoryCondition from '@src/enums/GameVictoryCondition'
 import OutgoingNovelMessages from '@src/game/handlers/outgoing/OutgoingNovelMessages'
 import ServerCardTarget from '@src/game/models/ServerCardTarget'
 
+import CardLibrary from '../libraries/CardLibrary'
+import { BuffConstructor } from '../models/buffs/ServerBuffContainer'
 import ServerGame from '../models/ServerGame'
 import ServerOwnedCard from '../models/ServerOwnedCard'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
@@ -20,13 +23,15 @@ import OutgoingMessageHandlers from './OutgoingMessageHandlers'
 
 const IncomingMessageHandlers: ClientToServerGameMessageHandlers<ServerGame, ServerPlayerInGame> = {
 	[GenericActionMessageType.CARD_PLAY]: (data: CardPlayedMessage, game: ServerGame, playerInGame: ServerPlayerInGame): void => {
-		const card = playerInGame.cardHand.findCardById(data.id)
+		const playableCards = playerInGame.cardHand.allCards.concat(playerInGame.leader)
+		const card = playableCards.find((card) => card.id === data.id)
 		if (!card) {
 			return
 		}
 
 		const validTargets = card.targeting.getPlayTargets(playerInGame, { checkMana: true })
 		if (
+			playerInGame.group.mulliganMode ||
 			playerInGame.group.turnEnded ||
 			playerInGame.group.roundEnded ||
 			playerInGame.targetRequired ||
@@ -37,7 +42,13 @@ const IncomingMessageHandlers: ClientToServerGameMessageHandlers<ServerGame, Ser
 			return
 		}
 
-		const ownedCard = new ServerOwnedCard(card, playerInGame)
+		const cardToPlay = card.color === CardColor.LEADER ? CardLibrary.instantiateFromInstance(game, card) : card
+		if (card.color === CardColor.LEADER) {
+			const BuffGwentUsedLeader = require('../buffs/14-gwent/BuffGwentUsedLeader').default as BuffConstructor
+			card.buffs.add(BuffGwentUsedLeader, card)
+			OutgoingMessageHandlers.notifyAboutCardPlayDeclined(playerInGame.player, card)
+		}
+		const ownedCard = new ServerOwnedCard(cardToPlay, playerInGame)
 		game.cardPlay.playCardAsPlayerAction(ownedCard, data.rowIndex, data.unitIndex)
 
 		onPlayerActionEnd(game, playerInGame)
@@ -130,7 +141,7 @@ const IncomingMessageHandlers: ClientToServerGameMessageHandlers<ServerGame, Ser
 	},
 
 	[GenericActionMessageType.TURN_END]: (data: null, game: ServerGame, player: ServerPlayerInGame): void => {
-		if (player.group.turnEnded || player.targetRequired || !!game.novel.clientState) {
+		if (player.group.turnEnded || player.targetRequired || !!game.novel.clientState || player.group.mulliganMode) {
 			return
 		}
 

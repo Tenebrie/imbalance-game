@@ -43,7 +43,7 @@ export default class GwentIncineratingTrap extends ServerCard {
 		})
 
 		this.createCallback(GameEventType.TURN_ENDED, [CardLocation.BOARD])
-			.require(({ group }) => !group.owns(this))
+			.require(({ group }) => group.owns(this))
 			.perform(() => {
 				const triggeringUnit = this.unit!
 
