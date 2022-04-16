@@ -816,6 +816,7 @@ export default class ServerCard implements Card {
 	protected createEffect(event: GameEventType.UNIT_DESTROYED): EventSubscription<UnitDestroyedEventArgs>
 	protected createEffect(event: GameEventType.AFTER_UNIT_DESTROYED): EventSubscription<UnitDestroyedEventArgs>
 	protected createEffect(event: GameEventType.CARD_DESTROYED): EventSubscription<CardDestroyedEventArgs>
+	protected createEffect(event: GameEventType.CARD_POWER_RESTORED): EventSubscription<CardPowerRestoredEventArgs>
 	protected createEffect<ArgsType extends SharedEventArgs>(event: GameEventType): EventSubscription<ArgsType> {
 		return this.game.events
 			.createCallback<ArgsType>(this, event)
