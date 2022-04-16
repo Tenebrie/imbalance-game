@@ -6,7 +6,6 @@ import ExpansionSet from '@shared/enums/ExpansionSet'
 import TargetType from '@shared/enums/TargetType'
 import BuffStrength from '@src/game/buffs/BuffStrength'
 import { DamageInstance } from '@src/game/models/ServerDamageSource'
-import { getLeaderTextVariables } from '@src/utils/Utils'
 
 import ServerCard from '../../../../models/ServerCard'
 import ServerGame from '../../../../models/ServerGame'
@@ -25,15 +24,10 @@ export default class GwentUnseenElder extends ServerCard {
 			},
 			expansionSet: ExpansionSet.GWENT,
 		})
-		this.dynamicTextVariables = {
-			...getLeaderTextVariables(this),
-		}
 
-		this.createLocalization({
+		this.createLeaderLocalization({
 			en: {
-				name: '<if inGame>{playerName}</if><ifn inGame>Unseen Elder</if>',
-				title: '<if inGame>as Unseen Elder</if>',
-				listName: 'Unseen Elder',
+				name: 'Unseen Elder',
 				description: '*Drain* a unit by half.',
 				flavor:
 					'No one, not even among the higher vampires, knows exactly how old the Unseen Elder is. They only know they should never, under any circumstances, defy his will.',

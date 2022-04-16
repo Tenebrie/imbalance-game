@@ -115,6 +115,8 @@ export abstract class ServerRuleset implements Ruleset {
 
 			GAME_BOARD_ROW_COUNT: 6,
 			GAME_BOARD_ROW_SPLIT_MODE: BoardSplitMode.SPLIT_IN_HALF,
+
+			PASSIVE_LEADERS: false,
 			...props.constants,
 		}
 

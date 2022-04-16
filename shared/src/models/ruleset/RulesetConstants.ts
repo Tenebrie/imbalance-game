@@ -18,4 +18,6 @@ export type RulesetConstants = {
 
 	GAME_BOARD_ROW_COUNT: number
 	GAME_BOARD_ROW_SPLIT_MODE: BoardSplitMode
+
+	PASSIVE_LEADERS: boolean
 }

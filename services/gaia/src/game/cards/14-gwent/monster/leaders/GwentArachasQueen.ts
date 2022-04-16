@@ -6,7 +6,6 @@ import ExpansionSet from '@shared/enums/ExpansionSet'
 import TargetType from '@shared/enums/TargetType'
 import BuffPermanentImmunity from '@src/game/buffs/BuffPermanentImmunity'
 import Keywords from '@src/utils/Keywords'
-import { getLeaderTextVariables } from '@src/utils/Utils'
 
 import ServerCard from '../../../../models/ServerCard'
 import ServerGame from '../../../../models/ServerGame'
@@ -27,15 +26,12 @@ export default class GwentArachasQueen extends ServerCard {
 		})
 		this.dynamicTextVariables = {
 			targets: GwentArachasQueen.TARGETS,
-			...getLeaderTextVariables(this),
 		}
 		this.buffs.add(BuffPermanentImmunity, this)
 
-		this.createLocalization({
+		this.createLeaderLocalization({
 			en: {
-				name: '<if inGame>{playerName}</if><ifn inGame>Arachas Queen</if>',
-				title: '<if inGame>as Arachas Queen</if>',
-				listName: 'Arachas Queen',
+				name: 'Arachas Queen',
 				description: '*Immune*<p>*Consume* {targets} allies and boost self by their power.',
 				flavor: 'That is not dead which can eternal lie, and with strange aeons even death may die.',
 			},

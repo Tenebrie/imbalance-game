@@ -23,13 +23,13 @@ import {
 	RowTargetValidatorArguments,
 	UnitTargetValidatorArguments,
 } from '@src/types/TargetValidatorArguments'
-import { createRandomId, getClassFromConstructor } from '@src/utils/Utils'
+import { createRandomId, getClassFromConstructor, getLeaderTextVariables } from '@src/utils/Utils'
 
 import BotCardEvaluation from '../AI/BotCardEvaluation'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import CardLibrary, { CardConstructor } from '../libraries/CardLibrary'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
-import ServerBuffContainer from './buffs/ServerBuffContainer'
+import ServerBuffContainer, { BuffConstructor } from './buffs/ServerBuffContainer'
 import { EventHook } from './events/EventHook'
 import { EventSubscription } from './events/EventSubscription'
 import GameEventCreators, {
@@ -258,7 +258,7 @@ export default class ServerCard implements Card {
 			return
 		}
 
-		const validLocations = [CardLocation.BOARD, CardLocation.HAND, CardLocation.GRAVEYARD, CardLocation.DECK]
+		const validLocations = [CardLocation.BOARD, CardLocation.HAND, CardLocation.GRAVEYARD, CardLocation.DECK, CardLocation.STACK]
 		this.createCallback(GameEventType.CARD_TAKES_DAMAGE, validLocations)
 			.forceIgnoreControlEffects()
 			.require(({ triggeringCard }) => triggeringCard === this)
@@ -886,9 +886,43 @@ export default class ServerCard implements Card {
 		}
 	}
 
+	protected createLeaderLocalization(localization: PartialCardLocalization): void {
+		this.dynamicTextVariables = {
+			...this.dynamicTextVariables,
+			...getLeaderTextVariables(this),
+		}
+		this.localization = {
+			en: {
+				...this.localization.en,
+				...localization.en,
+				name: `<if inGame>{playerName}</if><ifn inGame>${localization.en?.name || ''}</if>`,
+				title: `<if inGame>as ${localization.en?.name || ''}</if>`,
+				listName: localization.en?.name || '',
+			},
+			ru: {
+				...this.localization.ru,
+				...localization.ru,
+				name: `<if inGame>{playerName}</if><ifn inGame>${localization.ru?.name || localization.en?.name || ''}</if>`,
+				title: `<if inGame>as ${localization.ru?.name || localization.en?.name || ''}</if>`,
+				listName: localization.ru?.name || localization.en?.name || '',
+			},
+		}
+	}
+
 	protected addRelatedCards(): RelatedCardsDefinition {
 		const relatedCardDefinition = new RelatedCardsDefinition()
 		this.customRelatedCards.push(relatedCardDefinition)
 		return relatedCardDefinition
+	}
+
+	protected makeResilient(): void {
+		const BuffGwentResilience = require('../buffs/14-gwent/BuffGwentResilience').default as BuffConstructor
+		this.buffs.add(BuffGwentResilience, this)
+		this.createEffect(GameEventType.CARD_RETURNED)
+			.require(({ triggeringCard }) => !triggeringCard.buffs.has(BuffGwentResilience))
+			.perform(({ triggeringCard }) => triggeringCard.buffs.add(BuffGwentResilience, this))
+		this.createEffect(GameEventType.UNIT_DESTROYED)
+			.require(({ triggeringUnit }) => !triggeringUnit.buffs.has(BuffGwentResilience))
+			.perform(({ triggeringUnit }) => triggeringUnit.buffs.add(BuffGwentResilience, this))
 	}
 }

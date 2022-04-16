@@ -744,7 +744,7 @@ const unwrapRowDistance = (index: RowDistanceWrapper, game: ServerGame, player: 
 	return index === 'front' ? 0 : index === 'middle' ? 1 : game.board.getControlledRows(player).length - 1
 }
 
-const warn = (message: string): void => {
+const _warn = (message: string): void => {
 	console.debug(`${colorize('[Warning]', AsciiColor.YELLOW)} ${message}`)
 }
 

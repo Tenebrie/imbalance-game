@@ -5,7 +5,6 @@ import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import TargetType from '@shared/enums/TargetType'
 import Keywords from '@src/utils/Keywords'
-import { getLeaderTextVariables } from '@src/utils/Utils'
 
 import ServerCard from '../../../../models/ServerCard'
 import ServerGame from '../../../../models/ServerGame'
@@ -25,15 +24,10 @@ export default class GwentDagon extends ServerCard {
 			expansionSet: ExpansionSet.GWENT,
 			relatedCards: [GwentImpenetrableFog, GwentTorrentialRain],
 		})
-		this.dynamicTextVariables = {
-			...getLeaderTextVariables(this),
-		}
 
-		this.createLocalization({
+		this.createLeaderLocalization({
 			en: {
-				name: '<if inGame>{playerName}</if><ifn inGame>Dagon</if>',
-				title: '<if inGame>as Dagon</if>',
-				listName: 'Dagon',
+				name: 'Dagon',
 				description: '*Spawn* *Impenetrable Fog* or *Torrential Rain*.',
 				flavor: 'That is not dead which can eternal lie, and with strange aeons even death may die.',
 			},

@@ -31,7 +31,7 @@ export default class GwentNekkerWarrior extends ServerCard {
 		this.createLocalization({
 			en: {
 				name: 'Nekker Warrior',
-				description: 'Choose a Bronze ally and add {copiesToAdd} copies of it to the bottom of your deck.',
+				description: 'Choose a Bronze ally and add {extraCopies} copies of it to the bottom of your deck.',
 				flavor: "Take heed, gents, there's nekkers under this here bridge.",
 			},
 		})

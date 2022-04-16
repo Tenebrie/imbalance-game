@@ -511,10 +511,13 @@ export default class Renderer {
 			return returnValue * this.superSamplingLevel
 		}
 
-		const leaderPower = Core.player.players
-			.map((player) => player.leader)
-			.filter((card) => !card.features.includes(CardFeature.APATHY))
-			.reduce((totalPower, leader) => totalPower + leader.stats.power, 0)
+		const passiveLeaders = store.state.currentGame?.ruleset.constants.PASSIVE_LEADERS
+		const leaderPower = passiveLeaders
+			? Core.player.players
+					.map((player) => player.leader)
+					.filter((card) => !card.features.includes(CardFeature.APATHY))
+					.reduce((totalPower, leader) => totalPower + leader.stats.power, 0)
+			: 0
 		const power =
 			leaderPower +
 			Core.board
@@ -523,10 +526,12 @@ export default class Renderer {
 				.map((unit) => unit.card.stats.power)
 				.reduce((accumulator, value) => accumulator + value, 0)
 
-		const opponentLeaderPower = Core.opponent.players
-			.map((player) => player.leader)
-			.filter((card) => !card.features.includes(CardFeature.APATHY))
-			.reduce((totalPower, leader) => totalPower + leader.stats.power, 0)
+		const opponentLeaderPower = passiveLeaders
+			? Core.opponent.players
+					.map((player) => player.leader)
+					.filter((card) => !card.features.includes(CardFeature.APATHY))
+					.reduce((totalPower, leader) => totalPower + leader.stats.power, 0)
+			: 0
 		const opponentPower =
 			opponentLeaderPower +
 			Core.board

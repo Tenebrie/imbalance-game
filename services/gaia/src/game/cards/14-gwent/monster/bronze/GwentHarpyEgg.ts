@@ -1,6 +1,7 @@
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
 import CardFeature from '@shared/enums/CardFeature'
+import CardTribe from '@shared/enums/CardTribe'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
@@ -21,7 +22,8 @@ export default class GwentHarpyEgg extends ServerCard {
 			type: CardType.UNIT,
 			color: CardColor.BRONZE,
 			faction: CardFaction.MONSTER,
-			features: [CardFeature.DOOMED, CardFeature.HAS_DEATHWISH],
+			features: [CardFeature.HAS_DEATHWISH],
+			tribes: [CardTribe.DOOMED],
 			stats: {
 				power: 1,
 			},

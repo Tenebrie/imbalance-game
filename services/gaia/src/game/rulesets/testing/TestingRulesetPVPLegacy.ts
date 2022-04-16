@@ -8,6 +8,9 @@ export default class TestingRulesetPVPLegacy extends ServerRuleset {
 		super(game, {
 			gameMode: GameMode.PVP,
 			category: RulesetCategory.PVP,
+			constants: {
+				PASSIVE_LEADERS: true,
+			},
 		})
 	}
 }

@@ -5,7 +5,6 @@ import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import TargetType from '@shared/enums/TargetType'
 import Keywords from '@src/utils/Keywords'
-import { getLeaderTextVariables } from '@src/utils/Utils'
 
 import ServerCard from '../../../../models/ServerCard'
 import ServerGame from '../../../../models/ServerGame'
@@ -22,16 +21,11 @@ export default class GwentEredin extends ServerCard {
 			},
 			expansionSet: ExpansionSet.GWENT,
 		})
-		this.dynamicTextVariables = {
-			...getLeaderTextVariables(this),
-		}
 		this.addRelatedCards().requireTribe(CardTribe.WILD_HUNT).requireColor(CardColor.BRONZE).requireCollectible()
 
-		this.createLocalization({
+		this.createLeaderLocalization({
 			en: {
-				name: '<if inGame>{playerName}</if><ifn inGame>Eredin Bréacc Glas</if>',
-				title: '<if inGame>as Eredin Bréacc Glas</if>',
-				listName: 'Eredin Bréacc Glas',
+				name: 'Eredin Bréacc Glas',
 				description: '*Spawn* a Bronze Wild Hunt unit.',
 				flavor: 'Have some dignity. You know how this will end.',
 			},

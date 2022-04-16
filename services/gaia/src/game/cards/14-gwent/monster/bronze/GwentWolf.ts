@@ -1,6 +1,5 @@
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
-import CardFeature from '@shared/enums/CardFeature'
 import CardTribe from '@shared/enums/CardTribe'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
@@ -13,8 +12,7 @@ export default class GwentWolf extends ServerCard {
 			type: CardType.UNIT,
 			color: CardColor.BRONZE,
 			faction: CardFaction.MONSTER,
-			tribes: [CardTribe.BEAST],
-			features: [CardFeature.DOOMED],
+			tribes: [CardTribe.BEAST, CardTribe.DOOMED],
 			stats: {
 				power: 1,
 			},

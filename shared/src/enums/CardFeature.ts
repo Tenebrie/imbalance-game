@@ -1,5 +1,4 @@
 enum CardFeature {
-	DOOMED,
 	SPY,
 	QUICK,
 	APATHY,

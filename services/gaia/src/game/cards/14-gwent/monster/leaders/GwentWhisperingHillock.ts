@@ -8,7 +8,7 @@ import GameEventType from '@shared/enums/GameEventType'
 import TargetType from '@shared/enums/TargetType'
 import CardLibrary from '@src/game/libraries/CardLibrary'
 import Keywords from '@src/utils/Keywords'
-import { getLeaderTextVariables, getMultipleRandomArrayValues } from '@src/utils/Utils'
+import { getMultipleRandomArrayValues } from '@src/utils/Utils'
 
 import ServerCard from '../../../../models/ServerCard'
 import ServerGame from '../../../../models/ServerGame'
@@ -27,16 +27,11 @@ export default class GwentWhisperingHillock extends ServerCard {
 			},
 			expansionSet: ExpansionSet.GWENT,
 		})
-		this.dynamicTextVariables = {
-			...getLeaderTextVariables(this),
-		}
 		this.addRelatedCards().requireTribe(CardTribe.ORGANIC).requireAnyColor([CardColor.BRONZE, CardColor.SILVER]).requireCollectible()
 
-		this.createLocalization({
+		this.createLeaderLocalization({
 			en: {
-				name: '<if inGame>{playerName}</if><ifn inGame>Whispering Hillock</if>',
-				title: '<if inGame>as Whispering Hillock</if>',
-				listName: 'Whispering Hillock',
+				name: 'Whispering Hillock',
 				description: '*Create* a Bronze or Silver Organic card.',
 				flavor: 'That is not dead which can eternal lie, and with strange aeons even death may die.',
 			},
