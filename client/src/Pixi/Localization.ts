@@ -44,7 +44,13 @@ class Localization {
 
 	public getCardListName(card: Card | CardMessage): string | null {
 		const language = store.state.userPreferencesModule.userLanguage
-		return this.get(card.localization[language].listName, 'null')
+		const key = card.localization[language].listName
+		if (key.match(localizationIdRegex)) {
+			return this.get(key, 'null')
+		} else if (key.length > 0) {
+			return key
+		}
+		return null
 	}
 
 	public getCardDescription(card: Card | CardMessage): string {

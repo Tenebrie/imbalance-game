@@ -153,7 +153,8 @@ type TestGameUnit = {
 	buffs: TestGameBuffContainer
 	variables: RichTextVariables
 	tribes: CardTribe[]
-	getRow(): RowDistanceWrapper
+	getRow(): TestGameRow
+	getRowDistance(): RowDistanceWrapper
 	getRowPosition(): number
 	orderOnFirst(): void
 	takeDamage(damage: number): TestGameUnit
@@ -206,7 +207,8 @@ const wrapUnit = (game: ServerGame, unit: ServerUnit): TestGameUnit => {
 		buffs: wrapBuffContainer(game, unit.card),
 		variables: unit.card.variables,
 		tribes: unit.card.tribes,
-		getRow: () => wrapRowDistance(unit),
+		getRow: () => wrapRow(game, unit.boardRow),
+		getRowDistance: () => wrapRowDistance(unit),
 		getRowPosition: () => unit.unitIndex,
 		orderOnFirst: () => orderOnFirst(),
 		takeDamage: (damage: number) => takeDamage(damage),
@@ -239,6 +241,7 @@ type TestGamePlayer = {
 	findInAtGameIndex(card: CardConstructor, location: CardLocation, gameIndex: number): TestGameCard
 	getStack(): TestGameCardPlayActions
 	getFrontRow(): TestGameRow
+	getRow(index: RowDistanceWrapper): TestGameRow
 	getLeaderStat(stat: LeaderStatType): number
 	countOnRow(card: CardConstructor, rowIndex: number): number
 	countInHand(card: CardConstructor): number
@@ -376,6 +379,10 @@ const setupTestGamePlayers = (game: ServerGame): TestGamePlayer[][] => {
 		return wrapRow(game, game.board.getRowWithDistanceToFront(player, 0))
 	}
 
+	const getRow = (index: RowDistanceWrapper, player: ServerPlayerInGame): TestGameRow => {
+		return wrapRow(game, game.board.getRowWithDistanceToFront(player, unwrapRowDistance(index, game, player)))
+	}
+
 	const countOnRow = (player: ServerPlayerInGame, card: CardConstructor, distance: number): number => {
 		const cards = game.board.getRowWithDistanceToFront(player, distance).cards
 		return cards.filter((unit) => unit.card.class === getClassFromConstructor(card)).length
@@ -451,6 +458,7 @@ const setupTestGamePlayers = (game: ServerGame): TestGamePlayer[][] => {
 			addSpellMana: (value: number) => addSpellMana(player, value),
 			getStack: () => getCardPlayActions(game, player),
 			getFrontRow: () => getFrontRow(player),
+			getRow: (index: RowDistanceWrapper) => getRow(index, player),
 			getLeaderStat: (stat: LeaderStatType) => getTotalLeaderStat(player, [stat]),
 			countOnRow: (card: CardConstructor, distance: number) => countOnRow(player, card, distance),
 			countInHand: (card: CardConstructor) => countInHand(player, card),
@@ -567,6 +575,7 @@ type TestGameBuffContainer = {
 	addMultiple(buffConstructor: BuffConstructor, count: number): TestGameBuff[]
 	has(buffConstructor: BuffConstructor): boolean
 	hasExact(buff: TestGameBuff): boolean
+	count(): number
 }
 
 const wrapBuffContainer = (game: ServerGame, parent: ServerCard | ServerBoardRow): TestGameBuffContainer => {
@@ -579,6 +588,7 @@ const wrapBuffContainer = (game: ServerGame, parent: ServerCard | ServerBoardRow
 		addMultiple: (buffConstructor, count) => addBuffs(buffConstructor, count),
 		has: (buffConstructor) => parent.buffs.has(buffConstructor),
 		hasExact: (buff: TestGameBuff) => parent.buffs.hasExact(buff.handle),
+		count: () => parent.buffs.buffs.length,
 	}
 }
 

@@ -26,6 +26,7 @@
 
 <script lang="ts">
 import CardFaction from '@shared/enums/CardFaction'
+import { enumToArray } from '@shared/Utils'
 import { defineComponent } from 'vue'
 
 import DeckListMode from '@/utils/DeckListMode'
@@ -63,7 +64,7 @@ export default defineComponent({
 		},
 
 		deckFilters(): FilteredDeck[] {
-			const factions = [CardFaction.HUMAN, CardFaction.ARCANE, CardFaction.WILD, CardFaction.NEUTRAL]
+			const factions = enumToArray(CardFaction)
 
 			return factions.reduce((result: FilteredDeck[], faction) => {
 				const normalDeck = {

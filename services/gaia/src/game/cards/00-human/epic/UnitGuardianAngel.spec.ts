@@ -69,7 +69,7 @@ describe('UnitGuardianAngel', () => {
 
 			it("takes the target's place", () => {
 				const unit = game.player.find(CardInTesting).getUnit()
-				expect(unit.getRow()).toEqual('middle')
+				expect(unit.getRowDistance()).toEqual('middle')
 				expect(unit.getRowPosition()).toEqual(1)
 			})
 		})

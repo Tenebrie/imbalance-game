@@ -23,11 +23,11 @@ describe('UnitShiftingShadow', () => {
 		})
 
 		it('moves the card', () => {
-			expect(game.board.find(TestingUnitNoEffect).getRow()).toEqual('middle')
+			expect(game.board.find(TestingUnitNoEffect).getRowDistance()).toEqual('middle')
 		})
 
 		it('creates a shadow', () => {
-			expect(game.board.find(UnitFierceShadow).getRow()).toEqual('front')
+			expect(game.board.find(UnitFierceShadow).getRowDistance()).toEqual('front')
 		})
 	})
 
@@ -45,12 +45,12 @@ describe('UnitShiftingShadow', () => {
 		})
 
 		it('moves the card', () => {
-			expect(game.board.find(TestingUnitNoEffect).getRow()).toEqual('front')
+			expect(game.board.find(TestingUnitNoEffect).getRowDistance()).toEqual('front')
 			expect(game.board.find(TestingUnitNoEffect).getRowPosition()).toEqual(3)
 		})
 
 		it("creates a shadow on the target's old position", () => {
-			expect(game.board.find(UnitFierceShadow).getRow()).toEqual('front')
+			expect(game.board.find(UnitFierceShadow).getRowDistance()).toEqual('front')
 			expect(game.board.find(UnitFierceShadow).getRowPosition()).toEqual(1)
 		})
 	})
@@ -66,7 +66,7 @@ describe('UnitShiftingShadow', () => {
 		})
 
 		it('does not move the card', () => {
-			expect(game.board.find(TestingUnitNoEffect).getRow()).toEqual('front')
+			expect(game.board.find(TestingUnitNoEffect).getRowDistance()).toEqual('front')
 		})
 	})
 })

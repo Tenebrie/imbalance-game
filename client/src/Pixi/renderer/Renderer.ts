@@ -980,7 +980,7 @@ export default class Renderer {
 
 		const targetPosition = {
 			x: distanceToCenter * cardWidth + screenCenter,
-			y: this.getScreenHeight() / 2 + levelOffset,
+			y: this.getScreenHeight() / 2 - levelOffset,
 		}
 
 		targetPosition.y = this.getScreenHeight() - targetPosition.y

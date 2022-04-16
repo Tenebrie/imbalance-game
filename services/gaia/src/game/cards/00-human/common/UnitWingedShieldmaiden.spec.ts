@@ -33,7 +33,7 @@ describe('UnitWingedShieldmaiden', () => {
 		})
 
 		it('does not trigger', () => {
-			expect(game.player.find(CardInTesting).getUnit().getRow()).toEqual('front')
+			expect(game.player.find(CardInTesting).getUnit().getRowDistance()).toEqual('front')
 		})
 
 		it('does not prevent target death', () => {
@@ -50,7 +50,7 @@ describe('UnitWingedShieldmaiden', () => {
 
 			it('plays itself in front of target', () => {
 				const card = game.player.find(CardInTesting)
-				expect(card.getUnit().getRow()).toEqual('middle')
+				expect(card.getUnit().getRowDistance()).toEqual('middle')
 				expect(card.stats.power).toEqual(card.stats.basePower)
 				expect(card.stats.armor).toEqual(card.stats.baseArmor - 1)
 			})
@@ -119,7 +119,7 @@ describe('UnitWingedShieldmaiden', () => {
 
 			it('plays itself in front of target', () => {
 				const card = game.player.find(CardInTesting)
-				expect(card.getUnit().getRow()).toEqual('front')
+				expect(card.getUnit().getRowDistance()).toEqual('front')
 				expect(card.getUnit().getRowPosition()).toEqual(1)
 				expect(card.stats.armor).toEqual(card.stats.baseArmor - 1)
 			})
@@ -146,7 +146,7 @@ describe('UnitWingedShieldmaiden', () => {
 
 			it('plays itself in front of target', () => {
 				const card = game.player.find(CardInTesting)
-				expect(card.getUnit().getRow()).toEqual('front')
+				expect(card.getUnit().getRowDistance()).toEqual('front')
 				expect(card.getUnit().getRowPosition()).toEqual(5)
 				expect(card.stats.armor).toEqual(card.stats.baseArmor - 1)
 			})
@@ -169,7 +169,7 @@ describe('UnitWingedShieldmaiden', () => {
 
 			it('plays itself in front of target', () => {
 				const card = game.player.find(CardInTesting)
-				expect(card.getUnit().getRow()).toEqual('front')
+				expect(card.getUnit().getRowDistance()).toEqual('front')
 				expect(card.getUnit().getRowPosition()).toEqual(1)
 				expect(card.stats.armor).toEqual(card.stats.baseArmor)
 			})

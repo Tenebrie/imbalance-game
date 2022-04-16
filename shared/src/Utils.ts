@@ -102,16 +102,15 @@ export function sortCards<T extends Card | CardMessage>(inputArray: T[]): T[] {
 			('features' in a &&
 				'features' in b &&
 				Number(a.features.includes(CardFeature.PASSIVE)) - Number(b.features.includes(CardFeature.PASSIVE))) ||
+			a.color - b.color ||
 			a.type - b.type ||
 			(a.type === CardType.UNIT &&
-				(a.color - b.color ||
-					b.stats.basePower - a.stats.basePower ||
+				(b.stats.basePower - a.stats.basePower ||
 					a.sortPriority - b.sortPriority ||
 					hashCodeOfId(a.class) - hashCodeOfId(b.class) ||
 					hashCodeOfId(a.id) - hashCodeOfId(b.id))) ||
 			(a.type === CardType.SPELL &&
-				(a.color - b.color ||
-					a.stats.baseSpellCost - b.stats.baseSpellCost ||
+				(a.stats.baseSpellCost - b.stats.baseSpellCost ||
 					a.sortPriority - b.sortPriority ||
 					hashCodeOfId(a.class) - hashCodeOfId(b.class) ||
 					hashCodeOfId(a.id) - hashCodeOfId(b.id))) ||

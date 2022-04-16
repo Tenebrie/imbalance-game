@@ -42,8 +42,8 @@ describe('UnitBoxOfCats', () => {
 		})
 
 		it('summons cats on the same row', () => {
-			expect(game.board.findAt(UnitStrayCat, 0).getRow()).toEqual('front')
-			expect(game.board.findAt(UnitStrayCat, 1).getRow()).toEqual('front')
+			expect(game.board.findAt(UnitStrayCat, 0).getRowDistance()).toEqual('front')
+			expect(game.board.findAt(UnitStrayCat, 1).getRowDistance()).toEqual('front')
 		})
 	})
 })

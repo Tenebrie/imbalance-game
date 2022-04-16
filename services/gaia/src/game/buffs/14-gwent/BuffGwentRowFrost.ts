@@ -7,7 +7,7 @@ import { BuffConstructorParams, ServerRowBuff } from '../../models/buffs/ServerB
 import { DamageInstance } from '../../models/ServerDamageSource'
 
 export default class BuffGwentRowFrost extends ServerRowBuff {
-	public static DAMAGE = 2
+	public static readonly DAMAGE = 2
 
 	constructor(params: BuffConstructorParams) {
 		super(params, {
@@ -26,7 +26,7 @@ export default class BuffGwentRowFrost extends ServerRowBuff {
 		}
 
 		const oppositeRow = this.game.board.getOppositeRow(this.parent)
-		const wildHuntRidersCount = oppositeRow.cards.filter((card) => card instanceof GwentWildHuntRider).length
+		const wildHuntRidersCount = oppositeRow.cards.filter((unit) => unit.card instanceof GwentWildHuntRider).length
 		const damage = BuffGwentRowFrost.DAMAGE + wildHuntRidersCount * GwentWildHuntRider.EXTRA_DAMAGE
 
 		const lowestPower = cards.sort((a, b) => a.card.stats.power - b.card.stats.power)[0].card.stats.power

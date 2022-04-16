@@ -41,9 +41,9 @@ export default class GwentWildHuntWarrior extends ServerCard {
 		this.createDeployTargets(TargetType.UNIT)
 			.requireEnemy()
 			.perform(({ targetUnit }) => {
+				const isUnderFrost = game.board.rows[targetUnit.rowIndex].buffs.has(BuffGwentRowFrost)
 				targetUnit.dealDamage(DamageInstance.fromCard(GwentWildHuntWarrior.DAMAGE, this))
 				const isDestroyed = targetUnit.card.stats.power <= 0
-				const isUnderFrost = game.board.rows[targetUnit.rowIndex].buffs.has(BuffGwentRowFrost)
 				if (isDestroyed || isUnderFrost) {
 					this.buffs.addMultiple(BuffStrength, GwentWildHuntWarrior.SELF_BOOST, this)
 				}

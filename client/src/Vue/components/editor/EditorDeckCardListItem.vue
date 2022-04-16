@@ -8,6 +8,7 @@
 		@mouseleave="onMouseLeave"
 	>
 		<span class="power" v-if="showPower">{{ card.stats.basePower }}</span>
+		<span class="power" v-if="!showPower"><i class="fas fa-scroll" /></span>
 		<span class="name"
 			>{{ fullName }}<span class="count" v-if="displayCount">x{{ card.count }}</span></span
 		>
@@ -17,6 +18,7 @@
 <script lang="ts">
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
+import CardType from '@shared/enums/CardType'
 import PopulatedEditorCard from '@shared/models/PopulatedEditorCard'
 import { getMaxCardCopiesForColor } from '@shared/Utils'
 import * as PIXI from 'pixi.js'
@@ -49,7 +51,7 @@ export default defineComponent({
 		},
 
 		showPower(): boolean {
-			return this.card.color !== CardColor.LEADER
+			return this.card.type !== CardType.SPELL
 		},
 
 		displayCount(): boolean {

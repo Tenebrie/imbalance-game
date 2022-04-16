@@ -36,7 +36,7 @@ describe('SpellTacticalRetreat', () => {
 		})
 
 		it('moves the unit to the target row', () => {
-			expect(game.board.find(TestingUnitNoEffect).getRow()).toEqual('middle')
+			expect(game.board.find(TestingUnitNoEffect).getRowDistance()).toEqual('middle')
 		})
 	})
 
@@ -65,7 +65,7 @@ describe('SpellTacticalRetreat', () => {
 		})
 
 		it('moves within the row', () => {
-			expect(game.board.find(TestingUnit100Power).getRow()).toEqual('front')
+			expect(game.board.find(TestingUnit100Power).getRowDistance()).toEqual('front')
 			expect(game.board.find(TestingUnit100Power).getRowPosition()).toEqual(1)
 		})
 	})

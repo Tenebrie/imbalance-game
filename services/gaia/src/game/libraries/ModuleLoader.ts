@@ -29,10 +29,21 @@ export function loadModules<T extends { name: string }>(props: Props): ReturnVal
 	const rulesetDefinitionFiles = glob.sync(`${normalizedPath}/**/*.js`)
 
 	const cardModules: Module<T>[] = rulesetDefinitionFiles
-		.map((path) => ({
-			path,
-			importedModule: require(path),
-		}))
+		.map((path) => {
+			try {
+				return {
+					path,
+					importedModule: require(path),
+				}
+			} catch (err) {
+				return {
+					path,
+					importedModule: null,
+					error: err,
+				}
+			}
+		})
+		.filter((wrapper) => wrapper.importedModule !== null)
 		.map((wrapper) => ({
 			path: wrapper.path,
 			filename: wrapper.path.substring(wrapper.path.lastIndexOf('/') + 1, wrapper.path.indexOf('.js')),
