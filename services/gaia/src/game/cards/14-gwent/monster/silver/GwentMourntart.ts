@@ -37,9 +37,9 @@ export default class GwentMourntart extends ServerCard {
 		})
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(() => {
-			const targetCards = this.ownerPlayer.cardGraveyard.allCards.filter(
-				(card) => card.color === CardColor.BRONZE || card.color === CardColor.SILVER
-			)
+			const targetCards = this.ownerPlayer.cardGraveyard.allCards
+				.filter((card) => card.type === CardType.UNIT)
+				.filter((card) => card.color === CardColor.BRONZE || card.color === CardColor.SILVER)
 			const powerToGain = targetCards.length * GwentMourntart.POWER_PER_CARD
 			targetCards.forEach((card) => {
 				this.ownerPlayer.cardGraveyard.removeCard(card)

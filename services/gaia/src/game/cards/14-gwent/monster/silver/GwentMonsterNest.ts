@@ -4,6 +4,7 @@ import CardTribe from '@shared/enums/CardTribe'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import TargetType from '@shared/enums/TargetType'
+import BuffStrength from '@src/game/buffs/BuffStrength'
 import Keywords from '@src/utils/Keywords'
 
 import ServerCard from '../../../../models/ServerCard'
@@ -41,7 +42,8 @@ export default class GwentMonsterNest extends ServerCard {
 			.require(({ targetCard }) => targetCard.color === CardColor.BRONZE)
 			.require(({ targetCard }) => targetCard.tribes.includes(CardTribe.NECROPHAGE) || targetCard.tribes.includes(CardTribe.INSECTOID))
 			.perform(({ targetCard }) => {
-				Keywords.createCard.forOwnerOf(this).fromInstance(targetCard)
+				const card = Keywords.createCard.forOwnerOf(this).fromInstance(targetCard)
+				card.buffs.addMultiple(BuffStrength, GwentMonsterNest.BOOST, this)
 			})
 	}
 }
