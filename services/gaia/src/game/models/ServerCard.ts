@@ -39,6 +39,7 @@ import GameEventCreators, {
 	CardBuffRemovedEventArgs,
 	CardDestroyedEventArgs,
 	CardDrawnEventArgs,
+	CardMultibuffCreatedEventArgs,
 	CardPlayedEventArgs,
 	CardPowerRestoredEventArgs,
 	CardPreResolvedEventArgs,
@@ -751,6 +752,10 @@ export default class ServerCard implements Card {
 		event: GameEventType.ROW_BUFF_REMOVED,
 		location: CardLocation[] | 'any'
 	): EventSubscription<RowBuffRemovedEventArgs>
+	protected createCallback(
+		event: GameEventType.CARD_MULTIBUFF_CREATED,
+		location: CardLocation[] | 'any'
+	): EventSubscription<CardMultibuffCreatedEventArgs>
 	protected createCallback(
 		event: GameEventType.SPELL_MANA_GENERATED,
 		location: CardLocation[] | 'any'

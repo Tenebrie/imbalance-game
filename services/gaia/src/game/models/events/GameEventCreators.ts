@@ -10,6 +10,7 @@ import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
 
 import ServerPlayerInGame from '../../players/ServerPlayerInGame'
 import ServerBuff, { ServerCardBuff, ServerRowBuff } from '../buffs/ServerBuff'
+import { ServerBuffSource } from '../buffs/ServerBuffContainer'
 import ServerBoardRow from '../ServerBoardRow'
 import ServerCard from '../ServerCard'
 import { ServerCardTargetCard, ServerCardTargetPosition, ServerCardTargetRow } from '../ServerCardTarget'
@@ -394,6 +395,11 @@ export default {
 			parentRow: args.triggeringBuff.parent.index,
 		},
 	}),
+	cardMultibuffCreated: (args: CardMultibuffCreatedEventArgs): GameEvent => ({
+		type: GameEventType.CARD_MULTIBUFF_CREATED,
+		args: args,
+		hiddenFromLogs: true,
+	}),
 
 	spellManaGenerated: (args: SpellManaGeneratedEventArgs): GameEvent => ({
 		type: GameEventType.SPELL_MANA_GENERATED,
@@ -618,15 +624,24 @@ export interface SpellDeployedEventArgs extends SharedEventArgs {
 
 export interface CardBuffCreatedEventArgs extends SharedEventArgs {
 	triggeringBuff: ServerCardBuff
+	source: ServerBuffSource
 }
 export interface RowBuffCreatedEventArgs extends SharedEventArgs {
 	triggeringBuff: ServerRowBuff
+	source: ServerBuffSource
 }
 export interface CardBuffRemovedEventArgs extends SharedEventArgs {
 	triggeringBuff: ServerCardBuff
+	source: ServerBuffSource
 }
 export interface RowBuffRemovedEventArgs extends SharedEventArgs {
 	triggeringBuff: ServerRowBuff
+	source: ServerBuffSource
+}
+export interface CardMultibuffCreatedEventArgs extends SharedEventArgs {
+	triggeringBuff: ServerCardBuff
+	affectedBuffs: ServerCardBuff[]
+	source: ServerBuffSource
 }
 
 export interface SpellManaGeneratedEventArgs extends SharedEventArgs {

@@ -50,6 +50,7 @@ enum GameEventType {
 	CARD_BUFF_REMOVED = 'cardBuffRemoved',
 	ROW_BUFF_CREATED = 'rowBuffCreated',
 	ROW_BUFF_REMOVED = 'rowBuffRemoved',
+	CARD_MULTIBUFF_CREATED = 'cardMultibuffCreated',
 
 	SPELL_MANA_GENERATED = 'spellManaGenerated',
 

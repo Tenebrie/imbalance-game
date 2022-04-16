@@ -37,7 +37,11 @@ export default class GwentArchgriffin extends ServerCard {
 				return
 			}
 			game.animation.play(ServerAnimation.cardAffectsRows(this, [targetRow]))
-			hazards.forEach((hazard) => targetRow.buffs.removeByReference(hazard))
+			hazards.forEach((hazard) =>
+				targetRow.buffs.removeByReference(hazard, {
+					source: this,
+				})
+			)
 		})
 	}
 }

@@ -101,6 +101,9 @@ export default class ServerBuffContainer implements BuffContainer {
 		if (typeof count === 'function') {
 			count = count(source)
 		}
+		if (count <= 0) {
+			return []
+		}
 
 		const buffs = []
 		for (let i = 0; i < count; i++) {
@@ -120,14 +123,24 @@ export default class ServerBuffContainer implements BuffContainer {
 			}
 		}
 
-		if (count > 0) {
-			const exampleBuff = buffs[0]
-			if (!this.buffSkipsAnimation(exampleBuff) && mergeAnimation) {
-				if (this.parent instanceof ServerCard && this.parent.isVisuallyRendered) {
-					this.game.animation.play(ServerAnimation.cardsReceivedBuff([this.parent], exampleBuff.alignment))
-				} else if (this.parent instanceof ServerBoardRow) {
-					this.game.animation.play(ServerAnimation.rowsReceivedBuff([this.parent], exampleBuff.alignment))
-				}
+		const exampleBuff = buffs[0]
+
+		if (exampleBuff instanceof ServerCardBuff) {
+			this.game.events.postEvent(
+				GameEventCreators.cardMultibuffCreated({
+					game: this.game,
+					triggeringBuff: exampleBuff,
+					affectedBuffs: buffs as ServerCardBuff[],
+					source,
+				})
+			)
+		}
+
+		if (!this.buffSkipsAnimation(exampleBuff) && mergeAnimation) {
+			if (this.parent instanceof ServerCard && this.parent.isVisuallyRendered) {
+				this.game.animation.play(ServerAnimation.cardsReceivedBuff([this.parent], exampleBuff.alignment))
+			} else if (this.parent instanceof ServerBoardRow) {
+				this.game.animation.play(ServerAnimation.rowsReceivedBuff([this.parent], exampleBuff.alignment))
 			}
 		}
 		return buffs
@@ -195,6 +208,7 @@ export default class ServerBuffContainer implements BuffContainer {
 				GameEventCreators.cardBuffCreated({
 					game: this.game,
 					triggeringBuff: newBuff,
+					source,
 				})
 			)
 		} else if (newBuff instanceof ServerRowBuff) {
@@ -203,6 +217,7 @@ export default class ServerBuffContainer implements BuffContainer {
 				GameEventCreators.rowBuffCreated({
 					game: this.game,
 					triggeringBuff: newBuff,
+					source,
 				})
 			)
 		}
@@ -258,13 +273,15 @@ export default class ServerBuffContainer implements BuffContainer {
 			.forEach((buff) => this.removeByReference(buff))
 	}
 
-	public removeByReference(buff: ServerBuff, args: { skipAnimation: boolean } = { skipAnimation: false }): void {
+	public removeByReference(buff: ServerBuff, args?: { source?: ServerBuffSource; skipAnimation?: boolean }): void {
 		const index = this.buffs.indexOf(buff)
 		if (index === -1) {
 			return
 		}
+		const source = args?.source || null
+		const skipAnimation = args?.skipAnimation || null
 
-		if (!this.buffSkipsAnimation(buff) && !args.skipAnimation) {
+		if (!this.buffSkipsAnimation(buff) && !skipAnimation) {
 			if (this.parent instanceof ServerCard && this.parent.isVisuallyRendered) {
 				this.game.animation.play(ServerAnimation.cardsLostBuff([this.parent], buff.alignment))
 			} else if (this.parent instanceof ServerBoardRow) {
@@ -276,12 +293,14 @@ export default class ServerBuffContainer implements BuffContainer {
 			GameEventCreators.cardBuffRemoved({
 				game: this.game,
 				triggeringBuff: buff,
+				source,
 			})
 		} else if (buff instanceof ServerRowBuff) {
 			this.game.events.postEvent(
 				GameEventCreators.rowBuffRemoved({
 					game: this.game,
 					triggeringBuff: buff,
+					source,
 				})
 			)
 		}
@@ -339,7 +358,10 @@ export default class ServerBuffContainer implements BuffContainer {
 		}
 
 		buffsOfType.forEach((buffToRemove) => {
-			this.removeByReference(buffToRemove)
+			this.removeByReference(buffToRemove, {
+				skipAnimation: false,
+				source,
+			})
 		})
 	}
 
