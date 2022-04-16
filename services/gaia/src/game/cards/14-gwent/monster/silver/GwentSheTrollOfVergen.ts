@@ -37,6 +37,7 @@ export default class GwentSheTrollOfVergen extends ServerCard {
 
 		this.createDeployTargets(TargetType.CARD_IN_UNIT_DECK)
 			.requireAllied()
+			.require(({ targetCard }) => targetCard.type === CardType.UNIT)
 			.require(({ targetCard }) => targetCard.color === CardColor.BRONZE)
 			.require(({ targetCard }) => targetCard.features.includes(CardFeature.HAS_DEATHWISH))
 			.perform(({ targetCard }) => {
@@ -47,8 +48,8 @@ export default class GwentSheTrollOfVergen extends ServerCard {
 		this.createCallback(GameEventType.CARD_RESOLVED, [CardLocation.BOARD])
 			.require(({ triggeringCard }) => triggeringCard === this.cardToConsume)
 			.perform(({ triggeringCard }) => {
-				Keywords.consume.cards({
-					targets: [triggeringCard],
+				Keywords.consume.units({
+					targets: [triggeringCard.unit!],
 					consumer: this,
 				})
 				this.cardToConsume = null

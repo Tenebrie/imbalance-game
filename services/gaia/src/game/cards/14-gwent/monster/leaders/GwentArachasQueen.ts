@@ -45,9 +45,9 @@ export default class GwentArachasQueen extends ServerCard {
 			.requireAllied()
 			.requireNotSelf()
 			.targetCount(GwentArachasQueen.TARGETS)
-			.perform(({ targetCard }) => {
-				Keywords.consume.cards({
-					targets: [targetCard],
+			.perform(({ targetUnit }) => {
+				Keywords.consume.units({
+					targets: [targetUnit],
 					consumer: this,
 				})
 			})

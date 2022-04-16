@@ -37,9 +37,9 @@ export default class GwentKayran extends ServerCard {
 		this.createDeployTargets(TargetType.UNIT)
 			.requireNotSelf()
 			.require(({ targetCard }) => targetCard.stats.power <= GwentKayran.MAX_CONSUME_POWER)
-			.perform(({ targetCard }) => {
-				Keywords.consume.cards({
-					targets: [targetCard],
+			.perform(({ targetUnit }) => {
+				Keywords.consume.units({
+					targets: [targetUnit],
 					consumer: this,
 				})
 			})

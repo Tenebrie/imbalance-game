@@ -44,10 +44,10 @@ export default class GwentHarpyEgg extends ServerCard {
 
 		this.createEffect(GameEventType.AFTER_UNIT_DESTROYED)
 			.require(({ reason }) => reason === UnitDestructionReason.CARD_EFFECT)
-			.perform(() => {
-				const targetRow = shuffle(game.board.getControlledRows(this.ownerGroup))[0]
+			.perform(({ owner }) => {
+				const targetRow = shuffle(game.board.getControlledRows(owner.group))[0]
 				Keywords.summonUnit({
-					owner: this.ownerPlayer,
+					owner: owner,
 					cardConstructor: GwentHarpyHatchling,
 					rowIndex: targetRow.index,
 					unitIndex: targetRow.cards.length,

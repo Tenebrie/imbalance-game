@@ -51,6 +51,19 @@ export default class GwentGriffin extends ServerCard {
 						unitIndex: targetUnit.unitIndex,
 					})
 				)
+				Keywords.triggerEvent(
+					targetUnit.card,
+					GameEventCreators.afterUnitDestroyed({
+						game,
+						triggeringCard: targetUnit.card,
+						triggeringUnit: targetUnit,
+						reason: UnitDestructionReason.CARD_EFFECT,
+						destroyer: this,
+						owner: targetUnit.originalOwner,
+						rowIndex: targetUnit.rowIndex,
+						unitIndex: targetUnit.unitIndex,
+					})
+				)
 			})
 	}
 }
