@@ -58,7 +58,7 @@ export class ServerCardTargeting {
 	 * ------------------------------------
 	 */
 	public getPlayTargets(cardOwner: ServerPlayerInGame, attrs: { checkMana: boolean }): PlayTarget[] {
-		if (this.card.features.includes(CardFeature.PASSIVE)) {
+		if (this.card.features.includes(CardFeature.PASSIVE) || this.card.features.includes(CardFeature.UNPLAYABLE)) {
 			return []
 		}
 

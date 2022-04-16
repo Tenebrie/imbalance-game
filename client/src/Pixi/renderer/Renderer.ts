@@ -198,15 +198,16 @@ export default class Renderer {
 
 		if (Core.player.players.length > 0) {
 			const unitCards = Core.player.players[0].cardHand.unitCards
+			const spellCards = Core.player.players[0].cardHand.spellCards
+
 			const sortedPlayerUnitCards = Core.player.players[0].cardHand.unitCards
 				.filter((card) => !input.forcedTargetingCards.some((targetingCard) => targetingCard.id === card.id))
 				.slice()
 				.reverse()
 			sortedPlayerUnitCards.forEach((renderedCard) => {
-				this.renderCard(renderedCard, unitCards, 'player', 'unit')
+				this.renderCard(renderedCard, unitCards, 'player', spellCards.length === 0 ? 'gwent-unit' : 'unit')
 			})
 
-			const spellCards = Core.player.players[0].cardHand.spellCards
 			const sortedPlayerSpellCards = Core.player.players[0].cardHand.spellCards
 				.filter((card) => !input.forcedTargetingCards.some((targetingCard) => targetingCard.id === card.id))
 				.slice()
@@ -218,16 +219,17 @@ export default class Renderer {
 
 		if (Core.opponent.players.length > 0) {
 			const opponentsUnitCards = Core.opponent.players[0].cardHand.unitCards
+			const opponentsSpellCards = Core.opponent.players[0].cardHand.spellCards
+
 			const sortedOpponentUnitCards = Core.opponent.players[0].cardHand.unitCards.slice().reverse()
 			sortedOpponentUnitCards.forEach((renderedCard) => {
 				if (renderedCard === mainHandler.announcedCard) {
 					return
 				}
 
-				this.renderCard(renderedCard, opponentsUnitCards, 'opponent', 'unit')
+				this.renderCard(renderedCard, opponentsUnitCards, 'opponent', opponentsSpellCards.length === 0 ? 'gwent-unit' : 'unit')
 			})
 
-			const opponentsSpellCards = Core.opponent.players[0].cardHand.spellCards
 			const sortedOpponentSpellCards = Core.opponent.players[0].cardHand.spellCards.slice().reverse()
 			sortedOpponentSpellCards.forEach((renderedCard) => {
 				if (renderedCard === mainHandler.announcedCard) {
@@ -247,7 +249,12 @@ export default class Renderer {
 		this.renderTargetingArrow()
 	}
 
-	private renderCard(card: RenderedCard, cardArray: RenderedCard[], owner: 'player' | 'opponent', hand: 'leader' | 'unit' | 'spell'): void {
+	private renderCard(
+		card: RenderedCard,
+		cardArray: RenderedCard[],
+		owner: 'player' | 'opponent',
+		hand: 'leader' | 'unit' | 'spell' | 'gwent-unit'
+	): void {
 		const input = Core.input
 		if (!input) {
 			return
@@ -337,7 +344,7 @@ export default class Renderer {
 		handPosition: number,
 		handSize: number,
 		owner: 'player' | 'opponent',
-		hand: 'leader' | 'unit' | 'spell'
+		hand: 'leader' | 'unit' | 'spell' | 'gwent-unit'
 	): void {
 		const container = renderedCard.coreContainer
 		const sprite = renderedCard.sprite
@@ -353,10 +360,22 @@ export default class Renderer {
 		const leaderHandFraction = 0.1
 		const unitHandFraction = 0.5
 		const spellHandFraction = 0.3
+		const gwentHandFraction = 0.8
 		const handPaddingFraction = 0.02
 		const handsOffsetFraction = 0.1
 
-		const containerFraction = hand === 'unit' ? unitHandFraction : hand === 'spell' ? spellHandFraction : leaderHandFraction
+		const containerFraction = (() => {
+			switch (hand) {
+				case 'unit':
+					return unitHandFraction
+				case 'spell':
+					return spellHandFraction
+				case 'leader':
+					return leaderHandFraction
+				case 'gwent-unit':
+					return gwentHandFraction
+			}
+		})()
 		const singleCardWidth = (screenWidth * containerFraction) / handSize
 		const singleCardOverflow = Math.max(0, cardHeight * this.CARD_ASPECT_RATIO - singleCardWidth)
 		const containerWidth = Math.min(screenWidth * containerFraction - singleCardOverflow, cardHeight * this.CARD_ASPECT_RATIO * handSize)
@@ -381,6 +400,8 @@ export default class Renderer {
 			targetPosition.x += (screenWidth * unitHandFraction) / 2 + (screenWidth * spellHandFraction) / 2 + screenWidth * handPaddingFraction
 		} else if (hand === 'leader') {
 			targetPosition.x += -(screenWidth * unitHandFraction) / 2 - (screenWidth * leaderHandFraction) / 2 - screenWidth * handPaddingFraction
+		} else if (hand === 'gwent-unit') {
+			targetPosition.x += screenWidth * leaderHandFraction
 		}
 
 		if (renderedCard.displayMode === CardDisplayMode.IN_HAND || renderedCard.displayMode === CardDisplayMode.IN_HAND_HOVERED) {

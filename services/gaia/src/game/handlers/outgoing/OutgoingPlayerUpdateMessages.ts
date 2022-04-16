@@ -222,7 +222,7 @@ export default {
 
 	notifyAboutValidActionsChanged(game: ServerGame, targetPlayers: ServerPlayerInGame[]): void {
 		targetPlayers.forEach((playerInGame) => {
-			const cardsInHand = playerInGame.cardHand.allCards
+			const cardsInHand = playerInGame.cardHand.allCards.concat(playerInGame.leader)
 			const validPlayTargets = cardsInHand.flatMap((card) => card.targeting.getPlayTargets(playerInGame, { checkMana: true }))
 			const playTargetMessages = validPlayTargets.map((order) => new CardTargetMessage(order.target))
 			playerInGame.player.sendGameMessage({

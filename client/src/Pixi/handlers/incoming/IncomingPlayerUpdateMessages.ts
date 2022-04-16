@@ -1,3 +1,4 @@
+import CardColor from '@shared/enums/CardColor'
 import CardMessage from '@shared/models/network/card/CardMessage'
 import CardRefMessage from '@shared/models/network/card/CardRefMessage'
 import CardTargetMessage from '@shared/models/network/CardTargetMessage'
@@ -136,7 +137,9 @@ const IncomingPlayerUpdateMessages: PlayerUpdateMessageHandlers = {
 		if (!cardInLimbo) {
 			return
 		}
-		Core.player.players[0].cardHand.addCard(cardInLimbo)
+		if (cardInLimbo.color !== CardColor.LEADER) {
+			Core.player.players[0].cardHand.addCard(cardInLimbo)
+		}
 	},
 
 	[PlayerUpdateMessageType.TURN_START]: (group: PlayerGroupRefMessage) => {
