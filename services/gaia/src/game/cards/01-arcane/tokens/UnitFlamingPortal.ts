@@ -5,12 +5,12 @@ import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
 import UnitFlamingShadow from '@src/game/cards/01-arcane/tokens/UnitFlamingShadow'
+import ServerCard from '@src/game/models/ServerCard'
+import ServerGame from '@src/game/models/ServerGame'
 import Keywords from '@src/utils/Keywords'
 import { asRecurringSummonCount } from '@src/utils/LeaderStats'
 
 import BotCardEvaluation from '../../../AI/BotCardEvaluation'
-import ServerCard from '../../../models/ServerCard'
-import ServerGame from '../../../models/ServerGame'
 
 export default class UnitFlamingPortal extends ServerCard {
 	public static readonly BASE_SHADOWS_SUMMONED = 1

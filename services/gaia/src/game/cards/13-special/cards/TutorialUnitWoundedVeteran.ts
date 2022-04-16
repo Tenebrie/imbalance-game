@@ -5,10 +5,10 @@ import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
 import UnitWoundedVeteran from '@src/game/cards/00-human/common/UnitWoundedVeteran'
+import ServerCard from '@src/game/models/ServerCard'
+import ServerGame from '@src/game/models/ServerGame'
 
-import ServerCard from '../../../models/ServerCard'
 import { DamageInstance } from '../../../models/ServerDamageSource'
-import ServerGame from '../../../models/ServerGame'
 
 export default class TutorialUnitWoundedVeteran extends ServerCard {
 	damageToSelf = 20

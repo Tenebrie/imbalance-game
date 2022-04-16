@@ -8,10 +8,10 @@ import DamageSource from '@shared/enums/DamageSource'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
 import BuffProtector from '@src/game/buffs/BuffProtector'
+import ServerCard from '@src/game/models/ServerCard'
+import ServerGame from '@src/game/models/ServerGame'
 
 import GameHookType from '../../../models/events/GameHookType'
-import ServerCard from '../../../models/ServerCard'
-import ServerGame from '../../../models/ServerGame'
 
 export default class HeroAntoria extends ServerCard {
 	private damageIntercepted = false

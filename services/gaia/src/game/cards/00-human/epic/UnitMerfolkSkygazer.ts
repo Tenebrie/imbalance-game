@@ -6,9 +6,8 @@ import ExpansionSet from '@shared/enums/ExpansionSet'
 import TargetType from '@shared/enums/TargetType'
 import BuffRowHealingRain from '@src/game/buffs/BuffRowHealingRain'
 import ServerBoardRow from '@src/game/models/ServerBoardRow'
-
-import ServerCard from '../../../models/ServerCard'
-import ServerGame from '../../../models/ServerGame'
+import ServerCard from '@src/game/models/ServerCard'
+import ServerGame from '@src/game/models/ServerGame'
 
 export default class UnitMerfolkSkygazer extends ServerCard {
 	constructor(game: ServerGame) {

@@ -4,12 +4,12 @@ import CardFaction from '@shared/enums/CardFaction'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import TargetType from '@shared/enums/TargetType'
+import ServerCard from '@src/game/models/ServerCard'
+import ServerGame from '@src/game/models/ServerGame'
 import ServerPlayerInGame from '@src/game/players/ServerPlayerInGame'
 
 import CardLibrary from '../../../libraries/CardLibrary'
 import ServerBoardRow from '../../../models/ServerBoardRow'
-import ServerCard from '../../../models/ServerCard'
-import ServerGame from '../../../models/ServerGame'
 import UnitHarmlessShadow from '../tokens/UnitHarmlessShadow'
 
 export default class HeroLearthe extends ServerCard {

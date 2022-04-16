@@ -8,7 +8,7 @@ import Keywords from '@src/utils/Keywords'
 
 import ServerCard from '../../../../models/ServerCard'
 import ServerGame from '../../../../models/ServerGame'
-import GwentMoonlight from '../GwentMoonlight'
+import GwentMoonlight from '../bronze/GwentMoonlight'
 
 export default class GwentNekurat extends ServerCard {
 	constructor(game: ServerGame) {
@@ -21,6 +21,7 @@ export default class GwentNekurat extends ServerCard {
 				power: 5,
 			},
 			expansionSet: ExpansionSet.GWENT,
+			relatedCards: [GwentMoonlight],
 		})
 
 		this.createLocalization({

@@ -6,9 +6,8 @@ import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
 import BuffWeakness from '@src/game/buffs/BuffWeakness'
-
-import ServerCard from '../../../models/ServerCard'
-import ServerGame from '../../../models/ServerGame'
+import ServerCard from '@src/game/models/ServerCard'
+import ServerGame from '@src/game/models/ServerGame'
 
 export default class UnitTheMinisterOfLand extends ServerCard {
 	public static readonly WEAKNESS_POTENCY = 4

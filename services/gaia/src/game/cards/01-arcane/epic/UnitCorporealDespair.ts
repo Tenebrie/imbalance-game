@@ -8,10 +8,9 @@ import TargetType from '@shared/enums/TargetType'
 import BuffStrength from '@src/game/buffs/BuffStrength'
 import BuffWeaknessHidden from '@src/game/buffs/BuffWeaknessHidden'
 import UnitShadow from '@src/game/cards/01-arcane/tokens/UnitShadow'
+import ServerCard from '@src/game/models/ServerCard'
+import ServerGame from '@src/game/models/ServerGame'
 import Keywords from '@src/utils/Keywords'
-
-import ServerCard from '../../../models/ServerCard'
-import ServerGame from '../../../models/ServerGame'
 
 export default class UnitCorporealDespair extends ServerCard {
 	fallbackTriggered = false

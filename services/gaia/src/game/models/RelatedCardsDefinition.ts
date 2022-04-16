@@ -59,6 +59,11 @@ export default class RelatedCardsDefinition {
 		return this
 	}
 
+	requireAnyColor(colors: CardColor[]): RelatedCardsDefinition {
+		this.__conditions.push((card) => colors.includes(card.color))
+		return this
+	}
+
 	requireFaction(faction: CardFaction): RelatedCardsDefinition {
 		this.__conditions.push((card) => card.faction === faction)
 		return this

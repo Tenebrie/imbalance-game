@@ -7,11 +7,11 @@ import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
 import MoveDirection from '@shared/enums/MoveDirection'
 import TargetType from '@shared/enums/TargetType'
+import ServerCard from '@src/game/models/ServerCard'
+import ServerGame from '@src/game/models/ServerGame'
 import { asRecurringUnitDamage } from '@src/utils/LeaderStats'
 
-import ServerCard from '../../../models/ServerCard'
 import { DamageInstance } from '../../../models/ServerDamageSource'
-import ServerGame from '../../../models/ServerGame'
 
 export default class UnitChargingKnight extends ServerCard {
 	damage = asRecurringUnitDamage(5)

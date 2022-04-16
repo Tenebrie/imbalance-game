@@ -43,7 +43,7 @@
 		</div>
 		<div class="card-info-section" v-if="displayedRelatedCards.length > 0">
 			<div class="menu-separator" v-if="displayInGameStats || displayedFeatures.length > 0 || displayBuffs" />
-			<div class="header" v-if="displayLeaderPowersLabel">{{ $locale.get('card.inspect.leaderPowers') }}:</div>
+			<div class="header" v-if="displayedRelatedCards.length > 0">Related cards:</div>
 			<div class="card-section">
 				<div class="related-card" v-for="relatedCardClass in displayedRelatedCards" :key="relatedCardClass">
 					<pixi-related-card :card-class="relatedCardClass" />

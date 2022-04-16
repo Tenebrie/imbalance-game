@@ -1,10 +1,10 @@
 import TargetType from '@shared/enums/TargetType'
+import ServerCard from '@src/game/models/ServerCard'
+import ServerGame from '@src/game/models/ServerGame'
 
 import TestGameTemplates from '../../../../utils/TestGameTemplates'
 import { getClassFromConstructor } from '../../../../utils/Utils'
 import CardLibrary from '../../../libraries/CardLibrary'
-import ServerCard from '../../../models/ServerCard'
-import ServerGame from '../../../models/ServerGame'
 import ServerOwnedCard from '../../../models/ServerOwnedCard'
 import ServerPlayerInGame from '../../../players/ServerPlayerInGame'
 import LeaderNighterie from '../leaders/Nighterie/LeaderNighterie'

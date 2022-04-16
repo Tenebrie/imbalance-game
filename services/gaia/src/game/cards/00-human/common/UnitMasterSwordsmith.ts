@@ -6,11 +6,11 @@ import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
 import { sortCards } from '@shared/Utils'
+import ServerCard from '@src/game/models/ServerCard'
+import ServerGame from '@src/game/models/ServerGame'
 import { asSplashBuffPotency } from '@src/utils/LeaderStats'
 
 import BuffStrength from '../../../buffs/BuffStrength'
-import ServerCard from '../../../models/ServerCard'
-import ServerGame from '../../../models/ServerGame'
 
 export default class UnitMasterSwordsmith extends ServerCard {
 	bonusPower = asSplashBuffPotency(2)

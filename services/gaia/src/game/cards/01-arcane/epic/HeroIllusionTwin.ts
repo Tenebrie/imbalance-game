@@ -5,11 +5,11 @@ import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
 import { sortCards } from '@shared/Utils'
+import ServerCard from '@src/game/models/ServerCard'
+import ServerGame from '@src/game/models/ServerGame'
 
 import BuffStrength from '../../../buffs/BuffStrength'
-import ServerCard from '../../../models/ServerCard'
 import { DamageInstance } from '../../../models/ServerDamageSource'
-import ServerGame from '../../../models/ServerGame'
 
 /* Original design and implementation by Nenl */
 export default class HeroIllusionTwin extends ServerCard {

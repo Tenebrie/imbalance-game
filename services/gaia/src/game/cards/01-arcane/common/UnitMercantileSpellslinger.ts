@@ -6,12 +6,12 @@ import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
 import TargetType from '@shared/enums/TargetType'
+import ServerCard from '@src/game/models/ServerCard'
+import ServerGame from '@src/game/models/ServerGame'
 
 import BuffSpellDiscountPerTurn from '../../../buffs/BuffSpellDiscountPerTurn'
 import BuffSpellExtraCost from '../../../buffs/BuffSpellExtraCost'
 import CardLibrary from '../../../libraries/CardLibrary'
-import ServerCard from '../../../models/ServerCard'
-import ServerGame from '../../../models/ServerGame'
 
 export default class UnitMercantileSpellslinger extends ServerCard {
 	manaMarkup = 3

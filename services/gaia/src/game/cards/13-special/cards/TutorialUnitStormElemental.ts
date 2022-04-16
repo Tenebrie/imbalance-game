@@ -5,10 +5,10 @@ import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
 import UnitStormElemental from '@src/game/cards/01-arcane/common/UnitStormElemental'
+import ServerCard from '@src/game/models/ServerCard'
+import ServerGame from '@src/game/models/ServerGame'
 
 import Keywords from '../../../../utils/Keywords'
-import ServerCard from '../../../models/ServerCard'
-import ServerGame from '../../../models/ServerGame'
 
 export default class TutorialUnitStormElemental extends ServerCard {
 	manaGenerated = 5

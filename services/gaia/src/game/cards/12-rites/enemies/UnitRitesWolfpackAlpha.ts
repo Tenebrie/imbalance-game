@@ -8,11 +8,11 @@ import DamageSource from '@shared/enums/DamageSource'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
 import BuffStrength from '@src/game/buffs/BuffStrength'
+import ServerCard from '@src/game/models/ServerCard'
+import ServerGame from '@src/game/models/ServerGame'
 import { asRecurringBuffPotency, asRecurringUnitDamage } from '@src/utils/LeaderStats'
 
-import ServerCard from '../../../models/ServerCard'
 import { DamageInstance } from '../../../models/ServerDamageSource'
-import ServerGame from '../../../models/ServerGame'
 import UnitRitesStarvingWolf from './UnitRitesStarvingWolf'
 
 export default class UnitRitesWolfpackAlpha extends ServerCard {

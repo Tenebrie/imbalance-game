@@ -6,11 +6,10 @@ import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
 import TargetType from '@shared/enums/TargetType'
 import ServerAnimation from '@src/game/models/ServerAnimation'
+import ServerCard from '@src/game/models/ServerCard'
 import { DamageInstance } from '@src/game/models/ServerDamageSource'
+import ServerGame from '@src/game/models/ServerGame'
 import Keywords from '@src/utils/Keywords'
-
-import ServerCard from '../../../models/ServerCard'
-import ServerGame from '../../../models/ServerGame'
 
 interface SacrificedUnit {
 	power: number

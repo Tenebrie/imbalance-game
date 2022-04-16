@@ -5,12 +5,12 @@ import CardFeature from '@shared/enums/CardFeature'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import TargetType from '@shared/enums/TargetType'
+import ServerCard from '@src/game/models/ServerCard'
+import ServerGame from '@src/game/models/ServerGame'
 import Keywords from '@src/utils/Keywords'
 import { asDirectBuffPotency } from '@src/utils/LeaderStats'
 
 import BuffStrength from '../../../buffs/BuffStrength'
-import ServerCard from '../../../models/ServerCard'
-import ServerGame from '../../../models/ServerGame'
 
 export default class UnitUndercityGambler extends ServerCard {
 	bonusPower = asDirectBuffPotency(10)

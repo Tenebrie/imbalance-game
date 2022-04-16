@@ -5,11 +5,11 @@ import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import TargetType from '@shared/enums/TargetType'
 import SpellFleetingSpark from '@src/game/cards/01-arcane/tokens/SpellFleetingSpark'
+import ServerCard from '@src/game/models/ServerCard'
+import ServerGame from '@src/game/models/ServerGame'
 import { asDirectSparkDamage } from '@src/utils/LeaderStats'
 
-import ServerCard from '../../../models/ServerCard'
 import { DamageInstance } from '../../../models/ServerDamageSource'
-import ServerGame from '../../../models/ServerGame'
 import ServerUnit from '../../../models/ServerUnit'
 
 export default class TutorialSpellFleetingSpark extends ServerCard {

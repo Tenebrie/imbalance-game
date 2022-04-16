@@ -9,10 +9,9 @@ import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
 import MoveDirection from '@shared/enums/MoveDirection'
 import BuffProtector from '@src/game/buffs/BuffProtector'
+import ServerCard from '@src/game/models/ServerCard'
+import ServerGame from '@src/game/models/ServerGame'
 import Keywords from '@src/utils/Keywords'
-
-import ServerCard from '../../../models/ServerCard'
-import ServerGame from '../../../models/ServerGame'
 
 export default class UnitWingedShieldmaiden extends ServerCard {
 	constructor(game: ServerGame) {

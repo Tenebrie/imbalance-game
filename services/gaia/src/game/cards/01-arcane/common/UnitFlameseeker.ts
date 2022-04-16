@@ -5,10 +5,10 @@ import ExpansionSet from '@shared/enums/ExpansionSet'
 import TargetType from '@shared/enums/TargetType'
 import UnitFlamingPortal from '@src/game/cards/01-arcane/tokens/UnitFlamingPortal'
 import GameEventCreators from '@src/game/models/events/GameEventCreators'
+import ServerCard from '@src/game/models/ServerCard'
+import ServerGame from '@src/game/models/ServerGame'
 
 import Keywords from '../../../../utils/Keywords'
-import ServerCard from '../../../models/ServerCard'
-import ServerGame from '../../../models/ServerGame'
 import UnitVoidPortal from '../tokens/UnitVoidPortal'
 
 export default class UnitFlameseeker extends ServerCard {

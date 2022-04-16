@@ -8,10 +8,9 @@ import LeaderStatType from '@shared/enums/LeaderStatType'
 import HeroSparklingSpirit from '@src/game/cards/01-arcane/epic/HeroSparklingSpirit'
 import SpellFleetingSpark from '@src/game/cards/01-arcane/tokens/SpellFleetingSpark'
 import TutorialSpellFleetingSpark from '@src/game/cards/13-special/cards/TutorialSpellFleetingSpark'
+import ServerCard from '@src/game/models/ServerCard'
+import ServerGame from '@src/game/models/ServerGame'
 import Keywords from '@src/utils/Keywords'
-
-import ServerCard from '../../../models/ServerCard'
-import ServerGame from '../../../models/ServerGame'
 
 export default class TutorialUnitSparklingSpirit extends ServerCard {
 	constructor(game: ServerGame) {

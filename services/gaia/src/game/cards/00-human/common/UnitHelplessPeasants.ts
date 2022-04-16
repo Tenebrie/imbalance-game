@@ -6,11 +6,11 @@ import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
 import BuffProtector from '@src/game/buffs/BuffProtector'
+import ServerCard from '@src/game/models/ServerCard'
+import ServerGame from '@src/game/models/ServerGame'
 import { asRecurringBuffPotency } from '@src/utils/LeaderStats'
 
 import BuffStrength from '../../../buffs/BuffStrength'
-import ServerCard from '../../../models/ServerCard'
-import ServerGame from '../../../models/ServerGame'
 
 /* Original design and implementation by Nenl */
 export default class UnitHelplessPeasants extends ServerCard {

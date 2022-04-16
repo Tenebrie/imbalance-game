@@ -6,12 +6,12 @@ import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
 import TargetType from '@shared/enums/TargetType'
+import ServerCard from '@src/game/models/ServerCard'
+import ServerGame from '@src/game/models/ServerGame'
 import { asSplashBuffPotency, asTargetCount } from '@src/utils/LeaderStats'
 
 import BuffStrength from '../../../buffs/BuffStrength'
 import BuffUpgradedStorms from '../../../buffs/BuffUpgradedStorms'
-import ServerCard from '../../../models/ServerCard'
-import ServerGame from '../../../models/ServerGame'
 import ServerUnit from '../../../models/ServerUnit'
 
 export default class SpellEnchantedStorm extends ServerCard {

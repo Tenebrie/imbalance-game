@@ -4,11 +4,10 @@ import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
 import BuffProtector from '@src/game/buffs/BuffProtector'
+import ServerCard from '@src/game/models/ServerCard'
 import { DamageInstance } from '@src/game/models/ServerDamageSource'
+import ServerGame from '@src/game/models/ServerGame'
 import { asSplashUnitDamage } from '@src/utils/LeaderStats'
-
-import ServerCard from '../../../models/ServerCard'
-import ServerGame from '../../../models/ServerGame'
 
 export default class HeroTagen extends ServerCard {
 	public static readonly BASE_ENEMY_DAMAGE = 3

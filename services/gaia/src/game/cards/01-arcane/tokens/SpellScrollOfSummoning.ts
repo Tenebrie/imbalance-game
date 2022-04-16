@@ -5,11 +5,10 @@ import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import TargetType from '@shared/enums/TargetType'
 import UnitFierceShadow from '@src/game/cards/01-arcane/tokens/UnitFierceShadow'
+import ServerCard from '@src/game/models/ServerCard'
+import ServerGame from '@src/game/models/ServerGame'
 import Keywords from '@src/utils/Keywords'
 import { asDirectSummonCount } from '@src/utils/LeaderStats'
-
-import ServerCard from '../../../models/ServerCard'
-import ServerGame from '../../../models/ServerGame'
 
 export default class SpellScrollOfSummoning extends ServerCard {
 	public static readonly BASE_SHADOWS_SUMMONED = 3

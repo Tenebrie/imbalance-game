@@ -5,11 +5,10 @@ import CardLocation from '@shared/enums/CardLocation'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
+import ServerCard from '@src/game/models/ServerCard'
 import { DamageInstance } from '@src/game/models/ServerDamageSource'
+import ServerGame from '@src/game/models/ServerGame'
 import Keywords from '@src/utils/Keywords'
-
-import ServerCard from '../../../models/ServerCard'
-import ServerGame from '../../../models/ServerGame'
 
 export default class SpellBloodPlague extends ServerCard {
 	public static readonly TARGET_DAMAGE = 1

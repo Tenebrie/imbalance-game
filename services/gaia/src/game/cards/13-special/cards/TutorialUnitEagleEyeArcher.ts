@@ -5,11 +5,11 @@ import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import TargetType from '@shared/enums/TargetType'
 import UnitEagleEyeArcher from '@src/game/cards/00-human/common/UnitEagleEyeArcher'
+import ServerCard from '@src/game/models/ServerCard'
+import ServerGame from '@src/game/models/ServerGame'
 import { asDirectUnitDamage } from '@src/utils/LeaderStats'
 
-import ServerCard from '../../../models/ServerCard'
 import { DamageInstance } from '../../../models/ServerDamageSource'
-import ServerGame from '../../../models/ServerGame'
 
 export default class TutorialUnitEagleEyeArcher extends ServerCard {
 	damage = asDirectUnitDamage(3)

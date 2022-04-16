@@ -1,3 +1,4 @@
+import Constants from '@shared/Constants'
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
 import CardTribe from '@shared/enums/CardTribe'
@@ -13,8 +14,6 @@ import ServerCard from '../../../../models/ServerCard'
 import ServerGame from '../../../../models/ServerGame'
 
 export default class GwentDevanaRunestone extends ServerCard {
-	public static readonly CARDS_TO_EXPLORE = 3
-
 	exploredCards: ServerCard[] = []
 
 	constructor(game: ServerGame) {
@@ -44,7 +43,7 @@ export default class GwentDevanaRunestone extends ServerCard {
 				.filter((card) => card.color === CardColor.SILVER || card.color === CardColor.BRONZE)
 				.filter((card) => card.faction === CardFaction.MONSTER)
 				.slice()
-			this.exploredCards = shuffle(validCards).slice(0, GwentDevanaRunestone.CARDS_TO_EXPLORE)
+			this.exploredCards = shuffle(validCards).slice(0, Constants.CREATE_KEYWORD_CARD_COUNT)
 		})
 
 		this.createDeployTargets(TargetType.CARD_IN_LIBRARY)

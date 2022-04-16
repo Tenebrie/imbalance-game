@@ -4,7 +4,7 @@
 			v-if="card"
 			:card="card"
 			:custom-art="imageRef"
-			:render-overlay="currentState === 'edit'"
+			:render-overlay="currentState !== 'save'"
 			@canvasReady="onCanvasReady"
 		/>
 		<div class="controls">
@@ -49,15 +49,16 @@ export default defineComponent({
 				const image = new Image()
 				image.onload = function () {
 					imageRef.value = image
+					currentState.value = 'edit'
 				}
 				image.src = fileReader.result as string
 			}
 			fileReader.readAsDataURL(files[0])
 		}
 
-		const currentState = ref<'edit' | 'save'>('edit')
+		const currentState = ref<'wait' | 'edit' | 'save'>('wait')
 		const onCanvasReady = async ({ canvas }: { canvas: HTMLCanvasElement }) => {
-			if (currentState.value === 'edit') {
+			if (currentState.value !== 'save') {
 				return
 			}
 
@@ -83,6 +84,10 @@ export default defineComponent({
 		}
 
 		const onSubmitArt = async () => {
+			if (currentState.value === 'wait') {
+				Notifications.error('Nothing to save')
+				return
+			}
 			currentState.value = 'save'
 		}
 

@@ -5,11 +5,10 @@ import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
 import TargetType from '@shared/enums/TargetType'
 import BuffStrength from '@src/game/buffs/BuffStrength'
+import ServerCard from '@src/game/models/ServerCard'
+import ServerGame from '@src/game/models/ServerGame'
 import { asDirectBuffPotency } from '@src/utils/LeaderStats'
 import { AnyCardLocation } from '@src/utils/Utils'
-
-import ServerCard from '../../../models/ServerCard'
-import ServerGame from '../../../models/ServerGame'
 
 export default class SpellGoldTithe extends ServerCard {
 	public static readonly BONUS_POWER = asDirectBuffPotency(4)

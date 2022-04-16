@@ -8,7 +8,7 @@ import Keywords from '@src/utils/Keywords'
 
 import ServerCard from '../../../../models/ServerCard'
 import ServerGame from '../../../../models/ServerGame'
-import GwentLesserIfrit from '../GwentLesserIfrit'
+import GwentLesserIfrit from '../tokens/GwentLesserIfrit'
 
 export default class GwentIfrit extends ServerCard {
 	public static readonly SUMMON_COUNT = 3
@@ -23,6 +23,7 @@ export default class GwentIfrit extends ServerCard {
 				power: 8,
 			},
 			expansionSet: ExpansionSet.GWENT,
+			relatedCards: [GwentLesserIfrit],
 		})
 		this.dynamicTextVariables = {
 			summonCount: GwentIfrit.SUMMON_COUNT,

@@ -7,13 +7,13 @@ import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
 import TargetType from '@shared/enums/TargetType'
+import ServerCard from '@src/game/models/ServerCard'
+import ServerGame from '@src/game/models/ServerGame'
 import { asRecurringUnitDamage } from '@src/utils/LeaderStats'
 
 import BuffCanAttack from '../../../buffs/BuffCanAttack'
-import ServerCard from '../../../models/ServerCard'
 import { ServerCardTargetUnit } from '../../../models/ServerCardTarget'
 import { DamageInstance } from '../../../models/ServerDamageSource'
-import ServerGame from '../../../models/ServerGame'
 
 export default class UnitArcheryTower extends ServerCard {
 	public static readonly BASE_DAMAGE = 3

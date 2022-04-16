@@ -5,10 +5,9 @@ import ExpansionSet from '@shared/enums/ExpansionSet'
 import TargetType from '@shared/enums/TargetType'
 import UnitEternalDeceit from '@src/game/cards/01-arcane/epic/UnitEternalDeceit'
 import UnitEternalTruth from '@src/game/cards/01-arcane/epic/UnitEternalTruth'
+import ServerCard from '@src/game/models/ServerCard'
+import ServerGame from '@src/game/models/ServerGame'
 import Keywords from '@src/utils/Keywords'
-
-import ServerCard from '../../../models/ServerCard'
-import ServerGame from '../../../models/ServerGame'
 
 export default class HeroEternalSeeker extends ServerCard {
 	constructor(game: ServerGame) {

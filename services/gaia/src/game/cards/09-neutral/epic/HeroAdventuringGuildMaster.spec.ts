@@ -1,6 +1,7 @@
+import ServerCard from '@src/game/models/ServerCard'
+import ServerGame from '@src/game/models/ServerGame'
+
 import TestGameTemplates from '../../../../utils/TestGameTemplates'
-import ServerCard from '../../../models/ServerCard'
-import ServerGame from '../../../models/ServerGame'
 import ServerOwnedCard from '../../../models/ServerOwnedCard'
 import ServerPlayerInGame from '../../../players/ServerPlayerInGame'
 import HeroAdventuringGuildMaster from './HeroAdventuringGuildMaster'

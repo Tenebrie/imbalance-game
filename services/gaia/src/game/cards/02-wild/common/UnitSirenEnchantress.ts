@@ -6,10 +6,9 @@ import ExpansionSet from '@shared/enums/ExpansionSet'
 import TargetType from '@shared/enums/TargetType'
 import BuffRowBloodMoon from '@src/game/buffs/BuffRowBloodMoon'
 import ServerBoardRow from '@src/game/models/ServerBoardRow'
+import ServerCard from '@src/game/models/ServerCard'
+import ServerGame from '@src/game/models/ServerGame'
 import Keywords from '@src/utils/Keywords'
-
-import ServerCard from '../../../models/ServerCard'
-import ServerGame from '../../../models/ServerGame'
 
 export default class UnitSirenEnchantress extends ServerCard {
 	public static readonly INFUSE_COST = 2

@@ -5,10 +5,9 @@ import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
 import UnitBoxOfCats from '@src/game/cards/09-neutral/tokens/UnitBoxOfCats'
+import ServerCard from '@src/game/models/ServerCard'
+import ServerGame from '@src/game/models/ServerGame'
 import Keywords from '@src/utils/Keywords'
-
-import ServerCard from '../../../models/ServerCard'
-import ServerGame from '../../../models/ServerGame'
 
 export default class HeroUnconventionalWarmaster extends ServerCard {
 	constructor(game: ServerGame) {

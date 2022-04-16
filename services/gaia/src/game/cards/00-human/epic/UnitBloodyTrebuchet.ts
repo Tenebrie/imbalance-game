@@ -6,12 +6,12 @@ import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
 import TargetType from '@shared/enums/TargetType'
+import ServerCard from '@src/game/models/ServerCard'
+import ServerGame from '@src/game/models/ServerGame'
 import { asDirectUnitDamage, asSplashUnitDamage } from '@src/utils/LeaderStats'
 
 import BuffCanAttack from '../../../buffs/BuffCanAttack'
-import ServerCard from '../../../models/ServerCard'
 import { DamageInstance } from '../../../models/ServerDamageSource'
-import ServerGame from '../../../models/ServerGame'
 
 export default class UnitBloodyTrebuchet extends ServerCard {
 	damage = asDirectUnitDamage(5)

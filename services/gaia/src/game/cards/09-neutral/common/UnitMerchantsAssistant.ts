@@ -5,11 +5,11 @@ import CardTribe from '@shared/enums/CardTribe'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
+import ServerCard from '@src/game/models/ServerCard'
+import ServerGame from '@src/game/models/ServerGame'
 import { asDirectBuffPotency } from '@src/utils/LeaderStats'
 
 import BuffNextSpellThisRoundDiscountAura from '../../../buffs/BuffNextSpellThisRoundDiscountAura'
-import ServerCard from '../../../models/ServerCard'
-import ServerGame from '../../../models/ServerGame'
 
 export default class UnitMerchantsAssistant extends ServerCard {
 	public static readonly BASE_SPELL_DISCOUNT = 3

@@ -1,4 +1,5 @@
 const Constants = {
+	CREATE_KEYWORD_CARD_COUNT: 3,
 	MAX_CARDS_PER_ROW: 11,
 
 	CARD_LIMIT_LEADER: 1,

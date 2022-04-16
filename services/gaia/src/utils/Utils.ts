@@ -9,7 +9,7 @@ import EditorCard from '@shared/models/EditorCard'
 import EditorDeck from '@shared/models/EditorDeck'
 import PopulatedEditorCard from '@shared/models/PopulatedEditorCard'
 import PopulatedEditorDeck from '@shared/models/PopulatedEditorDeck'
-import { getMaxCardCopiesForColor, getMaxCardCountForColor } from '@shared/Utils'
+import { getMaxCardCopiesForColor, getMaxCardCountForColor, shuffle } from '@shared/Utils'
 import { RulesetConstructor } from '@src/game/libraries/RulesetLibrary'
 import ServerBuff from '@src/game/models/buffs/ServerBuff'
 import { BuffConstructor } from '@src/game/models/buffs/ServerBuffContainer'
@@ -360,6 +360,9 @@ export const snakeToCamelCase = (str: string): string =>
 
 export const getRandomArrayValue = <T>(array: T[]): T => {
 	return array[Math.floor(Math.random() * array.length)]
+}
+export const getMultipleRandomArrayValues = <T>(array: T[], maxCount: number): T[] => {
+	return shuffle(array).slice(0, maxCount)
 }
 
 export const forEachRowCardSlot = (callback: (index: number) => void): void => {

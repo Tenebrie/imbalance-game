@@ -87,10 +87,14 @@ const Keywords = {
 		const { card, owner, rowIndex, unitIndex } = args
 
 		const game = owner.game
+		if (game.board.rows[rowIndex].isFull()) {
+			return null
+		}
 		owner.cardDeck.removeCard(card)
 		const unit = game.board.createUnit(card, owner, rowIndex, unitIndex)
 		if (!unit) {
 			owner.cardDeck.addUnitToTop(card)
+			return null
 		}
 		return unit
 	},
@@ -143,6 +147,15 @@ const Keywords = {
 			cardOwner.cardGraveyard.removeCard(card)
 		}
 		card.game.cardPlay.playCardToResolutionStack(new ServerOwnedCard(card, cardOwner))
+	},
+
+	playCardFromGraveyard: (card: ServerCard, newOwner: ServerPlayerInGame): void => {
+		const cardOwner = card.ownerPlayer
+		if (!cardOwner.cardGraveyard.allCards.includes(card)) {
+			throw new Error(`Card ${card.id} is not in the graveyard!`)
+		}
+		cardOwner.cardGraveyard.removeCard(card)
+		card.game.cardPlay.playCardToResolutionStack(new ServerOwnedCard(card, newOwner))
 	},
 
 	discardCard: (card: ServerCard): void => {

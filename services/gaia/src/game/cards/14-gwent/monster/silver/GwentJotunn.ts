@@ -9,6 +9,7 @@ import { DamageInstance } from '@src/game/models/ServerDamageSource'
 
 import ServerCard from '../../../../models/ServerCard'
 import ServerGame from '../../../../models/ServerGame'
+import GwentBitingFrost from '../../neutral/bronze/GwentBitingFrost'
 
 export default class GwentJotunn extends ServerCard {
 	public static readonly TARGETS = 3
@@ -25,6 +26,7 @@ export default class GwentJotunn extends ServerCard {
 				power: 6,
 			},
 			expansionSet: ExpansionSet.GWENT,
+			relatedCards: [GwentBitingFrost],
 		})
 		this.dynamicTextVariables = {
 			targets: GwentJotunn.TARGETS,
@@ -36,7 +38,7 @@ export default class GwentJotunn extends ServerCard {
 			en: {
 				name: 'Jotunn',
 				description:
-					'Move {targets} enemies to the row opposite this unit and deal {baseDamage} damage to them. If that row is under *Biting Frost*, deal {frostDamage} damage instead.',
+					'Move {targets} enemies to the row opposite this unit and deal {baseDamage} damage to them.\nIf that row is under *Biting Frost*, deal {frostDamage} damage instead.',
 				flavor:
 					'Skellige legend claims the mighty and terrible Jotunn, King of Giants, reigned over the isles in ancient times. He was slain by Hemdall, but with his dying breath he vowed to return for Ragh nar Roog.',
 			},

@@ -4,12 +4,12 @@ import CardLocation from '@shared/enums/CardLocation'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
+import ServerCard from '@src/game/models/ServerCard'
+import ServerGame from '@src/game/models/ServerGame'
 import Keywords from '@src/utils/Keywords'
 import { asRecurringSummonCount } from '@src/utils/LeaderStats'
 
 import BotCardEvaluation from '../../../AI/BotCardEvaluation'
-import ServerCard from '../../../models/ServerCard'
-import ServerGame from '../../../models/ServerGame'
 import UnitShadow from './UnitShadow'
 
 export default class UnitVoidPortal extends ServerCard {

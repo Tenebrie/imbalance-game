@@ -6,12 +6,12 @@ import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
 import TargetType from '@shared/enums/TargetType'
+import ServerCard from '@src/game/models/ServerCard'
+import ServerGame from '@src/game/models/ServerGame'
 
 import Keywords from '../../../../utils/Keywords'
 import BuffSpellDiscount from '../../../buffs/BuffSpellDiscount'
 import CardLibrary from '../../../libraries/CardLibrary'
-import ServerCard from '../../../models/ServerCard'
-import ServerGame from '../../../models/ServerGame'
 
 export default class UnitHungrySpellslinger extends ServerCard {
 	infuseCost = 3

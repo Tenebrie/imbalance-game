@@ -38,6 +38,11 @@ enum CardTribe {
 	DOOMED = 'doomed',
 	SUPPORT = 'support',
 	DWARF = 'dwarf',
+	SPELL = 'spell',
+	TACTIC = 'tactic',
+	VODYANOY = 'vodyanoi',
+	OFFICER = 'officer',
+	TOKEN = 'token',
 
 	LOST = 'lost',
 	RITES_WEAPON = 'ritesWeapon',

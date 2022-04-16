@@ -1,7 +1,7 @@
 import BuffAlignment from '@shared/enums/BuffAlignment'
 import GameEventType from '@shared/enums/GameEventType'
 import { shuffle } from '@shared/Utils'
-import GwentWildHuntRider from '@src/game/cards/14-gwent/monster/GwentWildHuntRider'
+import GwentWildHuntRider from '@src/game/cards/14-gwent/monster/bronze/GwentWildHuntRider'
 
 import { BuffConstructorParams, ServerRowBuff } from '../../models/buffs/ServerBuff'
 import { DamageInstance } from '../../models/ServerDamageSource'

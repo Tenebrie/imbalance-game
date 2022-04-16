@@ -5,11 +5,11 @@ import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
 import TargetType from '@shared/enums/TargetType'
+import ServerCard from '@src/game/models/ServerCard'
+import ServerGame from '@src/game/models/ServerGame'
 import { AnyCardLocation } from '@src/utils/Utils'
 
 import BuffNightwatch from '../../../buffs/BuffNightwatch'
-import ServerCard from '../../../models/ServerCard'
-import ServerGame from '../../../models/ServerGame'
 
 type SelectedUnit = {
 	card: ServerCard

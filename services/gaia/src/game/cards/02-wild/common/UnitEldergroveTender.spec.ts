@@ -1,7 +1,8 @@
+import ServerCard from '@src/game/models/ServerCard'
+import ServerGame from '@src/game/models/ServerGame'
+
 import TestGameTemplates from '../../../../utils/TestGameTemplates'
 import BuffGrowth from '../../../buffs/BuffGrowth'
-import ServerCard from '../../../models/ServerCard'
-import ServerGame from '../../../models/ServerGame'
 import ServerOwnedCard from '../../../models/ServerOwnedCard'
 import ServerUnit from '../../../models/ServerUnit'
 import ServerPlayerInGame from '../../../players/ServerPlayerInGame'

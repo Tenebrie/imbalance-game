@@ -385,7 +385,7 @@ export default class ServerBoard implements Board {
 		return targetRow.createUnit(card, createdBy, unitIndex)
 	}
 
-	public moveUnit(unit: ServerUnit, rowIndex: number, unitIndex: number): void {
+	public moveUnit(unit: ServerUnit, rowIndex: number, unitIndex: number, args?: { charmingPlayer: ServerPlayerInGame }): void {
 		if (unit.rowIndex === rowIndex && unit.unitIndex === unitIndex) {
 			return
 		}
@@ -399,27 +399,35 @@ export default class ServerBoard implements Board {
 		const fromIndex = unit.unitIndex
 		const targetRow = this.rows[rowIndex]
 
-		if (fromRow.owner !== targetRow.owner || targetRow.cards.length >= Constants.MAX_CARDS_PER_ROW) {
+		if (targetRow.isFull()) {
 			return
 		}
 
 		const adjustment = fromRow === targetRow && unit.unitIndex < unitIndex ? -1 : 0
-
 		fromRow.removeUnitLocally(unit)
-		targetRow.insertUnitLocally(unit, unitIndex + adjustment)
-		OutgoingMessageHandlers.notifyAboutUnitMoved(unit)
+
+		const isCharming = targetRow.owner && fromRow.owner !== targetRow.owner
+		const charmingPlayer = args?.charmingPlayer
+		if (isCharming && !charmingPlayer) {
+			throw new Error(`Attempting to charm a unit without specifying charming player!`)
+		}
+
+		const newUnit = isCharming && charmingPlayer ? new ServerUnit(this.game, unit.card, charmingPlayer.group, charmingPlayer) : unit
+
+		targetRow.insertUnitLocally(newUnit, unitIndex + adjustment)
+		OutgoingMessageHandlers.notifyAboutUnitMoved(newUnit)
 
 		this.game.animation.play(ServerAnimation.unitMove())
 		this.game.events.postEvent(
 			GameEventCreators.unitMoved({
 				game: this.game,
-				triggeringUnit: unit,
+				triggeringUnit: newUnit,
 				fromRow: fromRow,
 				fromIndex: fromIndex,
-				toRow: this.rows[unit.rowIndex],
-				toIndex: unit.unitIndex,
+				toRow: this.rows[newUnit.rowIndex],
+				toIndex: newUnit.unitIndex,
 				distance: this.getRowDistance(fromRow, targetRow),
-				direction: this.getMoveDirection(unit.owner, fromRow, targetRow),
+				direction: this.getMoveDirection(newUnit.owner, fromRow, targetRow),
 			})
 		)
 	}

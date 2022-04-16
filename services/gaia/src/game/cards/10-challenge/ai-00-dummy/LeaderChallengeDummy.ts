@@ -4,10 +4,10 @@ import CardLocation from '@shared/enums/CardLocation'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
+import ServerCard from '@src/game/models/ServerCard'
+import ServerGame from '@src/game/models/ServerGame'
 
 import CardLibrary from '../../../libraries/CardLibrary'
-import ServerCard from '../../../models/ServerCard'
-import ServerGame from '../../../models/ServerGame'
 import TokenChallengeDummyTargetDummy from './TokenChallengeDummyTargetDummy'
 
 export default class LeaderChallengeDummy extends ServerCard {
@@ -17,7 +17,7 @@ export default class LeaderChallengeDummy extends ServerCard {
 			color: CardColor.LEADER,
 			faction: CardFaction.NEUTRAL,
 			stats: {
-				power: 10,
+				power: 0,
 			},
 			expansionSet: ExpansionSet.BASE,
 			deckAddedCards: [],

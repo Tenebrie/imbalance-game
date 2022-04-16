@@ -7,11 +7,11 @@ import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import UnitDestructionReason from '@src/enums/UnitDestructionReason'
 import BuffProtector from '@src/game/buffs/BuffProtector'
+import ServerCard from '@src/game/models/ServerCard'
+import ServerGame from '@src/game/models/ServerGame'
 import Keywords from '@src/utils/Keywords'
 
 import GameHookType from '../../../models/events/GameHookType'
-import ServerCard from '../../../models/ServerCard'
-import ServerGame from '../../../models/ServerGame'
 
 export default class UnitGuardianAngel extends ServerCard {
 	constructor(game: ServerGame) {
