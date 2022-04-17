@@ -6,7 +6,6 @@
 
 <script lang="ts">
 import CardColor from '@shared/enums/CardColor'
-import CardType from '@shared/enums/CardType'
 import CardMessage from '@shared/models/network/card/CardMessage'
 import { computed, defineComponent, PropType, ref } from 'vue'
 
@@ -113,7 +112,6 @@ export default defineComponent({
 					silver: false,
 					bronze: false,
 					token: false,
-					spell: false,
 				}
 			}
 			return {
@@ -123,7 +121,6 @@ export default defineComponent({
 				silver: card.color === CardColor.SILVER,
 				bronze: card.color === CardColor.BRONZE,
 				token: card.color === CardColor.TOKEN,
-				spell: card.type === CardType.SPELL,
 			}
 		})
 
@@ -199,12 +196,6 @@ export default defineComponent({
 	&.token {
 		&::before {
 			box-shadow: gray 0 0 8px 4px;
-		}
-	}
-
-	&.spell {
-		&::before {
-			box-shadow: blue 0 0 8px 4px;
 		}
 	}
 

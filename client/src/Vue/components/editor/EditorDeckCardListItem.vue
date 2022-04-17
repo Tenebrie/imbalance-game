@@ -16,15 +16,14 @@
 </template>
 
 <script lang="ts">
-import CardColor from '@shared/enums/CardColor'
-import CardFaction from '@shared/enums/CardFaction'
 import CardType from '@shared/enums/CardType'
 import PopulatedEditorCard from '@shared/models/PopulatedEditorCard'
-import { getMaxCardCopiesForColor } from '@shared/Utils'
+import { cardFactionToString, getMaxCardCopiesForColor } from '@shared/Utils'
 import * as PIXI from 'pixi.js'
 import { defineComponent, PropType } from 'vue'
 
 import Localization from '@/Pixi/Localization'
+import { getCardColorClasses } from '@/utils/Utils'
 import store from '@/Vue/store'
 import InspectedCardStore from '@/Vue/store/InspectedCardStore'
 
@@ -60,16 +59,8 @@ export default defineComponent({
 
 		colorClass(): any {
 			return {
-				leader: this.card.color === CardColor.LEADER,
-				golden: this.card.color === CardColor.GOLDEN,
-				silver: this.card.color === CardColor.SILVER,
-				bronze: this.card.color === CardColor.BRONZE,
-
-				human: this.card.faction === CardFaction.HUMAN,
-				arcane: this.card.faction === CardFaction.ARCANE,
-				wild: this.card.faction === CardFaction.WILD,
-				// eternal: this.card.faction === CardFaction.ETERNAL,
-				neutral: this.card.faction === CardFaction.NEUTRAL,
+				...getCardColorClasses(this.card.color),
+				[cardFactionToString(this.card.faction)]: true,
 			}
 		},
 	},
@@ -175,6 +166,22 @@ export default defineComponent({
 	}
 	&.eternal:before {
 		background: $COLOR_ETERNAL;
+	}
+
+	&.north:before {
+		background: $COLOR_NORTH;
+	}
+	&.skellige:before {
+		background: $COLOR_SKELLIGE;
+	}
+	&.scoiatael:before {
+		background: $COLOR_SCOIATAEL;
+	}
+	&.nilfgaard:before {
+		background: $COLOR_NILFGAARD;
+	}
+	&.monster:before {
+		background: $COLOR_MONSTER;
 	}
 
 	&.neutral:before {

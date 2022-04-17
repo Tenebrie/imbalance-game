@@ -42,7 +42,7 @@ export default class GwentMiruna extends ServerCard {
 			.require(({ group }) => group.owns(this))
 			.perform(() => {
 				this.turnsCounted += 1
-				if (this.turnsCounted < GwentMiruna.TURNS_TO_WAIT) {
+				if (this.turnsCounted !== GwentMiruna.TURNS_TO_WAIT) {
 					return
 				}
 

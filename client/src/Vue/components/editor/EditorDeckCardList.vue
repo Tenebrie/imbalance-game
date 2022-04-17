@@ -62,6 +62,7 @@ export default defineComponent({
 		})
 
 		onMounted(() => {
+			store.commit.editor.hoveredDeckCard.setCard(null)
 			store.commit.editor.setCurrentDeckId(deckId.value)
 		})
 

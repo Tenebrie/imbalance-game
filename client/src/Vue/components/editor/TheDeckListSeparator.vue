@@ -34,12 +34,8 @@ export default defineComponent({
 	},
 
 	setup(props) {
-		const factionAsString = computed<string>(() => {
-			return cardFactionToString(props.faction)
-		})
-
 		const separatorText = computed<string>(() => {
-			let faction = factionAsString.value
+			let faction = cardFactionToString(props.faction)
 			if (props.isExperimental) {
 				faction += '.experimental'
 			}
@@ -47,7 +43,7 @@ export default defineComponent({
 		})
 
 		const factionClass = computed<Record<string, boolean>>(() => ({
-			[factionAsString.value]: true,
+			[cardFactionToString(props.faction)]: true,
 			experimental: props.isExperimental,
 			clickable: props.mode === DeckListMode.EDIT,
 		}))
@@ -113,11 +109,42 @@ export default defineComponent({
 		}
 	}
 
+	&.north {
+		color: $COLOR_NORTH;
+		.line {
+			background: $COLOR_NORTH;
+		}
+	}
+	&.skellige {
+		color: $COLOR_SKELLIGE;
+		.line {
+			background: $COLOR_SKELLIGE;
+		}
+	}
+	&.scoiatael {
+		color: $COLOR_SCOIATAEL;
+		.line {
+			background: $COLOR_SCOIATAEL;
+		}
+	}
+	&.nilfgaard {
+		color: $COLOR_NILFGAARD;
+		.line {
+			background: $COLOR_NILFGAARD;
+		}
+	}
+	&.monster {
+		color: $COLOR_MONSTER;
+		.line {
+			background: $COLOR_MONSTER;
+		}
+	}
+
 	&.neutral {
-		color: gray;
+		color: $COLOR_NEUTRAL;
 
 		.line {
-			background: gray;
+			background: $COLOR_NEUTRAL;
 		}
 	}
 

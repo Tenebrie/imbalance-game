@@ -90,9 +90,11 @@ export default defineComponent({
 
 		const factionData = computed(() => [
 			{ text: Localization.get('filter.all'), faction: null },
-			{ text: Localization.get('card.faction.human'), faction: CardFaction.HUMAN },
-			{ text: Localization.get('card.faction.arcane'), faction: CardFaction.ARCANE },
-			{ text: Localization.get('card.faction.wild'), faction: CardFaction.WILD },
+			{ text: Localization.get('card.faction.north'), faction: CardFaction.NORTH },
+			{ text: Localization.get('card.faction.skellige'), faction: CardFaction.SKELLIGE },
+			{ text: Localization.get('card.faction.scoiatael'), faction: CardFaction.SCOIATAEL },
+			{ text: Localization.get('card.faction.nilfgaard'), faction: CardFaction.NILFGAARD },
+			{ text: Localization.get('card.faction.monster'), faction: CardFaction.MONSTER },
 			{ text: Localization.get('card.faction.neutral'), faction: CardFaction.NEUTRAL },
 		])
 
@@ -155,7 +157,7 @@ export default defineComponent({
 @import '../../styles/generic';
 
 $MOBILE_MODE_THRESHOLD: 1300px;
-$COMPACT_MODE_THRESHOLD: 2050px;
+$COMPACT_MODE_THRESHOLD: 10000px;
 
 .the-card-library-header {
 	display: flex;

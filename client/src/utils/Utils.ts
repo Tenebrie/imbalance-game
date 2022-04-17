@@ -78,6 +78,15 @@ export const isElectron = (): boolean => {
 	return false
 }
 
+export const getCardColorClasses = (color: CardColor) => {
+	return {
+		leader: color === CardColor.LEADER,
+		golden: color === CardColor.GOLDEN,
+		silver: color === CardColor.SILVER,
+		bronze: color === CardColor.BRONZE,
+	}
+}
+
 export const rarityToColor = (rarity: CardColor): number => {
 	switch (rarity) {
 		case CardColor.LEADER:

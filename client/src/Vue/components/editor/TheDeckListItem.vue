@@ -2,7 +2,7 @@
 	<span>
 		<span v-if="mode === DeckListMode.SELECT" class="deck-link" @click="onSelectDeck" :class="selectedClass">
 			<keep-alive>
-				<img v-if="iconPath" :src="iconPath" alt="Deck icon" />
+				<img v-if="iconPath" :src="iconPath" alt="Icon" @error="fetchFallbackIcon" />
 			</keep-alive>
 			<span>{{ deck.name }}</span>
 		</span>
@@ -13,7 +13,7 @@
 			:to="{ path: `/decks/${deck.id}`, query: getCurrentRouteQuery() }"
 		>
 			<keep-alive>
-				<img v-if="iconPath" :src="iconPath" alt="Deck icon" />
+				<img v-if="iconPath" :src="iconPath" alt="Icon" @error="fetchFallbackIcon" />
 			</keep-alive>
 			<span>{{ deck.name }}</span>
 		</router-link>
@@ -35,6 +35,10 @@ export default defineComponent({
 			required: true,
 		},
 	},
+
+	data: () => ({
+		iconFallback: false as boolean,
+	}),
 
 	setup() {
 		const getCurrentRouteQuery = () => router.currentRoute.value.query
@@ -65,11 +69,19 @@ export default defineComponent({
 			if (!deck.leader) {
 				return ''
 			}
+			if (this.iconFallback) {
+				return `/assets/icons/question.webp`
+			}
 			return `/assets/icons/${deck.leader.class}.webp`
 		},
 	},
 
 	methods: {
+		fetchFallbackIcon() {
+			console.log('q')
+			this.iconFallback = true
+		},
+
 		onSelectDeck() {
 			const selectedDeckId = store.state.selectedDeckId
 			if (selectedDeckId === this.deck.id) {

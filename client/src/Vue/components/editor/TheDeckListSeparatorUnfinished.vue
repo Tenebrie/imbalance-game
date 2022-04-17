@@ -46,9 +46,9 @@ export default defineComponent({
 		transition: background-color 0s;
 	}
 
-	color: darken(red, 10);
+	color: darken(gray, 10);
 	.line {
-		background: darken(red, 10);
+		background: darken(gray, 10);
 	}
 
 	.text {

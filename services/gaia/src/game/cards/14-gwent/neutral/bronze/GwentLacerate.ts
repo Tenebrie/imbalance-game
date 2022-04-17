@@ -8,9 +8,8 @@ import ServerCard from '@src/game/models/ServerCard'
 import { DamageInstance } from '@src/game/models/ServerDamageSource'
 import ServerGame from '@src/game/models/ServerGame'
 
-export default class GwentArachasVenom extends ServerCard {
-	public static readonly DAMAGE = 4
-	public static readonly TARGETS = 3
+export default class GwentLacerate extends ServerCard {
+	public static readonly DAMAGE = 3
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -25,28 +24,28 @@ export default class GwentArachasVenom extends ServerCard {
 			expansionSet: ExpansionSet.GWENT,
 		})
 		this.dynamicTextVariables = {
-			damage: GwentArachasVenom.DAMAGE,
-			targets: GwentArachasVenom.TARGETS,
+			damage: GwentLacerate.DAMAGE,
 		}
 
 		this.createLocalization({
 			en: {
-				name: "Aracha's Venom",
-				description: 'Deal {damage} damage to {targets} adjacent units.',
-				flavor: 'If substance makes contact with eyes, rinse immediately with cold water, then commence drawing up will.',
+				name: 'Lacerate',
+				description: 'Deal {damage} damage to all units on a row.',
+				flavor:
+					"A sight more horrid you've never seen… The poor soul lay shredded as the beast lapped up its blood from the ground all around.",
 			},
 		})
 
-		this.createDeployTargets(TargetType.UNIT)
+		this.createDeployTargets(TargetType.BOARD_ROW)
 			.requireEnemy()
-			.perform(({ targetUnit }) => {
-				const adjacentUnits = game.board.getAdjacentUnits(targetUnit)
-				const targets = [targetUnit].concat(adjacentUnits)
-				targets.forEach((target) => {
-					game.animation.instantThread(() => {
-						target.dealDamage(DamageInstance.fromCard(GwentArachasVenom.DAMAGE, this))
+			.perform(({ targetRow }) => {
+				const targets = targetRow.cards.sort((a, b) => a.unitIndex - b.unitIndex)
+				targets.forEach((unit) => {
+					game.animation.thread(() => {
+						unit.dealDamage(DamageInstance.fromCard(GwentLacerate.DAMAGE, this))
 					})
 				})
+				game.animation.syncAnimationThreads()
 			})
 	}
 }
