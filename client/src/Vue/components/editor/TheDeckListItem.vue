@@ -78,7 +78,6 @@ export default defineComponent({
 
 	methods: {
 		fetchFallbackIcon() {
-			console.log('q')
 			this.iconFallback = true
 		},
 

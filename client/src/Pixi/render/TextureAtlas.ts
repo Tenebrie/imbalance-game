@@ -107,7 +107,7 @@ export default class TextureAtlas {
 		const loadingNotification = TextureAtlas.loadingNotification
 
 		const updateNotificationText = () => {
-			loadingNotification.setText(`Loading assets (${TextureAtlas.assetsAlreadyLoaded}/${TextureAtlas.totalAssetsToLoad})...`)
+			loadingNotification.setText(`Loading assets (${TextureAtlas.totalAssetsToLoad - TextureAtlas.assetsAlreadyLoaded} remaining)...`)
 		}
 
 		TextureAtlas.totalAssetsToLoad += texturesToLoad.length

@@ -23,8 +23,8 @@ export default class GwentMahakamDefender extends ServerCard {
 		this.createLocalization({
 			en: {
 				name: 'Mahakam Defender',
-				description: '',
-				flavor: "I'm telling ye, we're born fer battle – we slash straight at their knees!",
+				description: ' ',
+				flavor: "I'm telling ye, we're born fer battle - we slash straight at their knees!",
 			},
 		})
 

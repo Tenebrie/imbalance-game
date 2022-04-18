@@ -1,5 +1,7 @@
 <template>
-	<div class="pixi-library-card" ref="containerRef" />
+	<div class="pixi-library-card" ref="containerRef">
+		<div class="placeholder" v-if="card"><progress-spinner class="spinner" /></div>
+	</div>
 </template>
 
 <script lang="ts">
@@ -10,7 +12,10 @@ import RenderedEditorCard from '@/utils/editor/RenderedEditorCard'
 import { getCardMessageKey } from '@/utils/Utils'
 import store from '@/Vue/store'
 
+import ProgressSpinner from '../../utils/ProgressSpinner.vue'
+
 export default defineComponent({
+	components: { ProgressSpinner },
 	props: {
 		card: {
 			type: Object as () => CardMessage | null,
@@ -71,7 +76,12 @@ export default defineComponent({
 			node.style.width = '100%'
 			node.style.height = '100%'
 			node.style.left = '0'
-			containerRef.value!.appendChild(node)
+			const container = containerRef.value!
+			for (let i = 0; i < container.children.length; i++) {
+				const child = container.children[i]
+				container.removeChild(child)
+			}
+			container.appendChild(node)
 		}
 
 		const cloneCanvas = (original: HTMLCanvasElement): HTMLCanvasElement => {
@@ -89,6 +99,7 @@ export default defineComponent({
 		return {
 			containerRef,
 			renderedCard,
+			isImageAppended,
 		}
 	},
 })
@@ -99,5 +110,19 @@ export default defineComponent({
 
 .pixi-library-card {
 	height: 100%;
+}
+
+.placeholder {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: rgba(#323232, 0.2);
+	border-radius: 8px;
+}
+
+.spinner {
+	font-size: 2em;
 }
 </style>

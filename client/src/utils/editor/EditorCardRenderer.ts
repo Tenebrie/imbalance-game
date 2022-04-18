@@ -8,6 +8,9 @@ import { RichTextTooltip } from '@/Pixi/render/RichText'
 import { CARD_HEIGHT, CARD_WIDTH } from '@/Pixi/renderer/RendererUtils'
 import { getCardMessageKey } from '@/utils/Utils'
 import store from '@/Vue/store'
+import { NotificationWrapper } from '@/Vue/store/modules/NotificationModule'
+
+import Notifications from '../Notifications'
 
 export type WorkshopCardProps = {
 	workshopTitle: string
@@ -19,6 +22,7 @@ class EditorCardRenderer {
 	pixi: PIXI.Renderer
 	renderTexture: PIXI.RenderTexture
 	mainTimer: number | null = null
+	loadingNotification: NotificationWrapper | null = null
 
 	public constructor() {
 		this.pixi = new PIXI.Renderer({
@@ -50,9 +54,13 @@ class EditorCardRenderer {
 		}
 
 		this.mainTimer = window.setInterval(() => {
-			if (store.state.editor.renderQueue.length === 0) {
+			const queueLength = store.state.editor.renderQueue.length
+			if (queueLength === 0) {
+				this.hideLoadingNotification()
 				return
 			}
+
+			this.showLoadingNotification(queueLength)
 
 			const nextEntry = store.state.editor.renderQueue[0]
 			store.commit.editor.shiftRenderQueue()
@@ -68,6 +76,21 @@ class EditorCardRenderer {
 				store.commit.editor.removeOldestRenderedCard()
 			}
 		}, 0)
+	}
+
+	public showLoadingNotification(queueLength: number): void {
+		if (!this.loadingNotification) {
+			this.loadingNotification = Notifications.loading('')
+		}
+		this.loadingNotification.setText(`Rendering cards (${queueLength} remaining)...`)
+	}
+
+	public hideLoadingNotification(): void {
+		if (!this.loadingNotification) {
+			return
+		}
+		this.loadingNotification.discard()
+		this.loadingNotification = null
 	}
 
 	public doRender(

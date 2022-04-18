@@ -28,6 +28,7 @@ export default class GwentHarpyEgg extends ServerCard {
 				power: 1,
 			},
 			expansionSet: ExpansionSet.GWENT,
+			hiddenFromLibrary: true,
 		})
 		this.dynamicTextVariables = {
 			extraPower: GwentHarpyEgg.EXTRA_CONSUMED_POWER,

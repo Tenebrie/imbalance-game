@@ -17,6 +17,7 @@ export default class GwentWolf extends ServerCard {
 				power: 1,
 			},
 			expansionSet: ExpansionSet.GWENT,
+			hiddenFromLibrary: true,
 		})
 
 		this.createLocalization({
