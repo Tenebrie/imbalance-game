@@ -324,8 +324,8 @@ export default class ServerGameEvents {
 			a.subscriber.parent instanceof ServerBoardRow &&
 			b.subscriber.parent instanceof ServerBoardRow
 		) {
-			const distanceOfA = game.board.getDistanceToStaticFront(a.subscriber.parent.index)
-			const distanceOfB = game.board.getDistanceToStaticFront(b.subscriber.parent.index)
+			const distanceOfA = game.board.getDistanceToFront(a.subscriber.parent.index)
+			const distanceOfB = game.board.getDistanceToFront(b.subscriber.parent.index)
 			return distanceOfA - distanceOfB
 		}
 
@@ -389,8 +389,8 @@ export default class ServerGameEvents {
 			const rowIndexOfB = unitOfB.rowIndex
 			// Unit at the front > Unit at the back
 			if (rowIndexOfA !== rowIndexOfB) {
-				const distanceOfA = game.board.getDistanceToStaticFront(rowIndexOfA)
-				const distanceOfB = game.board.getDistanceToStaticFront(rowIndexOfB)
+				const distanceOfA = game.board.getDistanceToFront(rowIndexOfA)
+				const distanceOfB = game.board.getDistanceToFront(rowIndexOfB)
 				return distanceOfA - distanceOfB
 			}
 

@@ -75,11 +75,11 @@ export default class ServerCardStats implements CardStats {
 	}
 
 	public get basePower(): number {
-		return this.__basePower
+		return this.card.buffs.buffs.reduce((value: number, buff: ServerBuff) => buff.getBasePowerOverride(value), this.__basePower)
 	}
 
 	public get maxPower(): number {
-		return this.card.buffs.buffs.reduce((value: number, buff: ServerBuff) => buff.getMaxPowerOverride(value), this.basePower)
+		return this.card.buffs.buffs.reduce((value: number, buff: ServerBuff) => buff.getMaxPowerOverride(value), this.__basePower)
 	}
 
 	/* Armor */

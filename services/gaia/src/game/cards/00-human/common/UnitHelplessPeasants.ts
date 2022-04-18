@@ -48,12 +48,12 @@ export default class UnitHelplessPeasants extends ServerCard {
 		if (!thisUnit) {
 			return
 		}
-		const unitDistance = this.game.board.getDistanceToStaticFront(thisUnit.rowIndex)
+		const unitDistance = this.game.board.getDistanceToFront(thisUnit.rowIndex)
 		const isProtected = this.game.board
 			.getUnitsOwnedByGroup(thisUnit.owner)
 			.some(
 				(anotherUnit) =>
-					this.game.board.getDistanceToStaticFront(anotherUnit.rowIndex) < unitDistance &&
+					this.game.board.getDistanceToFront(anotherUnit.rowIndex) < unitDistance &&
 					this.game.board.getHorizontalUnitDistance(thisUnit, anotherUnit) < 1 &&
 					anotherUnit.card.buffs.has(BuffProtector)
 			)

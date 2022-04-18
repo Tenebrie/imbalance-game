@@ -15,6 +15,7 @@ const IncomingCardUpdateMessages: CardUpdateMessageHandlers = {
 		}
 
 		card.stats.power = data.power
+		card.stats.basePower = data.basePower
 		card.stats.armor = data.armor
 		card.stats.maxPower = data.maxPower
 		card.stats.maxArmor = data.maxArmor

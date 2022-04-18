@@ -738,7 +738,7 @@ type RowDistanceWrapper = 'front' | 'middle' | 'back' | 'enemy'
 const wrapRowDistance = (unit: ServerUnit): RowDistanceWrapper => {
 	const game = unit.game
 	const group = unit.owner
-	const distance = game.board.getDistanceToFront(group, unit.rowIndex)
+	const distance = game.board.getDistanceToFrontLegacy(group, unit.rowIndex)
 	switch (distance) {
 		case 0:
 			return 'front'

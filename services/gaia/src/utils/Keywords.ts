@@ -17,7 +17,7 @@ import ServerBuff from '../game/models/buffs/ServerBuff'
 import ServerAnimation from '../game/models/ServerAnimation'
 import ServerCard from '../game/models/ServerCard'
 import ServerPlayerInGame from '../game/players/ServerPlayerInGame'
-import { EmptyFunction, getOwnerPlayer, toRowIndex } from './Utils'
+import { EmptyFunction, getConstructorFromCard, getOwnerPlayer, toRowIndex } from './Utils'
 
 const createCard = (player: ServerPlayerInGame | null, card: ServerCard, callback: (card: ServerCard) => void): ServerCard => {
 	if (!player) {
@@ -129,7 +129,7 @@ const Keywords = {
 		for (let i = 0; i < normalizedCount; i++) {
 			game.animation.thread(() => {
 				const card = new cardConstructor(game)
-				const unit = game.board.createUnit(card, owner, rowIndex, unitIndex)
+				const unit = game.board.createUnit(card, owner, rowIndex, unitIndex + 1)
 				if (unit) {
 					units.push(unit)
 				}
@@ -218,6 +218,18 @@ const Keywords = {
 		const unitIndex = unit.unitIndex
 		unit.game.board.removeUnit(unit)
 		return unit.game.board.createUnit(CardLibrary.instantiate(unit.game, targetCard), unit.originalOwner, rowIndex, unitIndex)
+	},
+
+	resetUnit: (unit: ServerUnit): ServerUnit => {
+		const rowIndex = unit.rowIndex
+		const unitIndex = unit.unitIndex
+		unit.game.board.removeUnit(unit)
+		return unit.game.board.createUnit(
+			CardLibrary.instantiate(unit.game, getConstructorFromCard(unit.card)),
+			unit.originalOwner,
+			rowIndex,
+			unitIndex
+		)!
 	},
 
 	destroyUnit: (args: { unit: ServerUnit; source?: ServerCard; affectedCards?: ServerCard[] }) => {

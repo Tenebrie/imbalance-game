@@ -311,7 +311,7 @@ export default class ServerBoard implements Board {
 		return Math.abs(rowA.index - rowB.index)
 	}
 
-	public getDistanceToStaticFront(rowIndex: number): number {
+	public getDistanceToFront(rowIndex: number): number {
 		const targetRow = this.rows[rowIndex]
 		const player = targetRow.owner
 		let playerRows = this.rows.filter((row) => row.owner === player)
@@ -324,7 +324,7 @@ export default class ServerBoard implements Board {
 	public getDistanceToDynamicFrontForPlayer(rowOrIndex: number | ServerBoardRow, player: ServerPlayerGroup): number {
 		const rowIndex = toRowIndex(rowOrIndex)
 		const targetRow = this.rows[rowIndex]
-		const distanceToStaticFront = this.getDistanceToStaticFront(rowIndex)
+		const distanceToStaticFront = this.getDistanceToFront(rowIndex)
 		if (player !== targetRow.owner) {
 			return distanceToStaticFront
 		}
@@ -339,7 +339,10 @@ export default class ServerBoard implements Board {
 		return result
 	}
 
-	public getDistanceToFront(player: ServerPlayerInGame | ServerPlayerGroup, rowOrIndex: number | ServerBoardRow): number {
+	/**
+	 * @deprecated
+	 */
+	public getDistanceToFrontLegacy(player: ServerPlayerInGame | ServerPlayerGroup, rowOrIndex: number | ServerBoardRow): number {
 		const row = typeof rowOrIndex === 'number' ? this.rows[rowOrIndex] : rowOrIndex
 		if (player instanceof ServerPlayerInGame) {
 			player = player.group
@@ -360,6 +363,14 @@ export default class ServerBoard implements Board {
 	}
 
 	public getRowWithDistanceToFront(player: ServerPlayerInGame | ServerPlayerGroup, distance: number): ServerBoardRow {
+		const targetRow = this.getRowWithDistanceToFrontNullable(player, distance)
+		if (!targetRow) {
+			throw new Error(`No row owned by player at distance ${distance}!`)
+		}
+		return targetRow
+	}
+
+	public getRowWithDistanceToFrontNullable(player: ServerPlayerInGame | ServerPlayerGroup, distance: number): ServerBoardRow | null {
 		if (player instanceof ServerPlayerInGame) {
 			player = player.group
 		}
@@ -369,7 +380,7 @@ export default class ServerBoard implements Board {
 		}
 		const targetRow = playerRows[Math.min(playerRows.length - 1, distance)]
 		if (!targetRow) {
-			throw new Error(`No row owned by player at distance ${distance}!`)
+			return null
 		}
 		return targetRow
 	}
@@ -379,7 +390,7 @@ export default class ServerBoard implements Board {
 		if (!row.owner) {
 			throw new Error(`Row ${row.index} has no owner.`)
 		}
-		const relativeDistance = this.getDistanceToFront(row.owner, row)
+		const relativeDistance = this.getDistanceToFrontLegacy(row.owner, row)
 		return this.getControlledRows(row.owner.opponent)[relativeDistance]
 	}
 
@@ -436,7 +447,7 @@ export default class ServerBoard implements Board {
 	}
 
 	public moveUnitForward(unit: ServerUnit, distance = 1): void {
-		if (this.getDistanceToStaticFront(unit.rowIndex) === 0) {
+		if (this.getDistanceToFront(unit.rowIndex) === 0) {
 			return
 		}
 		this.moveUnitToFarRight(unit, this.game.board.rowMove(unit.owner, unit.rowIndex, MoveDirection.FORWARD, distance))
@@ -444,7 +455,7 @@ export default class ServerBoard implements Board {
 
 	public moveUnitBack(unit: ServerUnit, distance = 1): void {
 		const rowsOwnedByPlayer = this.rows.filter((row) => row.owner === unit.owner).length
-		if (this.getDistanceToStaticFront(unit.rowIndex) === rowsOwnedByPlayer - 1) {
+		if (this.getDistanceToFront(unit.rowIndex) === rowsOwnedByPlayer - 1) {
 			return
 		}
 		this.moveUnitToFarRight(unit, this.game.board.rowMove(unit.owner, unit.rowIndex, MoveDirection.BACK, distance))

@@ -33,7 +33,7 @@ export default class SpellRitesBacktrack extends ServerCard {
 			.requireAllied()
 			.require(({ targetRow }) => {
 				const hero = game.board.getAllUnits().find((unit) => unit.card instanceof LeaderRitesPlayerUnit)!
-				return game.board.getDistanceToStaticFront(targetRow.index) > game.board.getDistanceToStaticFront(hero.rowIndex)
+				return game.board.getDistanceToFront(targetRow.index) > game.board.getDistanceToFront(hero.rowIndex)
 			})
 			.perform(({ targetRow, targetPosition }) => {
 				const hero = game.board.getAllUnits().find((unit) => unit.card instanceof LeaderRitesPlayerUnit)!

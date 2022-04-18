@@ -39,18 +39,18 @@ export default class GwentDwarvenMercenary extends ServerCard {
 			.requireNotSelf()
 			.require(({ targetUnit }) => {
 				const triggeringUnit = this.unit!
-				const thisUnitDistance = game.board.getDistanceToFront(triggeringUnit.owner, triggeringUnit.rowIndex)
+				const thisUnitDistance = game.board.getDistanceToFrontLegacy(triggeringUnit.owner, triggeringUnit.rowIndex)
 				const targetRow = game.board.getRowWithDistanceToFront(targetUnit.owner, thisUnitDistance)
 				if (targetRow.isFull()) {
 					return false
 				}
-				const targetDistance = game.board.getDistanceToFront(targetUnit.owner, targetUnit.rowIndex)
+				const targetDistance = game.board.getDistanceToFrontLegacy(targetUnit.owner, targetUnit.rowIndex)
 
 				return thisUnitDistance !== targetDistance
 			})
 			.perform(({ targetUnit }) => {
 				const triggeringUnit = this.unit!
-				const distance = game.board.getDistanceToFront(triggeringUnit.owner, triggeringUnit.rowIndex)
+				const distance = game.board.getDistanceToFrontLegacy(triggeringUnit.owner, triggeringUnit.rowIndex)
 				const targetRow = game.board.getRowWithDistanceToFront(targetUnit.owner, distance)
 
 				if (targetRow.isFull()) {

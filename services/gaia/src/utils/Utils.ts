@@ -184,6 +184,46 @@ export const tryUntil = (args: TryUntilArgs): boolean => {
 	return false
 }
 
+export const getHighestCard = (cards: ServerCard[]): ServerCard | null => {
+	if (cards.length === 0) {
+		return null
+	}
+	const sortedCards = cards.sort((a, b) => b.stats.power - a.stats.power)
+	const highestPower = sortedCards[0].stats.power
+	const highestUnits = sortedCards.filter((card) => card.stats.power === highestPower)
+	return getRandomArrayValue(highestUnits)
+}
+
+export const getHighestUnit = (units: ServerUnit[]): ServerUnit | null => {
+	if (units.length === 0) {
+		return null
+	}
+	const sortedUnits = units.sort((a, b) => b.card.stats.power - a.card.stats.power)
+	const highestPower = sortedUnits[0].card.stats.power
+	const highestUnits = sortedUnits.filter((unit) => unit.card.stats.power === highestPower)
+	return getRandomArrayValue(highestUnits)
+}
+
+export const getLowestCard = (cards: ServerCard[]): ServerCard | null => {
+	if (cards.length === 0) {
+		return null
+	}
+	const sortedCards = cards.sort((a, b) => a.stats.power - b.stats.power)
+	const lowestPower = sortedCards[0].stats.power
+	const lowestUnits = sortedCards.filter((card) => card.stats.power === lowestPower)
+	return getRandomArrayValue(lowestUnits)
+}
+
+export const getLowestUnit = (units: ServerUnit[]): ServerUnit | null => {
+	if (units.length === 0) {
+		return null
+	}
+	const sortedUnits = units.sort((a, b) => a.card.stats.power - b.card.stats.power)
+	const lowestPower = sortedUnits[0].card.stats.power
+	const lowestUnits = sortedUnits.filter((unit) => unit.card.stats.power === lowestPower)
+	return getRandomArrayValue(lowestUnits)
+}
+
 interface LeaderTextVariables {
 	inGame: () => boolean
 	playerName: () => string

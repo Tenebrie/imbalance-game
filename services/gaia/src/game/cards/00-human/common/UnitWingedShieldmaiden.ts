@@ -43,7 +43,7 @@ export default class UnitWingedShieldmaiden extends ServerCard {
 		this.createCallback(GameEventType.BEFORE_CARD_TAKES_DAMAGE, [CardLocation.HAND])
 			.require(({ triggeringCard }) => triggeringCard.ownerGroup === this.ownerGroup)
 			.require(({ triggeringCard }) => triggeringCard.location === CardLocation.BOARD)
-			.require(({ triggeringCard }) => game.board.getDistanceToStaticFront(triggeringCard.unit!.rowIndex) > 0)
+			.require(({ triggeringCard }) => game.board.getDistanceToFront(triggeringCard.unit!.rowIndex) > 0)
 			.require(({ damageInstance }) => damageInstance.source === DamageSource.CARD && !damageInstance.sourceCard.ownerGroup.owns(this))
 			.perform(({ triggeringCard }) => {
 				const triggeringUnit = triggeringCard.unit!

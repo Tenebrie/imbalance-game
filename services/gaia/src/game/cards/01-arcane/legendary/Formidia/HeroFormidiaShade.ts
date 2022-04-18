@@ -44,7 +44,7 @@ export default class HeroFormidiaShade extends ServerCard {
 				const rows = game.board
 					.getControlledRows(this.ownerGroup)
 					.filter((row) => !row.isFull())
-					.sort((a, b) => game.board.getDistanceToStaticFront(a.index) - game.board.getDistanceToStaticFront(b.index))
+					.sort((a, b) => game.board.getDistanceToFront(a.index) - game.board.getDistanceToFront(b.index))
 				if (rows.length === 0) {
 					return
 				}

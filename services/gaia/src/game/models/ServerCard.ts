@@ -270,6 +270,12 @@ export default class ServerCard implements Card {
 			)
 			.perform(() => this.destroy())
 
+		this.createCallback(GameEventType.CARD_BUFF_CREATED, validLocations)
+			.require(({ triggeringBuff }) => triggeringBuff.parent === this)
+			.require(() => this.type === CardType.UNIT)
+			.require(() => this.stats.maxPower <= 0)
+			.perform(() => this.destroy())
+
 		game.index.addCard(this)
 	}
 
@@ -575,21 +581,27 @@ export default class ServerCard implements Card {
 			return
 		}
 
-		this.game.events.postEvent(
-			GameEventCreators.cardDestroyed({
-				game: this.game,
-				triggeringCard: this,
-				formerOwner: owner,
-			})
-		)
+		if (this.stats.basePower > 0) {
+			this.game.events.postEvent(
+				GameEventCreators.cardDestroyed({
+					game: this.game,
+					triggeringCard: this,
+					formerOwner: owner,
+				})
+			)
+		}
 
 		const location = this.location
 		if (location === CardLocation.HAND) {
 			owner.cardHand.removeCard(this)
-			owner.cardGraveyard.addCard(this)
+			if (this.stats.basePower > 0) {
+				owner.cardGraveyard.addCard(this)
+			}
 		} else if (location === CardLocation.DECK) {
 			owner.cardDeck.removeCard(this)
-			owner.cardGraveyard.addCard(this)
+			if (this.stats.basePower > 0) {
+				owner.cardGraveyard.addCard(this)
+			}
 		} else if (location === CardLocation.GRAVEYARD) {
 			owner.cardGraveyard.removeCard(this)
 		}
