@@ -23,11 +23,11 @@ export default class GwentBrouverHoog extends ServerCard {
 			expansionSet: ExpansionSet.GWENT,
 		})
 
-		this.createLocalization({
+		this.createLeaderLocalization({
 			en: {
 				name: 'Brouver Hoog',
 				description: 'Play a non-Spying Silver unit or a Bronze Dwarf from your deck.',
-				flavor: "Our mead smells rotten to ye, do it? Easy to fix – I'll break yer nose!",
+				flavor: "Our mead smells rotten to ye, do it? Easy to fix - I'll break yer nose!",
 			},
 		})
 
@@ -40,7 +40,7 @@ export default class GwentBrouverHoog extends ServerCard {
 					(targetCard.color === CardColor.SILVER && !targetCard.features.includes(CardFeature.SPY))
 			)
 			.perform(({ targetCard }) => {
-				Keywords.playCardFromDeckOrGraveyard(targetCard)
+				Keywords.playCardFromDeck(targetCard)
 			})
 	}
 }

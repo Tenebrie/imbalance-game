@@ -45,7 +45,7 @@ export default class GwentParasite extends ServerCard {
 			.perform(({ targetUnit }) => {
 				targetUnit.card.buffs.addMultiple(BuffStrength, GwentParasite.BOOST, this)
 			})
-			.label(`Boost by ${GwentParasite.BOOST}`)
+			.label(`Boost by *${GwentParasite.BOOST}*`)
 
 		this.createDeployTargets(TargetType.UNIT)
 			.totalTargetCount(1)
@@ -53,6 +53,6 @@ export default class GwentParasite extends ServerCard {
 			.perform(({ targetUnit }) => {
 				targetUnit.dealDamage(DamageInstance.fromCard(GwentParasite.DAMAGE, this))
 			})
-			.label(`Deal ${GwentParasite.DAMAGE} damage`)
+			.label(`Deal *${GwentParasite.DAMAGE}* damage`)
 	}
 }
