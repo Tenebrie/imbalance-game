@@ -47,7 +47,7 @@ export default class GwentGeels extends ServerCard {
 					player.cardDeck.removeCard(card)
 					player.cardDeck.addUnitToTop(card)
 				})
-				Keywords.playCardFromDeck(targetCard)
+				Keywords.playCardFromDeckOrGraveyard(targetCard)
 			})
 	}
 }

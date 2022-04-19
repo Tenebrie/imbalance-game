@@ -474,6 +474,7 @@ export interface CardReturnedEventArgs extends SharedEventArgs {
 export interface CardPlayedEventArgs extends SharedEventArgs {
 	owner: ServerPlayerInGame
 	triggeringCard: ServerCard
+	source: 'hand' | 'deck' | 'graveyard' | 'aether'
 }
 export interface CardPreResolvedEventArgs extends SharedEventArgs {
 	triggeringCard: ServerCard

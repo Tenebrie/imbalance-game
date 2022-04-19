@@ -36,10 +36,8 @@ export default class GwentAlzursThunder extends ServerCard {
 			},
 		})
 
-		this.createDeployTargets(TargetType.UNIT)
-			.requireEnemy()
-			.perform(({ targetUnit }) => {
-				targetUnit.dealDamage(DamageInstance.fromCard(GwentAlzursThunder.DAMAGE, this))
-			})
+		this.createDeployTargets(TargetType.UNIT).perform(({ targetUnit }) => {
+			targetUnit.dealDamage(DamageInstance.fromCard(GwentAlzursThunder.DAMAGE, this))
+		})
 	}
 }

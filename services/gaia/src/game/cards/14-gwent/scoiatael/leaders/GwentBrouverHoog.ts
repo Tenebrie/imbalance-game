@@ -40,7 +40,7 @@ export default class GwentBrouverHoog extends ServerCard {
 					(targetCard.color === CardColor.SILVER && !targetCard.features.includes(CardFeature.SPY))
 			)
 			.perform(({ targetCard }) => {
-				Keywords.playCardFromDeck(targetCard)
+				Keywords.playCardFromDeckOrGraveyard(targetCard)
 			})
 	}
 }

@@ -48,7 +48,7 @@ export default class GwentReconnaissance extends ServerCard {
 		this.createDeployTargets(TargetType.CARD_IN_UNIT_DECK)
 			.require(({ targetCard }) => this.cardsToChoose.includes(targetCard))
 			.perform(({ targetCard }) => {
-				Keywords.playCardFromDeck(targetCard)
+				Keywords.playCardFromDeckOrGraveyard(targetCard)
 			})
 	}
 }

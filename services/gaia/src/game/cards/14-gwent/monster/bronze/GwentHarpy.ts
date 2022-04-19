@@ -5,6 +5,7 @@ import CardTribe from '@shared/enums/CardTribe'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
+import UnitDestructionReason from '@src/enums/UnitDestructionReason'
 import ServerCard from '@src/game/models/ServerCard'
 import ServerGame from '@src/game/models/ServerGame'
 import Keywords from '@src/utils/Keywords'
@@ -31,6 +32,7 @@ export default class GwentHarpy extends ServerCard {
 		})
 
 		this.createCallback(GameEventType.AFTER_UNIT_DESTROYED, [CardLocation.DECK])
+			.require(({ reason }) => reason === UnitDestructionReason.CARD_EFFECT)
 			.require(({ triggeringCard }) => triggeringCard.tribes.includes(CardTribe.BEAST))
 			.require(() => {
 				const cardsInDeck = this.ownerPlayer.cardDeck.allCards

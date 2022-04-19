@@ -110,7 +110,7 @@ export default class ServerGameCardPlay {
 		this.playCard(ownedCard, rowIndex, unitIndex, 'hand')
 	}
 
-	public playCardToResolutionStack(ownedCard: ServerOwnedCard): void {
+	public playCardToResolutionStack(ownedCard: ServerOwnedCard, source: 'hand' | 'deck' | 'graveyard' | 'aether'): void {
 		/* Start resolving */
 		const targetMode = ownedCard.card.type === CardType.UNIT ? TargetMode.CARD_PLAY : TargetMode.DEPLOY_EFFECT
 		this.cardResolveStack.startResolvingImmediately(ownedCard, targetMode, () =>
@@ -122,6 +122,7 @@ export default class ServerGameCardPlay {
 				game: this.game,
 				owner: ownedCard.owner,
 				triggeringCard: ownedCard.card,
+				source,
 			})
 		)
 		if (ownedCard.card.type === CardType.UNIT && ownedCard.card.unit) {
@@ -145,7 +146,12 @@ export default class ServerGameCardPlay {
 		}
 	}
 
-	private playCard(ownedCard: ServerOwnedCard, rowIndex: number, unitIndex: number, source: 'hand' | 'deck' | 'aether'): void {
+	private playCard(
+		ownedCard: ServerOwnedCard,
+		rowIndex: number,
+		unitIndex: number,
+		source: 'hand' | 'deck' | 'graveyard' | 'aether'
+	): void {
 		const card = ownedCard.card
 		const owner = ownedCard.owner
 
@@ -168,6 +174,7 @@ export default class ServerGameCardPlay {
 					game: this.game,
 					owner: owner,
 					triggeringCard: card,
+					source,
 				})
 			)
 		}

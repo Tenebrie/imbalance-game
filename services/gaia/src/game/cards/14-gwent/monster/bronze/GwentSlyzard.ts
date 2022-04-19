@@ -63,7 +63,7 @@ export default class GwentSlyzard extends ServerCard {
 			.require(() => this.deployEffectStage === 'play')
 			.require(({ targetCard }) => this.cardsToChoose.includes(targetCard))
 			.perform(({ targetCard }) => {
-				Keywords.playCardFromDeck(targetCard)
+				Keywords.playCardFromDeckOrGraveyard(targetCard)
 				this.deployEffectStage = 'consume'
 			})
 	}

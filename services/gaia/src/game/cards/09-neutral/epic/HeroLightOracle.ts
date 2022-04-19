@@ -34,6 +34,6 @@ export default class HeroLightOracle extends ServerCard {
 	}
 
 	private static onTargetSelected(target: ServerCard): void {
-		Keywords.playCardFromDeck(target)
+		Keywords.playCardFromDeckOrGraveyard(target)
 	}
 }

@@ -30,6 +30,6 @@ export default class SpellPokeTheSalvage extends ServerCard {
 			.require(({ targetCard }) => targetCard.stats.spellCost <= this.stats.baseSpellCost)
 			.require(({ targetCard }) => targetCard.tribes.includes(CardTribe.SALVAGE))
 			.require(({ targetCard }) => this.ownerGroup.owns(targetCard))
-			.perform(({ targetCard }) => Keywords.playCardFromDeck(targetCard))
+			.perform(({ targetCard }) => Keywords.playCardFromDeckOrGraveyard(targetCard))
 	}
 }

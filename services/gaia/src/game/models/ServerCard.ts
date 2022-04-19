@@ -23,13 +23,14 @@ import {
 	RowTargetValidatorArguments,
 	UnitTargetValidatorArguments,
 } from '@src/types/TargetValidatorArguments'
+import { LeaderStatValueGetter } from '@src/utils/LeaderStats'
 import { createRandomId, getClassFromConstructor, getLeaderTextVariables } from '@src/utils/Utils'
 
 import BotCardEvaluation from '../AI/BotCardEvaluation'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import CardLibrary, { CardConstructor } from '../libraries/CardLibrary'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
-import ServerBuffContainer, { BuffConstructor } from './buffs/ServerBuffContainer'
+import ServerBuffContainer, { BuffConstructor, ServerBuffSource } from './buffs/ServerBuffContainer'
 import { EventHook } from './events/EventHook'
 import { EventSubscription } from './events/EventSubscription'
 import GameEventCreators, {
@@ -176,6 +177,8 @@ export default class ServerCard implements Card {
 
 	public readonly deckAddedCards: CardConstructor[] = []
 
+	public readonly isBronzeOrSilver: boolean
+
 	constructor(game: ServerGame, props: ServerCardProps) {
 		const cardClass = getClassFromConstructor(this.constructor as CardConstructor)
 
@@ -188,6 +191,8 @@ export default class ServerCard implements Card {
 		this.type = props.color === CardColor.LEADER ? CardType.UNIT : props.type
 		this.color = props.color
 		this.faction = props.faction
+
+		this.isBronzeOrSilver = this.color === CardColor.BRONZE || this.color === CardColor.SILVER
 
 		this.stats = new ServerCardStats(this, {
 			power: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.power || 0 : 0,
@@ -408,7 +413,60 @@ export default class ServerCard implements Card {
 		return this.features.includes(CardFeature.AMBUSH) && !this.isRevealed
 	}
 
-	public dealDamage(damageInstance: ServerDamageInstance): void {
+	public boost(value: number | LeaderStatValueGetter, source: ServerBuffSource, animation: 'sync' | 'stagger' | 'parallel' = 'sync'): void {
+		const BuffStrength = require('../buffs/BuffStrength').default as BuffConstructor
+		if (animation === 'stagger') {
+			this.game.animation.createAnimationThread()
+		} else if (animation === 'parallel') {
+			this.game.animation.createInstantAnimationThread()
+		}
+		this.buffs.addMultiple(BuffStrength, value, source)
+		if (animation !== 'sync') {
+			this.game.animation.commitAnimationThread()
+		}
+	}
+
+	public strengthen(
+		value: number | LeaderStatValueGetter,
+		source: ServerBuffSource,
+		animation: 'sync' | 'stagger' | 'parallel' = 'sync'
+	): void {
+		const BuffBaseStrength = require('../buffs/BuffBaseStrength').default as BuffConstructor
+		if (animation === 'stagger') {
+			this.game.animation.createAnimationThread()
+		} else if (animation === 'parallel') {
+			this.game.animation.createInstantAnimationThread()
+		}
+		this.buffs.addMultiple(BuffBaseStrength, value, source)
+		if (animation !== 'sync') {
+			this.game.animation.commitAnimationThread()
+		}
+	}
+
+	public weaken(
+		value: number | LeaderStatValueGetter,
+		source: ServerBuffSource,
+		animation: 'sync' | 'stagger' | 'parallel' = 'sync'
+	): void {
+		const BuffBaseWeakness = require('../buffs/BuffBaseWeakness').default as BuffConstructor
+		if (animation === 'stagger') {
+			this.game.animation.createAnimationThread()
+		} else if (animation === 'parallel') {
+			this.game.animation.createInstantAnimationThread()
+		}
+		this.buffs.addMultiple(BuffBaseWeakness, value, source)
+		if (animation !== 'sync') {
+			this.game.animation.commitAnimationThread()
+		}
+	}
+
+	public dealDamage(damageInstance: ServerDamageInstance, animation: 'sync' | 'stagger' | 'parallel' = 'sync'): void {
+		if (animation === 'stagger') {
+			this.game.animation.createAnimationThread()
+		} else if (animation === 'parallel') {
+			this.game.animation.createInstantAnimationThread()
+		}
+
 		this.game.events.postEvent(
 			GameEventCreators.beforeCardTakesDamage({
 				game: this.game,
@@ -479,6 +537,10 @@ export default class ServerCard implements Card {
 				powerDamageInstance,
 			})
 		)
+
+		if (animation !== 'sync') {
+			this.game.animation.commitAnimationThread()
+		}
 	}
 
 	heal(healingInstance: ServerDamageInstance): void {

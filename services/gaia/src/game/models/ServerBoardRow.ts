@@ -31,6 +31,10 @@ export default class ServerBoardRow implements BoardRow {
 		return `row:${this.index}`
 	}
 
+	public get targetableCards(): ServerUnit[] {
+		return this.cards.filter((unit) => !unit.card.features.includes(CardFeature.UNTARGETABLE)).sort((a, b) => a.unitIndex - b.unitIndex)
+	}
+
 	public isFull(): boolean {
 		return this.cards.length === Constants.MAX_CARDS_PER_ROW
 	}
@@ -59,6 +63,7 @@ export default class ServerBoardRow implements BoardRow {
 
 		const unit = new ServerUnit(this.game, card, rowOwner, createdBy)
 		this.insertUnit(unit, unitIndex)
+		this.game.board.rememberInsertedUnit(card, createdBy)
 
 		/* Play deploy animation */
 		this.game.animation.play(ServerAnimation.unitDeploy(card))

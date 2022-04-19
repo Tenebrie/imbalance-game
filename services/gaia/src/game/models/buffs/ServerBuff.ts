@@ -22,6 +22,7 @@ import {
 	CardDestroyedEventArgs,
 	CardDrawnEventArgs,
 	CardPlayedEventArgs,
+	CardResolvedEventArgs,
 	CardRevealedEventArgs,
 	CardTakesDamageEventArgs,
 	CardTargetsConfirmedEventArgs,
@@ -210,6 +211,7 @@ export default class ServerBuff implements Buff {
 	protected createCallback(event: GameEventType.CARD_DESTROYED): EventSubscription<CardDestroyedEventArgs>
 	protected createCallback(event: GameEventType.UNIT_DESTROYED): EventSubscription<UnitDestroyedEventArgs>
 	protected createCallback(event: GameEventType.CARD_PLAYED): EventSubscription<CardPlayedEventArgs>
+	protected createCallback(event: GameEventType.CARD_RESOLVED): EventSubscription<CardResolvedEventArgs>
 	protected createCallback<ArgsType extends SharedEventArgs>(event: GameEventType): EventSubscription<ArgsType> {
 		return this.game.events.createCallback(this, event)
 	}

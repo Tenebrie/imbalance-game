@@ -6,6 +6,7 @@ import ExpansionSet from '@shared/enums/ExpansionSet'
 
 import ServerCard from '../../../../models/ServerCard'
 import ServerGame from '../../../../models/ServerGame'
+import GwentGloriousHunt from '../../neutral/silver/GwentGloriousHunt'
 
 export default class GwentImperialManticore extends ServerCard {
 	constructor(game: ServerGame) {
@@ -18,6 +19,7 @@ export default class GwentImperialManticore extends ServerCard {
 				power: 13,
 			},
 			expansionSet: ExpansionSet.GWENT,
+			relatedCards: [GwentGloriousHunt],
 		})
 
 		this.createLocalization({

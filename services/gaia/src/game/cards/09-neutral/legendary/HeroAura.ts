@@ -27,7 +27,7 @@ export default class HeroAura extends ServerCard {
 			.requireSamePlayer()
 			.require((args) => args.targetCard.color === CardColor.GOLDEN)
 			.perform(({ targetCard }) => {
-				Keywords.playCardFromDeck(targetCard)
+				Keywords.playCardFromDeckOrGraveyard(targetCard)
 			})
 	}
 }

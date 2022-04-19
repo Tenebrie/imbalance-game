@@ -113,11 +113,13 @@ export function sortCards<T extends Card | CardMessage>(inputArray: T[]): T[] {
 			(a.type === CardType.UNIT &&
 				(b.stats.basePower - a.stats.basePower ||
 					a.sortPriority - b.sortPriority ||
+					(a.localization.en.name && b.localization.en.name && a.localization.en.name.localeCompare(b.localization.en.name)) ||
 					hashCodeOfId(a.class) - hashCodeOfId(b.class) ||
 					hashCodeOfId(a.id) - hashCodeOfId(b.id))) ||
 			(a.type === CardType.SPELL &&
 				(a.stats.baseSpellCost - b.stats.baseSpellCost ||
 					a.sortPriority - b.sortPriority ||
+					(a.localization.en.name && b.localization.en.name && a.localization.en.name.localeCompare(b.localization.en.name)) ||
 					hashCodeOfId(a.class) - hashCodeOfId(b.class) ||
 					hashCodeOfId(a.id) - hashCodeOfId(b.id))) ||
 			0

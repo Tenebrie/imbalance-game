@@ -17,6 +17,7 @@ import ServerBoardOrders from './ServerBoardOrders'
 import ServerBoardRow from './ServerBoardRow'
 import ServerCard from './ServerCard'
 import ServerGame from './ServerGame'
+import ServerOwnedCard from './ServerOwnedCard'
 import ServerUnit from './ServerUnit'
 
 export default class ServerBoard implements Board {
@@ -24,6 +25,8 @@ export default class ServerBoard implements Board {
 	readonly rows: ServerBoardRow[]
 	readonly orders: ServerBoardOrders
 	readonly unitsBeingDestroyed: ServerUnit[]
+
+	private readonly __insertedUnitList: ServerOwnedCard[] = []
 
 	constructor(game: ServerGame) {
 		this.game = game
@@ -151,6 +154,10 @@ export default class ServerBoard implements Board {
 
 	public getAllUnits(): ServerUnit[] {
 		return this.rows.flatMap((row) => row.cards)
+	}
+
+	public getAllTargetableUnits(): ServerUnit[] {
+		return this.getAllUnits().filter((unit) => !unit.card.features.includes(CardFeature.UNTARGETABLE))
 	}
 
 	public isUnitAdjacent(first: ServerUnit | null, second: ServerUnit | null): boolean {
@@ -390,13 +397,21 @@ export default class ServerBoard implements Board {
 		if (!row.owner) {
 			throw new Error(`Row ${row.index} has no owner.`)
 		}
-		const relativeDistance = this.getDistanceToFrontLegacy(row.owner, row)
+		const relativeDistance = this.getDistanceToFront(row.index)
 		return this.getControlledRows(row.owner.opponent)[relativeDistance]
 	}
 
 	public createUnit(card: ServerCard, createdBy: ServerPlayerInGame, rowIndex: number, unitIndex: number): ServerUnit | null {
 		const targetRow = this.rows[rowIndex]
 		return targetRow.createUnit(card, createdBy, unitIndex)
+	}
+
+	public get insertedUnitList(): ServerOwnedCard[] {
+		return this.__insertedUnitList.slice()
+	}
+
+	public rememberInsertedUnit(card: ServerCard, owner: ServerPlayerInGame): void {
+		this.__insertedUnitList.push(new ServerOwnedCard(card, owner))
 	}
 
 	public moveUnit(unit: ServerUnit, rowIndex: number, unitIndex: number, args?: { charmingPlayer: ServerPlayerInGame }): void {

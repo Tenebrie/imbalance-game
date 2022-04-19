@@ -12,9 +12,6 @@ import GwentMardroemeStrengthen from './GwentMardroemeStrengthen'
 import GwentMardroemeWeaken from './GwentMardroemeWeaken'
 
 export default class GwentMardroeme extends ServerCard {
-	public static readonly EXTRA_POWER = 3
-	public static readonly WEAKEN = 3
-
 	constructor(game: ServerGame) {
 		super(game, {
 			type: CardType.SPELL,

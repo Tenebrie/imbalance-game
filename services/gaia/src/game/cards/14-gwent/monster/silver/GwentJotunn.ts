@@ -45,6 +45,7 @@ export default class GwentJotunn extends ServerCard {
 		})
 
 		this.createDeployTargets(TargetType.UNIT)
+			.targetCount(GwentJotunn.TARGETS)
 			.requireEnemy()
 			.require(() => this.unit !== null)
 			.require(() => !game.board.getOppositeRow(this.unit!.rowIndex).isFull())

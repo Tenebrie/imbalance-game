@@ -30,14 +30,14 @@ export default class GwentZoltanChivay extends ServerCard {
 		this.dynamicTextVariables = {
 			boost: GwentZoltanChivay.BOOST,
 			damage: GwentZoltanChivay.DAMAGE,
-			unitСount: GwentZoltanChivay.UNIT_COUNT,
+			unitCount: GwentZoltanChivay.UNIT_COUNT,
 		}
 
 		this.createLocalization({
 			en: {
 				name: 'Zoltan Chivay',
 				description:
-					'Choose {unitСount} units. Strengthen allies by {boost} and move them to this row. Deal {damage} damage to enemies and move them to the row opposite this unit.',
+					'Choose {unitCount} units. Strengthen allies by {boost} and move them to this row. Deal {damage} damage to enemies and move them to the row opposite this unit.',
 				flavor: "Drinkin' alone's like crappin' with company.",
 			},
 		})

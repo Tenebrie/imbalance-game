@@ -30,6 +30,6 @@ export default class UnitLabyrinthLostRaven extends ServerCard {
 	}
 
 	private static onTargetSelected(target: ServerCard): void {
-		Keywords.playCardFromDeck(target)
+		Keywords.playCardFromDeckOrGraveyard(target)
 	}
 }

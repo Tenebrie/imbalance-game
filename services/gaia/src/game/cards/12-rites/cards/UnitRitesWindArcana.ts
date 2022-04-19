@@ -43,7 +43,7 @@ export default class UnitRitesWindArcana extends ServerCard {
 
 				const cardToSummon = this.ownerPlayer.cardDeck.findCard(UnitRitesWindArcana)
 				if (cardToSummon) {
-					Keywords.playCardFromDeck(cardToSummon)
+					Keywords.playCardFromDeckOrGraveyard(cardToSummon)
 				}
 			})
 
@@ -53,7 +53,7 @@ export default class UnitRitesWindArcana extends ServerCard {
 			.perform(() => {
 				const cardToSummon = this.ownerPlayer.cardDeck.findCard(UnitRitesWindArcana)
 				if (cardToSummon) {
-					Keywords.playCardFromDeck(cardToSummon)
+					Keywords.playCardFromDeckOrGraveyard(cardToSummon)
 				}
 			})
 	}

@@ -2,10 +2,12 @@ import Unit from '@shared/models/Unit'
 import { OrderTarget } from '@src/game/models/ServerBoardOrders'
 import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
 import ServerPlayerInGame from '@src/game/players/ServerPlayerInGame'
+import { LeaderStatValueGetter } from '@src/utils/LeaderStats'
 
-import ServerBuffContainer from './buffs/ServerBuffContainer'
+import ServerBuffContainer, { ServerBuffSource } from './buffs/ServerBuffContainer'
 import ServerBoardRow from './ServerBoardRow'
 import ServerCard from './ServerCard'
+import ServerCardStats from './ServerCardStats'
 import ServerDamageInstance from './ServerDamageSource'
 import ServerGame from './ServerGame'
 
@@ -20,6 +22,14 @@ export default class ServerUnit implements Unit {
 		this.card = card
 		this.owner = owner
 		this.originalOwner = originalOwner
+	}
+
+	public get stats(): ServerCardStats {
+		return this.card.stats
+	}
+
+	public get isBronzeOrSilver(): boolean {
+		return this.card.isBronzeOrSilver
 	}
 
 	public get boardRow(): ServerBoardRow {
@@ -46,8 +56,28 @@ export default class ServerUnit implements Unit {
 		return this.card.buffs
 	}
 
-	public dealDamage(damageInstance: ServerDamageInstance): void {
-		this.card.dealDamage(damageInstance)
+	public boost(value: number | LeaderStatValueGetter, source: ServerBuffSource, animation: 'sync' | 'stagger' | 'parallel' = 'sync'): void {
+		this.card.boost(value, source, animation)
+	}
+
+	public strengthen(
+		value: number | LeaderStatValueGetter,
+		source: ServerBuffSource,
+		animation: 'sync' | 'stagger' | 'parallel' = 'sync'
+	): void {
+		this.card.strengthen(value, source, animation)
+	}
+
+	public weaken(
+		value: number | LeaderStatValueGetter,
+		source: ServerBuffSource,
+		animation: 'sync' | 'stagger' | 'parallel' = 'sync'
+	): void {
+		this.card.weaken(value, source, animation)
+	}
+
+	public dealDamage(damageInstance: ServerDamageInstance, animation: 'sync' | 'stagger' | 'parallel' = 'sync'): void {
+		this.card.dealDamage(damageInstance, animation)
 	}
 
 	public heal(healingInstance: ServerDamageInstance): void {

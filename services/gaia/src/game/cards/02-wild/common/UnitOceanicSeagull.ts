@@ -31,6 +31,6 @@ export default class UnitOceanicSeagull extends ServerCard {
 	}
 
 	private static onTargetSelected(target: ServerCard): void {
-		Keywords.playCardFromDeck(target)
+		Keywords.playCardFromDeckOrGraveyard(target)
 	}
 }

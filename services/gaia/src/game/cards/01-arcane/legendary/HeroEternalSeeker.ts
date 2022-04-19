@@ -34,6 +34,6 @@ export default class HeroEternalSeeker extends ServerCard {
 		this.createDeployTargets(TargetType.CARD_IN_UNIT_DECK)
 			.require(({ targetCard }) => targetCard instanceof UnitEternalTruth || targetCard instanceof UnitEternalDeceit)
 			.require(({ targetCard }) => targetCard.ownerPlayerNullable === this.ownerPlayer)
-			.perform(({ targetCard }) => Keywords.playCardFromDeck(targetCard))
+			.perform(({ targetCard }) => Keywords.playCardFromDeckOrGraveyard(targetCard))
 	}
 }

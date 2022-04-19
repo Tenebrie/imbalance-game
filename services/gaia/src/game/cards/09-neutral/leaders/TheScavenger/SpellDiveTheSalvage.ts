@@ -34,6 +34,6 @@ export default class SpellDiveTheSalvage extends ServerCard {
 					Keywords.createCard.forOwnerOf(this).fromInstance(targetCard)
 				}
 			})
-			.perform(({ targetCard }) => Keywords.playCardFromDeck(targetCard))
+			.perform(({ targetCard }) => Keywords.playCardFromDeckOrGraveyard(targetCard))
 	}
 }

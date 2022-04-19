@@ -41,7 +41,7 @@ export default class GwentSheTrollOfVergen extends ServerCard {
 			.require(({ targetCard }) => targetCard.color === CardColor.BRONZE)
 			.require(({ targetCard }) => targetCard.features.includes(CardFeature.HAS_DEATHWISH))
 			.perform(({ targetCard }) => {
-				Keywords.playCardFromDeck(targetCard)
+				Keywords.playCardFromDeckOrGraveyard(targetCard)
 				this.cardToConsume = targetCard
 			})
 

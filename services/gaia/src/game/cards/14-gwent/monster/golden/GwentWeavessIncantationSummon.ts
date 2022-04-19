@@ -45,7 +45,7 @@ export default class GwentWeavessIncantationSummon extends ServerCard {
 			.require(({ targetCard }) => targetCard.tribes.includes(CardTribe.RELICT))
 			.perform(({ targetCard, player }) => {
 				const weavess = game.board.getUnitsOwnedByPlayer(player).find((unit) => unit.card instanceof GwentWeavessIncantation)?.card
-				Keywords.playCardFromDeck(targetCard)
+				Keywords.playCardFromDeckOrGraveyard(targetCard)
 				targetCard.buffs.addMultiple(BuffBaseStrength, GwentWeavessIncantationSummon.BOOST, weavess || this)
 			})
 	}

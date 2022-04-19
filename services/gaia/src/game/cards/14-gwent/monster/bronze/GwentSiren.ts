@@ -39,7 +39,7 @@ export default class GwentSiren extends ServerCard {
 				return
 			}
 			const cardToPlay = shuffle(validCards)[0]
-			Keywords.playCardFromDeck(cardToPlay)
+			Keywords.playCardFromDeckOrGraveyard(cardToPlay)
 		})
 	}
 }

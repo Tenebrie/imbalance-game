@@ -25,7 +25,7 @@ const createCard = (player: ServerPlayerInGame | null, card: ServerCard, callbac
 	}
 
 	callback(card)
-	card.game.cardPlay.playCardToResolutionStack(new ServerOwnedCard(card, player))
+	card.game.cardPlay.playCardToResolutionStack(new ServerOwnedCard(card, player), 'aether')
 	return card
 }
 
@@ -139,14 +139,35 @@ const Keywords = {
 		return units
 	},
 
-	playCardFromDeck: (card: ServerCard): void => {
+	playCardFromHand: (card: ServerCard): void => {
+		const cardOwner = card.ownerPlayer
+		if (!cardOwner.cardHand.allCards.includes(card)) {
+			throw new Error(`Card ${card.id} is not in hand!`)
+		}
+		cardOwner.cardHand.removeCard(card)
+		card.game.cardPlay.playCardToResolutionStack(new ServerOwnedCard(card, cardOwner), 'hand')
+	},
+
+	/**
+	 * @deprecated Use `playCardFromDeck` or `playCardFromGraveyard` instead.
+	 */
+	playCardFromDeckOrGraveyard: (card: ServerCard): void => {
 		const cardOwner = card.ownerPlayer
 		if (cardOwner.cardDeck.allCards.includes(card)) {
 			cardOwner.cardDeck.removeCard(card)
 		} else if (cardOwner.cardGraveyard.allCards.includes(card)) {
 			cardOwner.cardGraveyard.removeCard(card)
 		}
-		card.game.cardPlay.playCardToResolutionStack(new ServerOwnedCard(card, cardOwner))
+		card.game.cardPlay.playCardToResolutionStack(new ServerOwnedCard(card, cardOwner), 'deck')
+	},
+
+	playCardFromDeck: (card: ServerCard): void => {
+		const cardOwner = card.ownerPlayer
+		if (!cardOwner.cardDeck.allCards.includes(card)) {
+			throw new Error(`Card ${card.id} is not in the deck!`)
+		}
+		cardOwner.cardDeck.removeCard(card)
+		card.game.cardPlay.playCardToResolutionStack(new ServerOwnedCard(card, cardOwner), 'deck')
 	},
 
 	playCardFromGraveyard: (card: ServerCard, newOwner: ServerPlayerInGame): void => {
@@ -155,7 +176,7 @@ const Keywords = {
 			throw new Error(`Card ${card.id} is not in the graveyard!`)
 		}
 		cardOwner.cardGraveyard.removeCard(card)
-		card.game.cardPlay.playCardToResolutionStack(new ServerOwnedCard(card, newOwner))
+		card.game.cardPlay.playCardToResolutionStack(new ServerOwnedCard(card, newOwner), 'graveyard')
 	},
 
 	discardCard: (card: ServerCard): void => {

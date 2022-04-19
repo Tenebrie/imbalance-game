@@ -41,10 +41,7 @@ export default class GwentRotfiend extends ServerCard {
 			.require(({ reason }) => reason === UnitDestructionReason.CARD_EFFECT)
 			.perform(({ triggeringUnit }) => {
 				const owner = triggeringUnit.owner
-				const oppositeRow = game.board.getRowWithDistanceToFront(
-					owner.opponent,
-					game.board.getDistanceToFrontLegacy(owner, triggeringUnit.rowIndex)
-				)
+				const oppositeRow = game.board.getRowWithDistanceToFront(owner.opponent, game.board.getDistanceToFront(triggeringUnit.rowIndex))
 				const targets = oppositeRow.cards
 				targets.forEach((target) => {
 					game.animation.thread(() => {

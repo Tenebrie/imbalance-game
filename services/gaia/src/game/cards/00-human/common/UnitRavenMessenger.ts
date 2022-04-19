@@ -31,6 +31,6 @@ export default class UnitRavenMessenger extends ServerCard {
 	}
 
 	private static onTargetSelected(target: ServerCard): void {
-		Keywords.playCardFromDeck(target)
+		Keywords.playCardFromDeckOrGraveyard(target)
 	}
 }

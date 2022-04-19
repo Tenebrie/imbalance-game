@@ -26,7 +26,7 @@ export default class HeroArgenta extends ServerCard {
 			.requireSamePlayer()
 			.require(({ targetCard }) => targetCard.color === CardColor.SILVER)
 			.perform(({ targetCard }) => {
-				Keywords.playCardFromDeck(targetCard)
+				Keywords.playCardFromDeckOrGraveyard(targetCard)
 			})
 	}
 }

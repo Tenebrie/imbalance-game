@@ -19,6 +19,9 @@ export default class RulesetChallengeDummy extends ServerRuleset {
 			gameMode: GameMode.PVE,
 			category: RulesetCategory.PVE,
 			sortPriority: 0,
+			constants: {
+				UNIT_HAND_SIZE_PER_ROUND: 3,
+			},
 		})
 
 		this.createSlots()

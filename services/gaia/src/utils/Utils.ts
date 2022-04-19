@@ -185,43 +185,67 @@ export const tryUntil = (args: TryUntilArgs): boolean => {
 }
 
 export const getHighestCard = (cards: ServerCard[]): ServerCard | null => {
+	return getRandomArrayValue(getAllHighestCards(cards)) || null
+}
+
+export const getAllHighestCards = (cards: ServerCard[]): ServerCard[] => {
 	if (cards.length === 0) {
-		return null
+		return []
 	}
-	const sortedCards = cards.sort((a, b) => b.stats.power - a.stats.power)
+	const sortedCards = cards
+		.filter((card) => !card.features.includes(CardFeature.UNTARGETABLE))
+		.sort((a, b) => b.stats.power - a.stats.power)
 	const highestPower = sortedCards[0].stats.power
 	const highestUnits = sortedCards.filter((card) => card.stats.power === highestPower)
-	return getRandomArrayValue(highestUnits)
+	return highestUnits
 }
 
 export const getHighestUnit = (units: ServerUnit[]): ServerUnit | null => {
+	return getRandomArrayValue(getAllHighestUnits(units)) || null
+}
+
+export const getAllHighestUnits = (units: ServerUnit[]): ServerUnit[] => {
 	if (units.length === 0) {
-		return null
+		return []
 	}
-	const sortedUnits = units.sort((a, b) => b.card.stats.power - a.card.stats.power)
+	const sortedUnits = units
+		.filter((unit) => !unit.card.features.includes(CardFeature.UNTARGETABLE))
+		.sort((a, b) => b.card.stats.power - a.card.stats.power)
 	const highestPower = sortedUnits[0].card.stats.power
 	const highestUnits = sortedUnits.filter((unit) => unit.card.stats.power === highestPower)
-	return getRandomArrayValue(highestUnits)
+	return highestUnits
 }
 
 export const getLowestCard = (cards: ServerCard[]): ServerCard | null => {
+	return getRandomArrayValue(getAllLowestCards(cards)) || null
+}
+
+export const getAllLowestCards = (cards: ServerCard[]): ServerCard[] => {
 	if (cards.length === 0) {
-		return null
+		return []
 	}
-	const sortedCards = cards.sort((a, b) => a.stats.power - b.stats.power)
+	const sortedCards = cards
+		.filter((card) => !card.features.includes(CardFeature.UNTARGETABLE))
+		.sort((a, b) => a.stats.power - b.stats.power)
 	const lowestPower = sortedCards[0].stats.power
 	const lowestUnits = sortedCards.filter((card) => card.stats.power === lowestPower)
-	return getRandomArrayValue(lowestUnits)
+	return lowestUnits
 }
 
 export const getLowestUnit = (units: ServerUnit[]): ServerUnit | null => {
+	return getRandomArrayValue(getAllLowestUnits(units)) || null
+}
+
+export const getAllLowestUnits = (units: ServerUnit[]): ServerUnit[] => {
 	if (units.length === 0) {
-		return null
+		return []
 	}
-	const sortedUnits = units.sort((a, b) => a.card.stats.power - b.card.stats.power)
+	const sortedUnits = units
+		.filter((unit) => !unit.card.features.includes(CardFeature.UNTARGETABLE))
+		.sort((a, b) => a.card.stats.power - b.card.stats.power)
 	const lowestPower = sortedUnits[0].card.stats.power
 	const lowestUnits = sortedUnits.filter((unit) => unit.card.stats.power === lowestPower)
-	return getRandomArrayValue(lowestUnits)
+	return lowestUnits
 }
 
 interface LeaderTextVariables {

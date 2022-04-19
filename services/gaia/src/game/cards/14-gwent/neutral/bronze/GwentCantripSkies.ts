@@ -38,7 +38,7 @@ export default class GwentCantripSkies extends ServerCard {
 				return
 			}
 			const targetCard = getRandomArrayValue(validCards)
-			Keywords.playCardFromDeck(targetCard)
+			Keywords.playCardFromDeckOrGraveyard(targetCard)
 		})
 	}
 }
