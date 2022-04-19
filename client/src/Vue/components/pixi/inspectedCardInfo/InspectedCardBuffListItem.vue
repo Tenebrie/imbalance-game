@@ -4,7 +4,7 @@
 		<span v-if="buff.intensity > 1">{{ buff.intensity }}x </span>
 		<span class="object-name">{{ $locale.getBuffName(buff.buff) }}: </span>
 		<span>{{ $locale.getBuffDescription(buff.buff) }}</span>
-		<span v-if="buff.buff.duration !== Infinity"> ({{ $locale.get('card.inspect.buffs.turnsRemaining') }}: {{ buff.buff.duration }}) </span>
+		<span v-if="buff.buff.duration < 100"> ({{ $locale.get('card.inspect.buffs.turnsRemaining') }}: {{ buff.buff.duration }}) </span>
 	</div>
 </template>
 
