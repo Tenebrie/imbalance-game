@@ -10,6 +10,7 @@ import ServerCard from './ServerCard'
 import ServerCardStats from './ServerCardStats'
 import ServerDamageInstance from './ServerDamageSource'
 import ServerGame from './ServerGame'
+import { AnimationThreadType } from './ServerGameAnimation'
 
 export default class ServerUnit implements Unit {
 	public readonly game: ServerGame
@@ -56,27 +57,19 @@ export default class ServerUnit implements Unit {
 		return this.card.buffs
 	}
 
-	public boost(value: number | LeaderStatValueGetter, source: ServerBuffSource, animation: 'sync' | 'stagger' | 'parallel' = 'sync'): void {
+	public boost(value: number | LeaderStatValueGetter, source: ServerBuffSource, animation: AnimationThreadType = 'sync'): void {
 		this.card.boost(value, source, animation)
 	}
 
-	public strengthen(
-		value: number | LeaderStatValueGetter,
-		source: ServerBuffSource,
-		animation: 'sync' | 'stagger' | 'parallel' = 'sync'
-	): void {
+	public strengthen(value: number | LeaderStatValueGetter, source: ServerBuffSource, animation: AnimationThreadType = 'sync'): void {
 		this.card.strengthen(value, source, animation)
 	}
 
-	public weaken(
-		value: number | LeaderStatValueGetter,
-		source: ServerBuffSource,
-		animation: 'sync' | 'stagger' | 'parallel' = 'sync'
-	): void {
+	public weaken(value: number | LeaderStatValueGetter, source: ServerBuffSource, animation: AnimationThreadType = 'sync'): void {
 		this.card.weaken(value, source, animation)
 	}
 
-	public dealDamage(damageInstance: ServerDamageInstance, animation: 'sync' | 'stagger' | 'parallel' = 'sync'): void {
+	public dealDamage(damageInstance: ServerDamageInstance, animation: AnimationThreadType = 'sync'): void {
 		this.card.dealDamage(damageInstance, animation)
 	}
 

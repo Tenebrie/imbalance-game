@@ -202,6 +202,11 @@ const router = createRouter({
 					name: 'admin-performance',
 					component: () => import('@/Vue/components/admin/AdminPerformanceView.vue'),
 				},
+				{
+					path: '/admin/templating',
+					name: 'admin-templating',
+					component: () => import('@/Vue/components/admin/AdminTemplatingView.vue'),
+				},
 			],
 		},
 	],

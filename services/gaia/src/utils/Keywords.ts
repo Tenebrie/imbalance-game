@@ -7,6 +7,7 @@ import BuffStrength from '@src/game/buffs/BuffStrength'
 import UnitShatteredSpace from '@src/game/cards/01-arcane/tokens/UnitShatteredSpace'
 import GameEventCreators, { GameEvent } from '@src/game/models/events/GameEventCreators'
 import ServerBoardRow from '@src/game/models/ServerBoardRow'
+import { AnimationThreadType } from '@src/game/models/ServerGameAnimation'
 import ServerOwnedCard from '@src/game/models/ServerOwnedCard'
 import ServerUnit from '@src/game/models/ServerUnit'
 import { LeaderStatValueGetter } from '@src/utils/LeaderStats'
@@ -71,32 +72,51 @@ const Keywords = {
 		return card
 	},
 
-	summonUnitFromHand: (args: { card: ServerCard; owner: ServerPlayerInGame; rowIndex: number; unitIndex: number }): ServerUnit | null => {
+	summonUnitFromHand: (args: {
+		card: ServerCard
+		owner: ServerPlayerInGame
+		rowIndex: number
+		unitIndex: number
+		threadType?: AnimationThreadType
+	}): ServerUnit | null => {
 		const { card, owner, rowIndex, unitIndex } = args
+		const threadType = args.threadType || 'sync'
 
 		const game = owner.game
-		owner.cardHand.removeCard(card)
-		const unit = game.board.createUnit(card, owner, rowIndex, unitIndex)
-		if (!unit) {
-			owner.cardHand.addUnit(card)
-		}
-		return unit
+		return game.animation.smartThread(threadType, () => {
+			owner.cardHand.removeCard(card)
+			const unit = game.board.createUnit(card, owner, rowIndex, unitIndex)
+			if (!unit) {
+				owner.cardHand.addUnit(card)
+			}
+			return unit
+		})
 	},
 
-	summonUnitFromDeck: (args: { card: ServerCard; owner: ServerPlayerInGame; rowIndex: number; unitIndex: number }): ServerUnit | null => {
+	summonUnitFromDeck: (args: {
+		card: ServerCard
+		owner: ServerPlayerInGame
+		rowIndex: number
+		unitIndex: number
+		threadType?: AnimationThreadType
+	}): ServerUnit | null => {
 		const { card, owner, rowIndex, unitIndex } = args
+		const threadType = args.threadType || 'sync'
 
 		const game = owner.game
 		if (game.board.rows[rowIndex].isFull()) {
 			return null
 		}
-		owner.cardDeck.removeCard(card)
-		const unit = game.board.createUnit(card, owner, rowIndex, unitIndex)
-		if (!unit) {
-			owner.cardDeck.addUnitToTop(card)
-			return null
-		}
-		return unit
+
+		return game.animation.smartThread(threadType, () => {
+			owner.cardDeck.removeCard(card)
+			const unit = game.board.createUnit(card, owner, rowIndex, unitIndex)
+			if (!unit) {
+				owner.cardDeck.addUnitToTop(card)
+				return null
+			}
+			return unit
+		})
 	},
 
 	summonUnit: (args: {
@@ -105,12 +125,16 @@ const Keywords = {
 		rowIndex: number
 		unitIndex: number
 		count?: number | LeaderStatValueGetter
+		threadType?: AnimationThreadType
 	}): ServerUnit | null => {
 		const { owner, cardConstructor, rowIndex, unitIndex } = args
+		const threadType = args.threadType || 'sync'
 
 		const game = owner.game
-		const card = new cardConstructor(game)
-		return game.board.createUnit(card, owner, rowIndex, unitIndex)
+		return game.animation.smartThread(threadType, () => {
+			const card = new cardConstructor(game)
+			return game.board.createUnit(card, owner, rowIndex, unitIndex)
+		})
 	},
 
 	summonMultipleUnits: (args: {

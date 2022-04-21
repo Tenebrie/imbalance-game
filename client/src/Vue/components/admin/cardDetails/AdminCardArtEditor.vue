@@ -21,7 +21,7 @@
 <script lang="ts">
 import CardMessage from '@shared/models/network/card/CardMessage'
 import axios from 'axios'
-import { defineComponent, PropType, ref } from 'vue'
+import { defineComponent, onMounted, onUnmounted, PropType, ref } from 'vue'
 
 import Notifications from '@/utils/Notifications'
 import WorkshopCardPreview from '@/Vue/components/workshop/WorkshopCardPreview.vue'
@@ -41,9 +41,33 @@ export default defineComponent({
 	setup(props) {
 		const imageRef = ref<HTMLImageElement | null>(null)
 
+		onMounted(() => {
+			window.addEventListener('paste', onPagePaste)
+		})
+		onUnmounted(() => {
+			window.removeEventListener('paste', onPagePaste)
+		})
+
+		const onPagePaste = (event: Event) => {
+			const typedEvent = event as ClipboardEvent
+			const items = typedEvent.clipboardData?.items || []
+
+			for (let i = 0; i < items.length; i++) {
+				if (items[i].type.indexOf('image') == -1) continue
+				const blob = (items[i] as DataTransferItem).getAsFile()
+				if (blob) {
+					loadFromFile(blob)
+					return
+				}
+			}
+		}
+
 		const onFileSelected = (event: any) => {
 			const files = event.target.files
+			loadFromFile(files[0])
+		}
 
+		const loadFromFile = (file: File) => {
 			const fileReader = new FileReader()
 			fileReader.onload = async () => {
 				const image = new Image()
@@ -53,7 +77,7 @@ export default defineComponent({
 				}
 				image.src = fileReader.result as string
 			}
-			fileReader.readAsDataURL(files[0])
+			fileReader.readAsDataURL(file)
 		}
 
 		const currentState = ref<'wait' | 'edit' | 'save'>('wait')

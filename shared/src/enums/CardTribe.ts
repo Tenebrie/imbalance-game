@@ -20,6 +20,7 @@ enum CardTribe {
 
 	DRACONID = 'draconid',
 	WILD_HUNT = 'wildHunt',
+	WITCHER = 'witcher',
 	CONSTRUCT = 'construct',
 	MACHINE = 'machine',
 	CURSED = 'cursed',

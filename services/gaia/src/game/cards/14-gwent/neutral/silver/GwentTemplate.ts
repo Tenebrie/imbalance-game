@@ -1,0 +1,29 @@
+import CardColor from '@shared/enums/CardColor'
+import CardFaction from '@shared/enums/CardFaction'
+import CardType from '@shared/enums/CardType'
+import ExpansionSet from '@shared/enums/ExpansionSet'
+import ServerCard from '@src/game/models/ServerCard'
+import ServerGame from '@src/game/models/ServerGame'
+
+export default class GwentTemplate extends ServerCard {
+	constructor(game: ServerGame) {
+		super(game, {
+			type: CardType.UNIT,
+			color: CardColor.SILVER,
+			faction: CardFaction.NEUTRAL,
+			tribes: [],
+			stats: {
+				power: 1,
+			},
+			expansionSet: ExpansionSet.GWENT,
+		})
+
+		this.createLocalization({
+			en: {
+				name: `{{NAME}}`,
+				description: `{{DESCRIPTION}}`,
+				flavor: `{{FLAVOR}}`,
+			},
+		})
+	}
+}

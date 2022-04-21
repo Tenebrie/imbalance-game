@@ -92,6 +92,7 @@ import ServerCardStats from './ServerCardStats'
 import { ServerCardTargeting } from './ServerCardTargeting'
 import ServerDamageInstance, { cloneDamageInstance, DamageInstance } from './ServerDamageSource'
 import ServerGame from './ServerGame'
+import { AnimationThreadType } from './ServerGameAnimation'
 import ServerRichTextVariables from './ServerRichTextVariables'
 import ServerUnit from './ServerUnit'
 
@@ -413,59 +414,29 @@ export default class ServerCard implements Card {
 		return this.features.includes(CardFeature.AMBUSH) && !this.isRevealed
 	}
 
-	public boost(value: number | LeaderStatValueGetter, source: ServerBuffSource, animation: 'sync' | 'stagger' | 'parallel' = 'sync'): void {
+	public boost(value: number | LeaderStatValueGetter, source: ServerBuffSource, threadType: AnimationThreadType = 'sync'): void {
 		const BuffStrength = require('../buffs/BuffStrength').default as BuffConstructor
-		if (animation === 'stagger') {
-			this.game.animation.createAnimationThread()
-		} else if (animation === 'parallel') {
-			this.game.animation.createInstantAnimationThread()
-		}
-		this.buffs.addMultiple(BuffStrength, value, source)
-		if (animation !== 'sync') {
-			this.game.animation.commitAnimationThread()
-		}
+		this.game.animation.smartThread(threadType, () => {
+			this.buffs.addMultiple(BuffStrength, value, source)
+		})
 	}
 
-	public strengthen(
-		value: number | LeaderStatValueGetter,
-		source: ServerBuffSource,
-		animation: 'sync' | 'stagger' | 'parallel' = 'sync'
-	): void {
+	public strengthen(value: number | LeaderStatValueGetter, source: ServerBuffSource, threadType: AnimationThreadType = 'sync'): void {
 		const BuffBaseStrength = require('../buffs/BuffBaseStrength').default as BuffConstructor
-		if (animation === 'stagger') {
-			this.game.animation.createAnimationThread()
-		} else if (animation === 'parallel') {
-			this.game.animation.createInstantAnimationThread()
-		}
-		this.buffs.addMultiple(BuffBaseStrength, value, source)
-		if (animation !== 'sync') {
-			this.game.animation.commitAnimationThread()
-		}
+		this.game.animation.smartThread(threadType, () => {
+			this.buffs.addMultiple(BuffBaseStrength, value, source)
+		})
 	}
 
-	public weaken(
-		value: number | LeaderStatValueGetter,
-		source: ServerBuffSource,
-		animation: 'sync' | 'stagger' | 'parallel' = 'sync'
-	): void {
+	public weaken(value: number | LeaderStatValueGetter, source: ServerBuffSource, threadType: AnimationThreadType = 'sync'): void {
 		const BuffBaseWeakness = require('../buffs/BuffBaseWeakness').default as BuffConstructor
-		if (animation === 'stagger') {
-			this.game.animation.createAnimationThread()
-		} else if (animation === 'parallel') {
-			this.game.animation.createInstantAnimationThread()
-		}
-		this.buffs.addMultiple(BuffBaseWeakness, value, source)
-		if (animation !== 'sync') {
-			this.game.animation.commitAnimationThread()
-		}
+		this.game.animation.smartThread(threadType, () => {
+			this.buffs.addMultiple(BuffBaseWeakness, value, source)
+		})
 	}
 
-	public dealDamage(damageInstance: ServerDamageInstance, animation: 'sync' | 'stagger' | 'parallel' = 'sync'): void {
-		if (animation === 'stagger') {
-			this.game.animation.createAnimationThread()
-		} else if (animation === 'parallel') {
-			this.game.animation.createInstantAnimationThread()
-		}
+	public dealDamage(damageInstance: ServerDamageInstance, animation: AnimationThreadType = 'sync'): void {
+		this.game.animation.createAnimationThread(animation)
 
 		this.game.events.postEvent(
 			GameEventCreators.beforeCardTakesDamage({
@@ -538,9 +509,7 @@ export default class ServerCard implements Card {
 			})
 		)
 
-		if (animation !== 'sync') {
-			this.game.animation.commitAnimationThread()
-		}
+		this.game.animation.commitAnimationThread(animation)
 	}
 
 	heal(healingInstance: ServerDamageInstance): void {

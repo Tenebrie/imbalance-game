@@ -8,6 +8,9 @@
 				<router-link tag="span" :to="{ name: 'admin-performance' }" class="router-link"
 					><i class="fas fa-code" /> System performance
 				</router-link>
+				<router-link tag="span" :to="{ name: 'admin-templating' }" class="router-link"
+					><i class="fas fa-file-circle-plus" /> Card templating
+				</router-link>
 			</div>
 			<div class="content">
 				<router-view />

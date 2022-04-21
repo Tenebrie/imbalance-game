@@ -291,6 +291,13 @@ textarea {
 	background: rgba(white, 0.1);
 }
 
+input[type='text']:disabled,
+input[type='number']:disabled,
+input[type='password']:disabled,
+textarea:disabled {
+	background: rgba(#333, 0.75);
+}
+
 input:invalid {
 	border: 1px red !important;
 }
