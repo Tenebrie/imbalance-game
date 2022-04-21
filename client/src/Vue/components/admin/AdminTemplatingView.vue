@@ -128,9 +128,10 @@ export default defineComponent({
 				'Resurrect: Play from your graveyard',
 				'Boon: Positive row effect',
 				'Hazard: Negative row effect',
+				"Ambush: Played face down, then flips over when the ability's condition is met",
+				'Banish: Remove from the game',
+				'Duel: Units take turns dealing damage equal to their power until one of them is destroyed',
 			]
-
-			console.log(data)
 
 			const keywordsToHighlight = linesToFilter
 				.map((line) => line.substring(0, line.indexOf(':')))
