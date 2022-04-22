@@ -39,6 +39,10 @@ export default class GwentAelirenn extends ServerCard {
 			.requireImmediate(() => this.location === CardLocation.DECK)
 			.requireImmediate(() => game.board.getControlledRows(this.ownerPlayer).some((row) => row.isNotFull()))
 			.perform(() => {
+				if (this.unit) {
+					return
+				}
+
 				const allRows = game.board.getControlledRows(this.ownerPlayer).filter((row) => row.isNotFull())
 
 				const randomRow = getRandomArrayValue(allRows)
