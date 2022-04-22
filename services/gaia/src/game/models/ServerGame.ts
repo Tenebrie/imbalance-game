@@ -20,6 +20,7 @@ import ServerGameIndex from '@src/game/models/ServerGameIndex'
 import ServerGameProgression from '@src/game/models/ServerGameProgression'
 import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
 import { colorizeConsoleText, colorizeId, colorizePlayer, createRandomGameId, getTotalLeaderStat } from '@src/utils/Utils'
+import { v4 as uuid } from 'uuid'
 
 import ServerBotPlayer from '../AI/ServerBotPlayer'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
@@ -75,6 +76,8 @@ export default class ServerGame implements SourceGame {
 
 	public finalVictoriousGroup: ServerPlayerGroup | null = null
 
+	public entropy = ''
+
 	public constructor(props: ServerGameProps) {
 		this.id = props.id ? props.id : createRandomGameId()
 		this.name = props.name || ServerGame.generateName(props.owner)
@@ -125,6 +128,12 @@ export default class ServerGame implements SourceGame {
 			this.events.evaluateSelectors()
 		})
 		this.ruleset.lifecycleCallback(RulesetLifecycleHook.CREATED, this)
+
+		this.generateEntropy()
+	}
+
+	public generateEntropy(): void {
+		this.entropy = uuid() + Math.random() + Math.random()
 	}
 
 	public get activePlayer(): ServerPlayerGroup | null {
@@ -422,6 +431,7 @@ export default class ServerGame implements SourceGame {
 	private startNextTurn(): void {
 		this.turnIndex += 1
 		this.setTurnPhase(GameTurnPhase.TURN_START)
+		this.generateEntropy()
 
 		this.playersToMove = this.players.slice()
 		if (this.lastRoundWonBy === this.players[1] || (this.lastRoundWonBy === null && this.playerMoveOrderReversed)) {

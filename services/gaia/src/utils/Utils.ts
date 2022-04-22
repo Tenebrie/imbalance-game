@@ -433,7 +433,7 @@ export const getStableRandomValues = <T>(game: ServerGame, array: T[], maxCount 
 	if (array.length <= maxCount) {
 		return array
 	}
-	const randomSeed = `${game.id}/${game.roundIndex}/${game.turnIndex}/${game.playersToMove.length}`
+	const randomSeed = `${game.id}/${game.roundIndex}/${game.turnIndex}/${game.playersToMove.length}/${game.entropy}`
 	const getRandom = createSeededRandom(randomSeed)
 	const selectedValues: T[] = []
 	const remainingValues = array.slice()
