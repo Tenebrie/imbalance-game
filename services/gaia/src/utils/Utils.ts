@@ -18,6 +18,7 @@ import ServerGame from '@src/game/models/ServerGame'
 import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
 import ServerPlayerInGame from '@src/game/players/ServerPlayerInGame'
 import express, { Request } from 'express'
+import createSeededRandom from 'seedrandom'
 import { v4 as getRandomId } from 'uuid'
 
 import AsciiColor from '../enums/AsciiColor'
@@ -427,6 +428,21 @@ export const getRandomArrayValue = <T>(array: T[]): T => {
 }
 export const getMultipleRandomArrayValues = <T>(array: T[], maxCount: number): T[] => {
 	return shuffle(array).slice(0, maxCount)
+}
+export const getStableRandomValues = <T>(game: ServerGame, array: T[], maxCount = Constants.CREATE_KEYWORD_CARD_COUNT): T[] => {
+	if (array.length <= maxCount) {
+		return array
+	}
+	const randomSeed = `${game.id}/${game.roundIndex}/${game.turnIndex}/${game.playersToMove.length}`
+	const getRandom = createSeededRandom(randomSeed)
+	const selectedValues: T[] = []
+	const remainingValues = array.slice()
+	for (let i = 0; i < maxCount; i++) {
+		const targetValue = remainingValues[Math.floor(getRandom() * remainingValues.length)]
+		selectedValues.push(targetValue)
+		remainingValues.splice(remainingValues.indexOf(targetValue), 1)
+	}
+	return selectedValues
 }
 
 export const forEachRowCardSlot = (callback: (index: number) => void): void => {

@@ -285,6 +285,11 @@ export default class ServerCard implements Card {
 			.perform(() => this.destroy())
 
 		game.index.addCard(this)
+
+		// Consider all loaded cards as collectible in tests
+		if (process.env.JEST_WORKER_ID !== undefined) {
+			this.isCollectible = true
+		}
 	}
 
 	public get tribes(): CardTribe[] {

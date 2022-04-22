@@ -38,6 +38,7 @@ export default class GwentFrightener extends ServerCard {
 			.requireAllied()
 			.requireNotSelf()
 			.require(() => !!this.unit)
+			.require(({ targetUnit }) => targetUnit.rowIndex !== this.unit!.rowIndex)
 			.perform(({ targetUnit }) => {
 				this.buffs.add(BuffGwentSingleUsed, this)
 				game.board.moveUnitToFarRight(targetUnit, this.unit!.rowIndex)

@@ -5,6 +5,7 @@ import CardFeature from '@shared/enums/CardFeature'
 import CardLocation from '@shared/enums/CardLocation'
 import CardTribe from '@shared/enums/CardTribe'
 import LeaderStatType from '@shared/enums/LeaderStatType'
+import TargetType from '@shared/enums/TargetType'
 import { GenericActionMessageType } from '@shared/models/network/messageHandlers/ClientToServerGameMessages'
 import RichTextVariables from '@shared/models/RichTextVariables'
 import { sortCards } from '@shared/Utils'
@@ -615,6 +616,8 @@ const setupCardPlayStack = (game: ServerGame): TestGamePlayStack => {
  * Play stack action wrapper
  */
 type TestGameCardPlayActions = {
+	topCard(): ServerOwnedCard
+	targetCards(): ServerCard[]
 	countOptions(): number
 	targetFirst(): TestGameCardPlayActions
 	targetLast(): TestGameCardPlayActions
@@ -623,6 +626,30 @@ type TestGameCardPlayActions = {
 
 const getCardPlayActions = (game: ServerGame, player: ServerPlayerInGame): TestGameCardPlayActions => {
 	const resolvingCard: TestGameCardPlayActions = {
+		topCard: () => {
+			const entry = game.cardPlay.cardResolveStack.currentCard
+			if (!entry) throw new Error('No currently resolving card!')
+			return entry
+		},
+		targetCards: () => {
+			const targets = game.cardPlay.getResolvingCardTargets()
+			const targetCards = targets
+				.map(({ target }) => {
+					return (() => {
+						switch (target.targetType) {
+							case TargetType.BOARD_POSITION:
+								return null
+							case TargetType.BOARD_ROW:
+								return null
+							default:
+								return target.targetCard
+						}
+					})()
+				})
+				.filter((card) => !!card)
+				.map((card) => card!)
+			return targetCards
+		},
 		countOptions: () => {
 			return game.cardPlay.getResolvingCardTargets().length
 		},
