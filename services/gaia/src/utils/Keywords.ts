@@ -79,13 +79,6 @@ const Keywords = {
 		player.cardDeck.removeCard(card)
 		player.cardHand.addUnitCardAsDraw(card)
 		player.cardHand.addUnit(card)
-		player.game.events.postEvent(
-			GameEventCreators.cardDrawn({
-				game: player.game,
-				owner: player,
-				triggeringCard: card,
-			})
-		)
 		return card
 	},
 
