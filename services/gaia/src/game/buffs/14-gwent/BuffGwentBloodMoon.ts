@@ -13,7 +13,7 @@ export default class BuffGwentBloodMoon extends ServerRowBuff {
 		})
 
 		this.createEffect(GameEventType.ROW_BUFF_CREATED).perform(() => {
-			this.parent.cards.forEach((unit) => {
+			this.parent.splashableCards.forEach((unit) => {
 				this.game.animation.thread(() => {
 					unit.dealDamage(DamageInstance.fromRow(BuffGwentBloodMoon.DAMAGE, this.parent))
 				})

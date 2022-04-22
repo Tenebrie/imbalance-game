@@ -38,10 +38,10 @@ export default class GwentOldSpeartip extends ServerCard {
 			},
 		})
 
-		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(({ triggeringUnit, owner }) => {
+		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(({ triggeringUnit }) => {
 			const oppositeRow = game.board.getOppositeRow(triggeringUnit.rowIndex)
 
-			const targets = getMultipleRandomArrayValues(oppositeRow.cards, GwentOldSpeartip.TARGETS)
+			const targets = getMultipleRandomArrayValues(oppositeRow.splashableCards, GwentOldSpeartip.TARGETS)
 
 			targets.forEach((card) => {
 				game.animation.thread(() => {

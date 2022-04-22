@@ -157,7 +157,7 @@ export default class ServerBoard implements Board {
 	}
 
 	public getAllTargetableUnits(): ServerUnit[] {
-		return this.getAllUnits().filter((unit) => !unit.card.features.includes(CardFeature.UNTARGETABLE))
+		return this.getAllUnits().filter((unit) => !unit.card.features.includes(CardFeature.UNSPLASHABLE))
 	}
 
 	public isUnitAdjacent(first: ServerUnit | null, second: ServerUnit | null): boolean {
@@ -254,14 +254,14 @@ export default class ServerBoard implements Board {
 		if (!owner) {
 			return []
 		}
-		return this.getAllUnits().filter((unit) => unit.originalOwner === owner)
+		return this.getAllTargetableUnits().filter((unit) => unit.originalOwner === owner)
 	}
 
 	public getUnitsOwnedByGroup(owner: ServerPlayerGroup | null): ServerUnit[] {
 		if (!owner) {
 			return []
 		}
-		return this.getAllUnits().filter((unit) => unit.owner === owner)
+		return this.getAllTargetableUnits().filter((unit) => unit.owner === owner)
 	}
 
 	public getUnitsOwnedByOpponent(context: ServerCard | ServerUnit | ServerPlayerInGame | ServerPlayerGroup | null): ServerUnit[] {

@@ -47,7 +47,7 @@ export default class GwentIncineratingTrap extends ServerCard {
 			.perform(() => {
 				const triggeringUnit = this.unit!
 
-				this.game.board.rows[triggeringUnit.rowIndex].cards.forEach((unit) => {
+				this.game.board.rows[triggeringUnit.rowIndex].splashableCards.forEach((unit) => {
 					if (unit === triggeringUnit) {
 						return
 					}

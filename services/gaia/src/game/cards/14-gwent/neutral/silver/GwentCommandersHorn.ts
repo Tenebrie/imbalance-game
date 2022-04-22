@@ -32,7 +32,7 @@ export default class GwentCommandersHorn extends ServerCard {
 		})
 
 		this.createDeployTargets(TargetType.UNIT).perform(({ targetUnit }) => {
-			const adjacentUnits = targetUnit.boardRow.targetableCards.filter(
+			const adjacentUnits = targetUnit.boardRow.splashableCards.filter(
 				(unit) => game.board.getHorizontalUnitDistance(unit, targetUnit) <= 2
 			)
 			adjacentUnits.forEach((unit) => {

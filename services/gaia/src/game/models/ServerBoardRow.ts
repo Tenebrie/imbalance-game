@@ -31,8 +31,8 @@ export default class ServerBoardRow implements BoardRow {
 		return `row:${this.index}`
 	}
 
-	public get targetableCards(): ServerUnit[] {
-		return this.cards.filter((unit) => !unit.card.features.includes(CardFeature.UNTARGETABLE)).sort((a, b) => a.unitIndex - b.unitIndex)
+	public get splashableCards(): ServerUnit[] {
+		return this.cards.filter((unit) => !unit.card.features.includes(CardFeature.UNSPLASHABLE)).sort((a, b) => a.unitIndex - b.unitIndex)
 	}
 
 	public isFull(): boolean {

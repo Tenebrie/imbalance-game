@@ -45,7 +45,7 @@ export default class GwentCrowsEye extends ServerCard {
 			const damage = GwentCrowsEye.BASE_DAMAGE + copiesInGraveyard * GwentCrowsEye.BONUS_DAMAGE
 			const highestEnemies = game.board
 				.getControlledRows(owner.opponent)
-				.filter((row) => row.cards.length > 0)
+				.filter((row) => row.splashableCards.length > 0)
 				.map((row) => getHighestUnit(row.cards)!)
 
 			highestEnemies.forEach((unit) => {

@@ -193,7 +193,7 @@ export const getAllHighestCards = (cards: ServerCard[]): ServerCard[] => {
 		return []
 	}
 	const sortedCards = cards
-		.filter((card) => !card.features.includes(CardFeature.UNTARGETABLE))
+		.filter((card) => !card.features.includes(CardFeature.UNSPLASHABLE))
 		.sort((a, b) => b.stats.power - a.stats.power)
 	const highestPower = sortedCards[0].stats.power
 	const highestUnits = sortedCards.filter((card) => card.stats.power === highestPower)
@@ -209,7 +209,7 @@ export const getAllHighestUnits = (units: ServerUnit[]): ServerUnit[] => {
 		return []
 	}
 	const sortedUnits = units
-		.filter((unit) => !unit.card.features.includes(CardFeature.UNTARGETABLE))
+		.filter((unit) => !unit.card.features.includes(CardFeature.UNSPLASHABLE))
 		.sort((a, b) => b.card.stats.power - a.card.stats.power)
 	const highestPower = sortedUnits[0].card.stats.power
 	const highestUnits = sortedUnits.filter((unit) => unit.card.stats.power === highestPower)
@@ -225,7 +225,7 @@ export const getAllLowestCards = (cards: ServerCard[]): ServerCard[] => {
 		return []
 	}
 	const sortedCards = cards
-		.filter((card) => !card.features.includes(CardFeature.UNTARGETABLE))
+		.filter((card) => !card.features.includes(CardFeature.UNSPLASHABLE))
 		.sort((a, b) => a.stats.power - b.stats.power)
 	const lowestPower = sortedCards[0].stats.power
 	const lowestUnits = sortedCards.filter((card) => card.stats.power === lowestPower)
@@ -241,7 +241,7 @@ export const getAllLowestUnits = (units: ServerUnit[]): ServerUnit[] => {
 		return []
 	}
 	const sortedUnits = units
-		.filter((unit) => !unit.card.features.includes(CardFeature.UNTARGETABLE))
+		.filter((unit) => !unit.card.features.includes(CardFeature.UNSPLASHABLE))
 		.sort((a, b) => a.card.stats.power - b.card.stats.power)
 	const lowestPower = sortedUnits[0].card.stats.power
 	const lowestUnits = sortedUnits.filter((unit) => unit.card.stats.power === lowestPower)

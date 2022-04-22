@@ -1,5 +1,4 @@
 import BuffAlignment from '@shared/enums/BuffAlignment'
-import CardFeature from '@shared/enums/CardFeature'
 import CardType from '@shared/enums/CardType'
 import GameEventType from '@shared/enums/GameEventType'
 
@@ -18,9 +17,7 @@ export default class BuffGwentRowDragonsDream extends ServerRowBuff {
 			.require(({ triggeringCard }) => triggeringCard !== this.source)
 			.require(({ triggeringCard }) => triggeringCard.type === CardType.SPELL)
 			.perform(() => {
-				const targets = this.parent.cards
-					.filter((unit) => !unit.card.features.includes(CardFeature.UNTARGETABLE))
-					.sort((a, b) => a.unitIndex - b.unitIndex)
+				const targets = this.parent.splashableCards
 
 				targets.forEach((unit) => {
 					unit.dealDamage(DamageInstance.fromRow(BuffGwentRowDragonsDream.DAMAGE, this.parent), 'stagger')

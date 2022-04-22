@@ -21,7 +21,7 @@ export default class BuffGwentFullMoon extends ServerRowBuff {
 	}
 
 	private onTurnStarted(): void {
-		const cards = this.parent.cards.filter(
+		const cards = this.parent.splashableCards.filter(
 			(unit) => unit.card.tribes.includes(CardTribe.BEAST) || unit.card.tribes.includes(CardTribe.VAMPIRE)
 		)
 		const randomCards = shuffle(cards).slice(0, BuffGwentFullMoon.CARDS_TO_BUFF)

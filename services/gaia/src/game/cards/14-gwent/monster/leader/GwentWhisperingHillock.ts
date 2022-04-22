@@ -47,7 +47,7 @@ export default class GwentWhisperingHillock extends ServerCard {
 		})
 
 		this.createDeployTargets(TargetType.CARD_IN_LIBRARY)
-			.require(({ targetCard }) => this.exploredCards.includes(targetCard))
+			.require(({ targetCard }) => getCreate)
 			.perform(({ targetCard }) => {
 				Keywords.createCard.for(this.ownerPlayer).fromInstance(targetCard)
 				this.exploredCards = []

@@ -19,7 +19,7 @@ export default class BuffGwentRowFog extends ServerRowBuff {
 	}
 
 	private onTurnStarted(): void {
-		const cards = this.parent.cards
+		const cards = this.parent.splashableCards
 		if (cards.length === 0) {
 			return
 		}

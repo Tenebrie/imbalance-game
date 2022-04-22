@@ -31,9 +31,9 @@ export default class GwentDimeritiumBomb extends ServerCard {
 		})
 
 		this.createDeployTargets(TargetType.BOARD_ROW)
-			.require(({ targetRow }) => targetRow.targetableCards.length > 0)
+			.require(({ targetRow }) => targetRow.splashableCards.length > 0)
 			.perform(({ targetRow }) => {
-				const targets = targetRow.targetableCards.filter((unit) => unit.stats.power > unit.stats.basePower)
+				const targets = targetRow.splashableCards.filter((unit) => unit.stats.power > unit.stats.basePower)
 				targets.forEach((target) => {
 					game.animation.thread(() => {
 						Keywords.resetUnit(target)

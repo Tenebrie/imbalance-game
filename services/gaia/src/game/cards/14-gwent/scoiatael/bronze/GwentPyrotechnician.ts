@@ -39,7 +39,7 @@ export default class GwentPyrotechnician extends ServerCard {
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(({ owner }) => {
 			game.board.getControlledRows(owner.opponent).forEach((row) => {
-				getRandomArrayValue(row.cards)?.dealDamage(DamageInstance.fromCard(GwentPyrotechnician.DAMAGE, this))
+				getRandomArrayValue(row.splashableCards)?.dealDamage(DamageInstance.fromCard(GwentPyrotechnician.DAMAGE, this))
 			})
 		})
 	}

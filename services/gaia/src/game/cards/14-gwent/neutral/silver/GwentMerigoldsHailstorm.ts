@@ -32,7 +32,7 @@ export default class GwentMerigoldsHailstorm extends ServerCard {
 		})
 
 		this.createDeployTargets(TargetType.BOARD_ROW).perform(({ targetRow }) => {
-			const targets = targetRow.cards
+			const targets = targetRow.splashableCards
 				.filter((unit) => [CardColor.BRONZE, CardColor.SILVER].includes(unit.card.color))
 				.filter((unit) => unit.stats.power > 1)
 				.sort((a, b) => a.unitIndex - b.unitIndex)

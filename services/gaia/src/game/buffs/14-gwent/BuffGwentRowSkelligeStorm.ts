@@ -15,7 +15,7 @@ export default class BuffGwentRowSkelligeStorm extends ServerRowBuff {
 		this.createCallback(GameEventType.TURN_STARTED)
 			.require(({ group }) => group.owns(this))
 			.perform(() => {
-				const cards = this.parent.cards
+				const cards = this.parent.splashableCards
 				const damage = BuffGwentRowSkelligeStorm.DAMAGE
 				const sortedTargets = cards.sort((a, b) => a.unitIndex - b.unitIndex)
 

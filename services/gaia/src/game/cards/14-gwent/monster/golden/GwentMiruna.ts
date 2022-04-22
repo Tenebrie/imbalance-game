@@ -7,7 +7,7 @@ import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
 import ServerCard from '@src/game/models/ServerCard'
 import ServerGame from '@src/game/models/ServerGame'
-import { getRandomArrayValue } from '@src/utils/Utils'
+import { getHighestUnit } from '@src/utils/Utils'
 
 export default class GwentMiruna extends ServerCard {
 	public static readonly TURNS_TO_WAIT = 2
@@ -52,14 +52,10 @@ export default class GwentMiruna extends ServerCard {
 				}
 
 				const oppositeRow = game.board.getOppositeRow(unit.rowIndex)
-				if (oppositeRow.cards.length === 0) {
+				const target = getHighestUnit(oppositeRow.cards)
+				if (!target) {
 					return
 				}
-
-				const sortedUnits = oppositeRow.cards.sort((a, b) => b.card.stats.power - a.card.stats.power)
-				const highestPower = sortedUnits[0].card.stats.power
-				const highestUnits = sortedUnits.filter((unit) => unit.card.stats.power === highestPower)
-				const target = getRandomArrayValue(highestUnits)
 
 				game.board.moveUnit(target, unit.rowIndex, unit.unitIndex, {
 					charmingPlayer: unit.originalOwner,

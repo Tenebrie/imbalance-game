@@ -38,7 +38,7 @@ export default class GwentSheldonSkaggs extends ServerCard {
 		})
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(({ triggeringUnit }) => {
-			triggeringUnit.boardRow.cards
+			triggeringUnit.boardRow.splashableCards
 				.filter((unit) => unit !== triggeringUnit)
 				.forEach((unit) => {
 					const otherRows = game.board.rows

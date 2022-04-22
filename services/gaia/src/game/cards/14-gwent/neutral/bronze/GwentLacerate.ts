@@ -39,7 +39,7 @@ export default class GwentLacerate extends ServerCard {
 		this.createDeployTargets(TargetType.BOARD_ROW)
 			.requireEnemy()
 			.perform(({ targetRow }) => {
-				const targets = targetRow.cards.sort((a, b) => a.unitIndex - b.unitIndex)
+				const targets = targetRow.splashableCards.sort((a, b) => a.unitIndex - b.unitIndex)
 				targets.forEach((unit) => {
 					game.animation.thread(() => {
 						unit.dealDamage(DamageInstance.fromCard(GwentLacerate.DAMAGE, this))
