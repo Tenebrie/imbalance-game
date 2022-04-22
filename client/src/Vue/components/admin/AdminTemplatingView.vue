@@ -131,6 +131,7 @@ export default defineComponent({
 				"Ambush: Played face down, then flips over when the ability's condition is met",
 				'Banish: Remove from the game',
 				'Duel: Units take turns dealing damage equal to their power until one of them is destroyed',
+				'Swap: Move a card from hand to deck and draw another in its place during your turn',
 			]
 
 			const keywordsToHighlight = linesToFilter

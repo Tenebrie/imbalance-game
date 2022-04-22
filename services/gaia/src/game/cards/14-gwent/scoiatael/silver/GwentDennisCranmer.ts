@@ -36,11 +36,11 @@ export default class GwentDennisCranmer extends ServerCard {
 		})
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(({ owner }) => {
-			const dennis = game.board.getUnitsOwnedByPlayer(owner).find((unit) => unit.card instanceof GwentDennisCranmer)?.card
+			const dennis = game.board.getSplashableUnitsFor(owner).find((unit) => unit.card instanceof GwentDennisCranmer)?.card
 
 			const targets = owner.cardHand.allCards
 				.concat(owner.cardDeck.allCards)
-				.concat(game.board.getUnitsOwnedByGroup(owner.group).map((unit) => unit.card))
+				.concat(game.board.getSplashableUnitsFor(owner.group).map((unit) => unit.card))
 				.filter((card) => card.tribes.includes(CardTribe.DWARF))
 				.filter((card) => card !== dennis)
 

@@ -1,7 +1,6 @@
 import Constants from '@shared/Constants'
 import CardFeature from '@shared/enums/CardFeature'
 import CardTribe from '@shared/enums/CardTribe'
-import CardType from '@shared/enums/CardType'
 import MoveDirection from '@shared/enums/MoveDirection'
 import Board from '@shared/models/Board'
 import UnitDestructionReason from '@src/enums/UnitDestructionReason'
@@ -67,6 +66,14 @@ export default class ServerBoard implements Board {
 		return rows
 	}
 
+	public getRandomNonEmptyRow(owner: ServerPlayerInGame | ServerPlayerGroup | null): ServerBoardRow | null {
+		const validRows = this.getControlledRows(owner).filter((row) => row.isNotFull())
+		if (validRows.length === 0) {
+			return null
+		}
+		return getRandomArrayValue(validRows)
+	}
+
 	public getAdjacentRows(targetRow: ServerBoardRow): ServerBoardRow[] {
 		const adjacentRows = []
 		if (targetRow.index > 0) {
@@ -91,7 +98,7 @@ export default class ServerBoard implements Board {
 					.map((card) => card.stats.power)
 					.reduce((total, value) => total + value, 0)
 			: 0
-		const boardPower = this.getUnitsOwnedByGroup(playerGroup)
+		const boardPower = this.getSplashableUnitsFor(playerGroup)
 			.filter((unit) => !unit.card.features.includes(CardFeature.APATHY))
 			.map((unit) => unit.card.stats.power)
 			.reduce((total, value) => total + value, 0)
@@ -156,7 +163,7 @@ export default class ServerBoard implements Board {
 		return this.rows.flatMap((row) => row.cards)
 	}
 
-	public getAllTargetableUnits(): ServerUnit[] {
+	public getAllSplashableUnits(): ServerUnit[] {
 		return this.getAllUnits().filter((unit) => !unit.card.features.includes(CardFeature.UNSPLASHABLE))
 	}
 
@@ -209,7 +216,7 @@ export default class ServerBoard implements Board {
 
 	public getOpposingUnits(thisUnit: ServerUnit): ServerUnit[] {
 		return this.game.board
-			.getUnitsOwnedByOpponent(thisUnit.card.ownerPlayer)
+			.getSplashableUnitsForOpponentOf(thisUnit.card.ownerPlayer)
 			.filter((unit) => this.game.board.getHorizontalUnitDistance(unit, thisUnit) < 1)
 			.sort((a, b) => {
 				return this.game.board.getVerticalUnitDistance(a, thisUnit) - this.game.board.getVerticalUnitDistance(b, thisUnit)
@@ -226,7 +233,7 @@ export default class ServerBoard implements Board {
 	}
 
 	public getClosestEnemyUnits(thisUnit: ServerUnit): ServerUnit[] {
-		const enemyUnits = this.game.board.getUnitsOwnedByOpponent(thisUnit)
+		const enemyUnits = this.game.board.getSplashableUnitsForOpponentOf(thisUnit)
 		const enemyUnitsWithDistance = enemyUnits
 			.map((unit) => ({
 				unit,
@@ -250,21 +257,7 @@ export default class ServerBoard implements Board {
 		return getRandomArrayValue(closestEnemyUnits)
 	}
 
-	public getUnitsOwnedByPlayer(owner: ServerPlayerInGame | null): ServerUnit[] {
-		if (!owner) {
-			return []
-		}
-		return this.getAllTargetableUnits().filter((unit) => unit.originalOwner === owner)
-	}
-
-	public getUnitsOwnedByGroup(owner: ServerPlayerGroup | null): ServerUnit[] {
-		if (!owner) {
-			return []
-		}
-		return this.getAllTargetableUnits().filter((unit) => unit.owner === owner)
-	}
-
-	public getUnitsOwnedByOpponent(context: ServerCard | ServerUnit | ServerPlayerInGame | ServerPlayerGroup | null): ServerUnit[] {
+	public getAllUnitsFor(context: ServerCard | ServerUnit | ServerPlayerInGame | ServerPlayerGroup | null): ServerUnit[] {
 		if (!context) {
 			return []
 		}
@@ -276,11 +269,56 @@ export default class ServerBoard implements Board {
 				: context instanceof ServerUnit
 				? context.card.ownerGroup
 				: context.group
-		return this.getUnitsOwnedByGroup(playerGroup.opponent)
+		return this.getAllUnits().filter((unit) => unit.owner === playerGroup)
 	}
 
-	public getUnitsOfTribe(tribe: CardTribe, player: ServerPlayerGroup | null): ServerUnit[] {
-		return this.getUnitsOwnedByGroup(player).filter((unit) => unit.card.tribes.includes(tribe))
+	public getAllUnitsForOpponent(context: ServerCard | ServerUnit | ServerPlayerInGame | ServerPlayerGroup | null): ServerUnit[] {
+		if (!context) {
+			return []
+		}
+		const playerGroup: ServerPlayerGroup =
+			context instanceof ServerPlayerGroup
+				? context
+				: context instanceof ServerCard
+				? context.ownerGroup
+				: context instanceof ServerUnit
+				? context.card.ownerGroup
+				: context.group
+		return this.getAllUnitsFor(playerGroup.opponent)
+	}
+
+	public getSplashableUnitsFor(context: ServerCard | ServerUnit | ServerPlayerInGame | ServerPlayerGroup | null): ServerUnit[] {
+		if (!context) {
+			return []
+		}
+		const playerGroup: ServerPlayerGroup =
+			context instanceof ServerPlayerGroup
+				? context
+				: context instanceof ServerCard
+				? context.ownerGroup
+				: context instanceof ServerUnit
+				? context.card.ownerGroup
+				: context.group
+		return this.getAllSplashableUnits().filter((unit) => unit.owner === playerGroup)
+	}
+
+	public getSplashableUnitsForOpponentOf(context: ServerCard | ServerUnit | ServerPlayerInGame | ServerPlayerGroup | null): ServerUnit[] {
+		if (!context) {
+			return []
+		}
+		const playerGroup: ServerPlayerGroup =
+			context instanceof ServerPlayerGroup
+				? context
+				: context instanceof ServerCard
+				? context.ownerGroup
+				: context instanceof ServerUnit
+				? context.card.ownerGroup
+				: context.group
+		return this.getSplashableUnitsFor(playerGroup.opponent)
+	}
+
+	public getSplashableUnitsOfTribe(tribe: CardTribe, player: ServerPlayerGroup | null): ServerUnit[] {
+		return this.getSplashableUnitsFor(player).filter((unit) => unit.card.tribes.includes(tribe))
 	}
 
 	public getMoveDirection(player: ServerPlayerGroup, from: ServerBoardRow, to: ServerBoardRow): MoveDirection {
@@ -560,19 +598,13 @@ export default class ServerBoard implements Board {
 		}
 		this.removeUnit(unit)
 
-		this.game.events.postEvent(GameEventCreators.afterUnitDestroyed(destroyEventArgs))
-
-		if (!card.tribes.includes(CardTribe.DOOMED)) {
-			if (card.features.includes(CardFeature.HERO_POWER)) {
-				card.cleanse()
-				// card.stats.power = card.stats.basePower
-				unit.originalOwner.cardDeck.addSpellToTop(card)
-			} else if (card.type === CardType.UNIT) {
-				unit.originalOwner.cardGraveyard.addUnit(card)
-			} else if (card.type === CardType.SPELL) {
-				unit.originalOwner.cardGraveyard.addSpell(card)
-			}
+		if (card.features.includes(CardFeature.HERO_POWER)) {
+			card.cleanse()
+			unit.originalOwner.cardDeck.addSpellToTop(card)
+		} else {
+			unit.originalOwner.cardGraveyard.addCard(card)
 		}
+		this.game.events.postEvent(GameEventCreators.afterUnitDestroyed(destroyEventArgs))
 
 		this.unitsBeingDestroyed.splice(this.unitsBeingDestroyed.indexOf(unit), 1)
 	}

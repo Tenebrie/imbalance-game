@@ -50,7 +50,7 @@ export default class UnitHelplessPeasants extends ServerCard {
 		}
 		const unitDistance = this.game.board.getDistanceToFront(thisUnit.rowIndex)
 		const isProtected = this.game.board
-			.getUnitsOwnedByGroup(thisUnit.owner)
+			.getSplashableUnitsFor(thisUnit.owner)
 			.some(
 				(anotherUnit) =>
 					this.game.board.getDistanceToFront(anotherUnit.rowIndex) < unitDistance &&

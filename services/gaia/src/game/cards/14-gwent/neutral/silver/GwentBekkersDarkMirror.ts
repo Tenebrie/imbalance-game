@@ -33,7 +33,7 @@ export default class GwentBekkersDarkMirror extends ServerCard {
 		})
 
 		this.createEffect(GameEventType.SPELL_DEPLOYED).perform(() => {
-			const allUnits = game.board.getAllTargetableUnits()
+			const allUnits = game.board.getAllSplashableUnits()
 			const highestUnit = getHighestUnit(allUnits)
 			if (!highestUnit) {
 				return

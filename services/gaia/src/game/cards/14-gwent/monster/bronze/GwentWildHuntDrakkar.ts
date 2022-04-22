@@ -38,7 +38,7 @@ export default class GwentWildHuntDrakkar extends ServerCard {
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(({ owner }) => {
 			const validAllies = game.board
-				.getUnitsOwnedByGroup(owner.group)
+				.getSplashableUnitsFor(owner.group)
 				.filter((unit) => unit.card.tribes.includes(CardTribe.WILD_HUNT))
 				.filter((unit) => unit.card !== this)
 

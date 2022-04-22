@@ -43,8 +43,7 @@ export default class GwentWildHuntWarrior extends ServerCard {
 			.perform(({ targetUnit }) => {
 				const isUnderFrost = game.board.rows[targetUnit.rowIndex].buffs.has(BuffGwentRowFrost)
 				targetUnit.dealDamage(DamageInstance.fromCard(GwentWildHuntWarrior.DAMAGE, this))
-				const isDestroyed = targetUnit.card.stats.power <= 0
-				if (isDestroyed || isUnderFrost) {
+				if (targetUnit.isDead || isUnderFrost) {
 					this.buffs.addMultiple(BuffStrength, GwentWildHuntWarrior.SELF_BOOST, this)
 				}
 			})

@@ -42,7 +42,7 @@ export default class GwentRockBarrage extends ServerCard {
 				const rowAbove = game.board.getRowWithDistanceToFrontNullable(targetUnit.owner, rowDistance + 1)
 
 				targetUnit.dealDamage(DamageInstance.fromCard(GwentRockBarrage.DAMAGE, this))
-				if (rowAbove === null || targetUnit.card.stats.power <= 0) {
+				if (rowAbove === null || targetUnit.isDead) {
 					return
 				}
 				if (rowAbove.isFull()) {

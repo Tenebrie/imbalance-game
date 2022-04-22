@@ -45,7 +45,7 @@ export default class GwentArchespore extends ServerCard {
 		})
 
 		const dealDamageToRandomEnemy = (damage: number) => {
-			const enemyUnits = game.board.getUnitsOwnedByOpponent(this)
+			const enemyUnits = game.board.getSplashableUnitsForOpponentOf(this)
 			if (enemyUnits.length === 0) {
 				return
 			}

@@ -44,8 +44,8 @@ export default class GwentWeavessIncantationSummon extends ServerCard {
 			.require(({ targetCard }) => targetCard.color === CardColor.BRONZE || targetCard.color === CardColor.SILVER)
 			.require(({ targetCard }) => targetCard.tribes.includes(CardTribe.RELICT))
 			.perform(({ targetCard, player }) => {
-				const weavess = game.board.getUnitsOwnedByPlayer(player).find((unit) => unit.card instanceof GwentWeavessIncantation)?.card
-				Keywords.playCardFromDeckOrGraveyard(targetCard)
+				const weavess = game.board.getSplashableUnitsFor(player).find((unit) => unit.card instanceof GwentWeavessIncantation)?.card
+				Keywords.playCardFromDeck(targetCard)
 				targetCard.buffs.addMultiple(BuffBaseStrength, GwentWeavessIncantationSummon.BOOST, weavess || this)
 			})
 	}

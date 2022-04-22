@@ -57,12 +57,13 @@ const Keywords = {
 	},
 
 	draw: {
-		topUnitCard: (player: ServerPlayerInGame): void => {
+		topUnitCard: (player: ServerPlayerInGame): ServerCard | null => {
 			const card = player.cardDeck.drawTopUnit()
 			if (!card) {
-				return
+				return null
 			}
 			player.cardHand.addUnit(card)
+			return card
 		},
 	},
 
@@ -88,32 +89,6 @@ const Keywords = {
 			const unit = game.board.createUnit(card, owner, rowIndex, unitIndex)
 			if (!unit) {
 				owner.cardHand.addUnit(card)
-			}
-			return unit
-		})
-	},
-
-	summonUnitFromDeck: (args: {
-		card: ServerCard
-		owner: ServerPlayerInGame
-		rowIndex: number
-		unitIndex: number
-		threadType?: AnimationThreadType
-	}): ServerUnit | null => {
-		const { card, owner, rowIndex, unitIndex } = args
-		const threadType = args.threadType || 'sync'
-
-		const game = owner.game
-		if (game.board.rows[rowIndex].isFull()) {
-			return null
-		}
-
-		return game.animation.smartThread(threadType, () => {
-			owner.cardDeck.removeCard(card)
-			const unit = game.board.createUnit(card, owner, rowIndex, unitIndex)
-			if (!unit) {
-				owner.cardDeck.addUnitToTop(card)
-				return null
 			}
 			return unit
 		})
@@ -161,6 +136,58 @@ const Keywords = {
 		}
 		game.animation.syncAnimationThreads()
 		return units
+	},
+
+	summonUnitFromDeck: (args: {
+		card: ServerCard
+		owner: ServerPlayerInGame
+		rowIndex: number
+		unitIndex: number
+		threadType?: AnimationThreadType
+	}): ServerUnit | null => {
+		const { card, owner, rowIndex, unitIndex } = args
+		const threadType = args.threadType || 'sync'
+
+		const game = owner.game
+		if (game.board.rows[rowIndex].isFull()) {
+			return null
+		}
+
+		return game.animation.smartThread(threadType, () => {
+			owner.cardDeck.removeCard(card)
+			const unit = game.board.createUnit(card, owner, rowIndex, unitIndex)
+			if (!unit) {
+				owner.cardDeck.addUnitToTop(card)
+				return null
+			}
+			return unit
+		})
+	},
+
+	summonUnitFromGraveyard: (args: {
+		card: ServerCard
+		owner: ServerPlayerInGame
+		rowIndex: number
+		unitIndex: number
+		threadType?: AnimationThreadType
+	}): ServerUnit | null => {
+		const { card, owner, rowIndex, unitIndex } = args
+		const threadType = args.threadType || 'sync'
+
+		const game = owner.game
+		if (game.board.rows[rowIndex].isFull()) {
+			return null
+		}
+
+		return game.animation.smartThread(threadType, () => {
+			owner.cardGraveyard.removeCard(card)
+			const unit = game.board.createUnit(card, owner, rowIndex, unitIndex)
+			if (!unit) {
+				owner.cardGraveyard.addUnit(card)
+				return null
+			}
+			return unit
+		})
 	},
 
 	playCardFromHand: (card: ServerCard): void => {

@@ -36,7 +36,7 @@ export default class GwentWhisperingHillock extends ServerCard {
 		this.createDeployTargets(TargetType.CARD_IN_LIBRARY)
 			.require(({ targetCard }) =>
 				getStableRandomValues(
-					game,
+					this,
 					CardLibrary.cards
 						.filter((card) => card.isCollectible)
 						.filter((card) => card.tribes.includes(CardTribe.ORGANIC))

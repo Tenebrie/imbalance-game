@@ -324,7 +324,7 @@ const setupTestGamePlayers = (game: ServerGame): TestGamePlayer[][] => {
 		const allCards = player.cardHand.allCards
 			.concat(player.cardDeck.allCards)
 			.concat(player.cardGraveyard.allCards)
-			.concat(game.board.getUnitsOwnedByPlayer(player).map((unit) => unit.card))
+			.concat(game.board.getSplashableUnitsFor(player).map((unit) => unit.card))
 			.concat(game.cardPlay.cardResolveStack.cards.filter((ownedCard) => ownedCard.owner === player).map((ownedCard) => ownedCard.card))
 
 		const sortedCards = sortingOrder === 'game' ? sortCards(allCards) : allCards

@@ -141,7 +141,7 @@ export const getTotalLeaderStat = (player: ServerPlayerInGame | ServerPlayerGrou
 	}
 
 	const playerGroup = player instanceof ServerPlayerGroup ? player : player.group
-	const validCards = player.game.board.getUnitsOwnedByGroup(playerGroup).map((unit) => unit.card)
+	const validCards = player.game.board.getSplashableUnitsFor(playerGroup).map((unit) => unit.card)
 
 	if (player instanceof ServerPlayerInGame) {
 		validCards.push(player.leader)
@@ -429,11 +429,12 @@ export const getRandomArrayValue = <T>(array: T[]): T => {
 export const getMultipleRandomArrayValues = <T>(array: T[], maxCount: number): T[] => {
 	return shuffle(array).slice(0, maxCount)
 }
-export const getStableRandomValues = <T>(game: ServerGame, array: T[], maxCount = Constants.CREATE_KEYWORD_CARD_COUNT): T[] => {
+export const getStableRandomValues = <T>(card: ServerCard, array: T[], maxCount = Constants.CREATE_KEYWORD_CARD_COUNT): T[] => {
 	if (array.length <= maxCount) {
 		return array
 	}
-	const randomSeed = `${game.id}/${game.roundIndex}/${game.turnIndex}/${game.playersToMove.length}/${game.entropy}`
+	const game = card.game
+	const randomSeed = `${card.id}/${game.roundIndex}/${game.turnIndex}/${game.playersToMove.length}/${game.entropy}`
 	const getRandom = createSeededRandom(randomSeed)
 	const selectedValues: T[] = []
 	const remainingValues = array.slice()
@@ -443,6 +444,10 @@ export const getStableRandomValues = <T>(game: ServerGame, array: T[], maxCount 
 		remainingValues.splice(remainingValues.indexOf(targetValue), 1)
 	}
 	return selectedValues
+}
+
+export const isTruce = (game: ServerGame): boolean => {
+	return game.players.every((group) => !group.roundEnded)
 }
 
 export const forEachRowCardSlot = (callback: (index: number) => void): void => {

@@ -38,7 +38,8 @@ export default class SpellBecomeTheSalvage extends ServerCard {
 			},
 		})
 
-		this.createDeployTargets(TargetType.CARD_IN_SPELL_GRAVEYARD)
+		this.createDeployTargets(TargetType.CARD_IN_UNIT_GRAVEYARD)
+			.require(({ targetCard }) => targetCard.type === CardType.SPELL)
 			.require(() => this.charges > 0)
 			.require(({ targetCard }) => targetCard.tribes.includes(CardTribe.SALVAGE))
 			.require(({ targetCard }) => this.ownerGroup.owns(targetCard))

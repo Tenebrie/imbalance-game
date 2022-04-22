@@ -37,7 +37,7 @@ export default {
 	notifyAboutCardVariablesUpdated(game: ServerGame): void {
 		game.players.forEach((playerGroup) => {
 			const cardsToNotify = game.board
-				.getUnitsOwnedByGroup(playerGroup)
+				.getSplashableUnitsFor(playerGroup)
 				.map((unit) => unit.card)
 				.concat(playerGroup.players.map((player) => player.leader))
 				.concat(playerGroup.players.flatMap((player) => player.cardHand.allCards))

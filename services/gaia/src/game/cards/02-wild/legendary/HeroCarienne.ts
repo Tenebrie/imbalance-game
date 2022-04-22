@@ -43,7 +43,7 @@ export default class HeroCarienne extends ServerCard {
 	}
 
 	private onUnitDeploy(): void {
-		const enemies = this.game.board.getUnitsOwnedByOpponent(this)
+		const enemies = this.game.board.getSplashableUnitsForOpponentOf(this)
 
 		for (let i = 0; i < this.waveCount; i++) {
 			enemies.forEach((enemy) => {

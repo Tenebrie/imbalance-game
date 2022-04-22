@@ -1,3 +1,4 @@
+import CardLocation from '@shared/enums/CardLocation'
 import TestingUnit2Power from '@src/game/cards/11-testing/TestingUnit2Power'
 import TestingUnit6Power from '@src/game/cards/11-testing/TestingUnit6Power'
 import TestingUnit100Power from '@src/game/cards/11-testing/TestingUnit100Power'
@@ -90,6 +91,14 @@ describe('GwentIceTroll', () => {
 
 		it('gets killed in retaliation', () => {
 			expect(() => game.board.find(CardInTesting)).toThrow()
+		})
+
+		it('is marked as dead', () => {
+			expect(game.player.findIn(CardInTesting, CardLocation.GRAVEYARD).handle.isDead).toEqual(true)
+		})
+
+		it('is moved to the graveyard', () => {
+			expect(() => game.player.findIn(CardInTesting, CardLocation.GRAVEYARD)).not.toThrow()
 		})
 
 		it('resolves the card', () => {

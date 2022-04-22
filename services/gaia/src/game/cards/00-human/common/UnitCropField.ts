@@ -43,7 +43,7 @@ export default class UnitCropField extends ServerCard {
 		const procCount = 1 + adjacentUnits.filter((unit) => unit.card.tribes.includes(CardTribe.COMMONER)).length
 		for (let i = 0; i < procCount; i++) {
 			const validUnits = this.game.board
-				.getUnitsOwnedByGroup(this.ownerGroupNullable)
+				.getSplashableUnitsFor(this.ownerGroupNullable)
 				.filter((unit) => unit.card !== this)
 				.filter((unit) => !unit.card.features.includes(CardFeature.APATHY))
 			if (validUnits.length === 0) {

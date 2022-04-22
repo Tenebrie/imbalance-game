@@ -39,7 +39,7 @@ export default class GwentPetrisPhilter extends ServerCard {
 		})
 
 		this.createEffect(GameEventType.SPELL_DEPLOYED).perform(({ owner }) => {
-			const allies = game.board.getUnitsOwnedByGroup(owner.group)
+			const allies = game.board.getSplashableUnitsFor(owner.group)
 			const targets = getMultipleRandomArrayValues(allies, GwentPetrisPhilter.TARGETS)
 			targets.forEach((unit) => {
 				game.animation.thread(() => {

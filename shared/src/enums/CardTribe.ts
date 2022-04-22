@@ -43,6 +43,7 @@ enum CardTribe {
 	TACTIC = 'tactic',
 	VODYANOY = 'vodyanoi',
 	OFFICER = 'officer',
+	REDANIA = 'redania',
 	TOKEN = 'token',
 
 	LOST = 'lost',

@@ -39,7 +39,7 @@ export default class UnitWolfpack extends ServerCard {
 			.requireEnemy()
 			.perform(({ targetUnit }) => {
 				targetUnit.dealDamage(DamageInstance.fromCard(this.damage, this))
-				if (targetUnit.card.stats.power <= 0) {
+				if (targetUnit.isDead) {
 					Keywords.createCard
 						.forOwnerOf(this)
 						.with((card) => {

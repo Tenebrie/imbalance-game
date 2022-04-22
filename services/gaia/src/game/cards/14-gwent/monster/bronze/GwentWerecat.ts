@@ -44,7 +44,7 @@ export default class GwentWerecat extends ServerCard {
 				targetUnit.dealDamage(DamageInstance.fromCard(GwentWerecat.TARGET_DAMAGE, this))
 
 				const enemiesUnderMoon = game.board
-					.getUnitsOwnedByOpponent(this)
+					.getSplashableUnitsForOpponentOf(this)
 					.filter((unit) => game.board.rows[unit.rowIndex].buffs.has(BuffGwentBloodMoon))
 
 				enemiesUnderMoon.forEach((unit) => {

@@ -37,7 +37,7 @@ export default class GwentStammelfordsTremor extends ServerCard {
 		})
 
 		this.createEffect(GameEventType.SPELL_DEPLOYED).perform(() => {
-			const enemies = game.board.getUnitsOwnedByOpponent(this)
+			const enemies = game.board.getSplashableUnitsForOpponentOf(this)
 			enemies.forEach((unit) => {
 				game.animation.thread(() => {
 					unit.dealDamage(DamageInstance.fromCard(GwentStammelfordsTremor.DAMAGE, this))

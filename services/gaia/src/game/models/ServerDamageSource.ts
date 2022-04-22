@@ -13,10 +13,7 @@ const collapseValue = (value: NumberOrGetter, sourceCard: ServerCard) => {
 	return value
 }
 
-export const cloneDamageInstance = <T extends ServerCardDamageInstance | ServerBoardRowDamageInstance | ServerUniverseDamageInstance>(
-	instance: T,
-	overrides: Partial<{ value: number }> = {}
-): T => {
+export const cloneDamageInstance = <T extends ServerDamageInstance>(instance: T, overrides: Partial<{ value: number }> = {}): T => {
 	const value = overrides.value ?? instance.value
 	switch (instance.source) {
 		case DamageSource.CARD:
@@ -27,13 +24,12 @@ export const cloneDamageInstance = <T extends ServerCardDamageInstance | ServerB
 			return new ServerBoardRowDamageInstance(value, boardRowInstance.sourceRow, null, instance.redirectHistory) as T
 		case DamageSource.UNIVERSE:
 			return new ServerUniverseDamageInstance(value, null, instance.redirectHistory) as T
+		case DamageSource.NONE:
+			return new ServerSourcelessDamageInstance(value, null, instance.redirectHistory) as T
 	}
 }
 
-export const redirectDamageInstance = <T extends ServerCardDamageInstance | ServerBoardRowDamageInstance | ServerUniverseDamageInstance>(
-	instance: T,
-	proxyCard: ServerCard
-): T => {
+export const redirectDamageInstance = <T extends ServerDamageInstance>(instance: T, proxyCard: ServerCard): T => {
 	switch (instance.source) {
 		case DamageSource.CARD:
 			const cardInstance = instance as ServerCardDamageInstance
@@ -44,6 +40,9 @@ export const redirectDamageInstance = <T extends ServerCardDamageInstance | Serv
 		case DamageSource.UNIVERSE:
 			const universeInstance = instance as ServerUniverseDamageInstance
 			return new ServerUniverseDamageInstance(universeInstance.value, proxyCard, instance.redirectHistory) as T
+		case DamageSource.NONE:
+			const sourcelessInstance = instance as ServerSourcelessDamageInstance
+			return new ServerSourcelessDamageInstance(sourcelessInstance.value, proxyCard, instance.redirectHistory) as T
 	}
 }
 
@@ -87,6 +86,14 @@ export class ServerUniverseDamageInstance extends BaseDamageInstance {
 	}
 }
 
+export class ServerSourcelessDamageInstance extends BaseDamageInstance {
+	public readonly source = DamageSource.NONE
+
+	public constructor(value: number, proxyCard: ServerCard | null = null, redirectHistory: ServerCard[] = []) {
+		super(value, proxyCard, redirectHistory)
+	}
+}
+
 export class DamageInstance {
 	public static fromCard(value: NumberOrGetter, sourceCard: ServerCard): ServerCardDamageInstance {
 		return new ServerCardDamageInstance(collapseValue(value, sourceCard), sourceCard)
@@ -104,11 +111,19 @@ export class DamageInstance {
 		return new ServerUniverseDamageInstance(value)
 	}
 
+	public static withoutSource(value: number): ServerSourcelessDamageInstance {
+		return new ServerSourcelessDamageInstance(value)
+	}
+
 	public static redirectedFrom(original: ServerDamageInstance, proxy: ServerCard): ServerDamageInstance {
 		return redirectDamageInstance(original, proxy)
 	}
 }
 
-type ServerDamageInstance = ServerCardDamageInstance | ServerBoardRowDamageInstance | ServerUniverseDamageInstance
+type ServerDamageInstance =
+	| ServerCardDamageInstance
+	| ServerBoardRowDamageInstance
+	| ServerUniverseDamageInstance
+	| ServerSourcelessDamageInstance
 
 export default ServerDamageInstance

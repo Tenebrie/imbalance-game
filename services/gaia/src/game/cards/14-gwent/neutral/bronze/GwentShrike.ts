@@ -40,7 +40,7 @@ export default class GwentShrike extends ServerCard {
 		})
 
 		this.createEffect(GameEventType.SPELL_DEPLOYED).perform(() => {
-			const enemies = game.board.getUnitsOwnedByOpponent(this)
+			const enemies = game.board.getSplashableUnitsForOpponentOf(this)
 			const validEnemies = getMultipleRandomArrayValues(enemies, GwentShrike.TARGETS)
 			validEnemies.forEach((unit) => {
 				game.animation.thread(() => {

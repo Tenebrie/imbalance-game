@@ -44,7 +44,7 @@ export default class GwentImlerithSabbath extends ServerCard {
 		this.createCallback(GameEventType.TURN_ENDED, [CardLocation.BOARD])
 			.require(({ group }) => group.owns(this))
 			.perform(() => {
-				const sortedUnits = game.board.getUnitsOwnedByOpponent(this)
+				const sortedUnits = game.board.getSplashableUnitsForOpponentOf(this)
 				const target = getHighestUnit(sortedUnits)
 				if (!target) {
 					return
@@ -52,12 +52,12 @@ export default class GwentImlerithSabbath extends ServerCard {
 
 				for (let i = 0; i < 100; i++) {
 					target.dealDamage(DamageInstance.fromCard(this.stats.power, this))
-					if (target.card.stats.power <= 0) {
+					if (target.card.isDead) {
 						break
 					}
 
 					this.dealDamage(DamageInstance.fromCard(target.card.stats.power, target.card))
-					if (this.stats.power <= 0) {
+					if (this.isDead) {
 						break
 					}
 				}

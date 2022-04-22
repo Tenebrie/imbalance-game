@@ -38,11 +38,11 @@ export default class GwentWeavessIncantationBoost extends ServerCard {
 		})
 
 		this.createEffect(GameEventType.SPELL_DEPLOYED).perform(({ owner }) => {
-			const weavess = game.board.getUnitsOwnedByPlayer(owner).find((unit) => unit.card instanceof GwentWeavessIncantation)?.card
+			const weavess = game.board.getSplashableUnitsFor(owner).find((unit) => unit.card instanceof GwentWeavessIncantation)?.card
 
 			const targets = owner.cardHand.allCards
 				.concat(owner.cardDeck.allCards)
-				.concat(game.board.getUnitsOwnedByGroup(owner.group).map((unit) => unit.card))
+				.concat(game.board.getSplashableUnitsFor(owner.group).map((unit) => unit.card))
 				.filter((card) => card.tribes.includes(CardTribe.RELICT))
 				.filter((card) => card !== weavess)
 

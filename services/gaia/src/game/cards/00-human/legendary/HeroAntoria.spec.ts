@@ -167,11 +167,6 @@ describe('HeroAntoria', () => {
 				expect(game.player.find(CardInTesting).location).toEqual(CardLocation.GRAVEYARD)
 			})
 
-			it('takes all the damage', () => {
-				expect(game.player.find(CardInTesting).stats.power).toEqual(0)
-				expect(game.player.find(CardInTesting).stats.armor).toEqual(0)
-			})
-
 			it('protects an ally from damage', () => {
 				expect(game.player.find(TestingUnit100Power).stats.power).toEqual(100)
 			})

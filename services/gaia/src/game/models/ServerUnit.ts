@@ -81,7 +81,7 @@ export default class ServerUnit implements Unit {
 		return !this.card.isDead
 	}
 
-	public isDead(): boolean {
+	public get isDead(): boolean {
 		return this.card.isDead
 	}
 

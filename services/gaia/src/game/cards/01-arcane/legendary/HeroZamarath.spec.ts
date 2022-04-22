@@ -46,7 +46,7 @@ describe('HeroZamarath', () => {
 		game.opponent.add(TestingSpellDeals100Damage).play().targetLast()
 
 		expect(game.player.find(TestingUnitNoEffect).stats.power).toEqual(20)
-		expect(game.player.find(CardInTesting).stats.power).toEqual(0)
-		expect(game.player.find(CardInTesting).stats.armor).toEqual(0)
+		expect(game.player.find(CardInTesting).handle.isDead).toEqual(true)
+		expect(game.player.find(CardInTesting).location).toEqual(CardLocation.GRAVEYARD)
 	})
 })

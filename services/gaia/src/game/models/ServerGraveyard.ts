@@ -1,11 +1,11 @@
 import CardTribe from '@shared/enums/CardTribe'
-import CardType from '@shared/enums/CardType'
 import CardDeck from '@shared/models/CardDeck'
 
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import { CardConstructor } from '../libraries/CardLibrary'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import ServerCard from './ServerCard'
+import { DamageInstance } from './ServerDamageSource'
 import ServerGame from './ServerGame'
 import ServerOwnedCard from './ServerOwnedCard'
 
@@ -27,14 +27,16 @@ export default class ServerGraveyard implements CardDeck {
 	}
 
 	public addCard(card: ServerCard): void {
-		if (card.type === CardType.UNIT) {
-			this.addUnit(card)
-		} else if (card.type === CardType.SPELL) {
-			this.addSpell(card)
-		}
+		this.addUnit(card)
 	}
 
 	public addUnit(card: ServerCard): void {
+		if (card.tribes.includes(CardTribe.DOOMED)) {
+			return
+		}
+		card.cleanse()
+		card.heal(DamageInstance.fromUniverse(card.stats.maxPower - card.stats.power))
+		card.restoreArmor(DamageInstance.fromUniverse(card.stats.maxArmor - card.stats.armor))
 		this.unitCards.push(card)
 		OutgoingMessageHandlers.notifyAboutCardAddedToUnitGraveyard(this.owner, card)
 	}

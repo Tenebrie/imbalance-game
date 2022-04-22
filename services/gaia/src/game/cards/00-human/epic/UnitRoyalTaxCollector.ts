@@ -32,7 +32,7 @@ export default class UnitRoyalTaxCollector extends ServerCard {
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(({ owner }) => {
 			const alliedNobles = game.board
-				.getUnitsOwnedByGroup(owner.group)
+				.getSplashableUnitsFor(owner.group)
 				.filter((unit) => unit.card.stats.power >= UnitRoyalTaxCollector.DEBUFF_POTENCY)
 				.filter((unit) => unit.card !== this)
 				.filter((unit) => unit.card.tribes.includes(CardTribe.NOBLE))

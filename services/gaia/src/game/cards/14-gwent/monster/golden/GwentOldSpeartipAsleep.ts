@@ -38,7 +38,7 @@ export default class GwentOldSpeartipAsleep extends ServerCard {
 		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(({ owner }) => {
 			const targets = owner.cardHand.allCards
 				.concat(owner.cardDeck.allCards)
-				.concat(game.board.getUnitsOwnedByGroup(owner.group).map((unit) => unit.card))
+				.concat(game.board.getSplashableUnitsFor(owner.group).map((unit) => unit.card))
 				.filter((card) => card.tribes.includes(CardTribe.OGROID))
 				.filter((card) => card !== this)
 

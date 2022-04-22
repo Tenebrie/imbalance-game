@@ -60,7 +60,7 @@ export default class UnitCorporealDespair extends ServerCard {
 
 		// No valid rows -> just create a shadow
 		this.createEffect(GameEventType.UNIT_DEPLOYED)
-			.require(() => !game.board.getUnitsOwnedByGroup(this.ownerGroup).some((unit) => unit.card.tribes.includes(CardTribe.VOIDSPAWN)))
+			.require(() => !game.board.getSplashableUnitsFor(this.ownerGroup).some((unit) => unit.card.tribes.includes(CardTribe.VOIDSPAWN)))
 			.perform(() => Keywords.createCard.forOwnerOf(this).fromConstructor(UnitShadow))
 			.perform(() => (this.fallbackTriggered = true))
 

@@ -59,7 +59,7 @@ export default class LeaderRitesOpponent extends ServerCard {
 				let newMoves: ServerUnit[] = []
 
 				const activeAllies = game.board
-					.getUnitsOwnedByGroup(this.ownerGroup)
+					.getSplashableUnitsFor(this.ownerGroup)
 					.filter((unit) => unit.card.features.includes(CardFeature.RITES_ACTIVE_ENEMY))
 					.filter((unit) => !unit.card.features.includes(CardFeature.RITES_UNIT_COOLDOWN))
 					.filter((unit) => !this.currentTurnMoves.includes(unit))

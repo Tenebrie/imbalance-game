@@ -40,7 +40,7 @@ export default class GwentLesserIfrit extends ServerCard {
 		})
 
 		this.createEffect(GameEventType.UNIT_CREATED).perform(() => {
-			const enemies = game.board.getUnitsOwnedByOpponent(this)
+			const enemies = game.board.getSplashableUnitsForOpponentOf(this)
 			if (enemies.length === 0) {
 				return
 			}

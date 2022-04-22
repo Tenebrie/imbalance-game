@@ -175,7 +175,6 @@ export default class ServerCard implements Card {
 	public readonly upgrades: CardConstructor[] = []
 
 	public isRevealed = false
-	public isDead = false
 
 	public readonly deckAddedCards: CardConstructor[] = []
 
@@ -459,7 +458,7 @@ export default class ServerCard implements Card {
 			this.game.animation.play(ServerAnimation.cardAttacksCards(damageInstance.sourceCard, [this]))
 		} else if (damageInstance.source === DamageSource.BOARD_ROW) {
 			this.game.animation.play(ServerAnimation.rowAttacksCards(damageInstance.sourceRow, [this]))
-		} else {
+		} else if (damageInstance.source === DamageSource.UNIVERSE) {
 			this.game.animation.play(ServerAnimation.universeAttacksCards([this]))
 		}
 
@@ -528,7 +527,7 @@ export default class ServerCard implements Card {
 			this.game.animation.play(ServerAnimation.cardHealsCards(healingInstance.sourceCard, [this]))
 		} else if (healingInstance.source === DamageSource.BOARD_ROW) {
 			this.game.animation.play(ServerAnimation.rowHealsCards(healingInstance.sourceRow, [this]))
-		} else {
+		} else if (healingInstance.source === DamageSource.UNIVERSE) {
 			this.game.animation.play(ServerAnimation.universeHealsCards([this]))
 		}
 
@@ -580,6 +579,10 @@ export default class ServerCard implements Card {
 		this.buffs.removeAllSystemDispellable()
 	}
 
+	public get isDead(): boolean {
+		return this.ownerPlayer.cardGraveyard.allCards.includes(this)
+	}
+
 	/* Destroy this card / unit
 	 * -------------------------
 	 * If this card has associated unit on the board, the unit is destroyed instead and this method has no effect.
@@ -596,8 +599,6 @@ export default class ServerCard implements Card {
 			return
 		}
 
-		this.isDead = true
-
 		const hookValues = this.game.events.applyHooks(
 			GameHookType.CARD_DESTROYED,
 			{
@@ -610,7 +611,6 @@ export default class ServerCard implements Card {
 
 		if (hookValues.destructionPrevented) {
 			this.stats.power = 0
-			this.isDead = false
 			return
 		}
 
@@ -977,7 +977,7 @@ export default class ServerCard implements Card {
 		this.createEffect(GameEventType.CARD_RETURNED)
 			.require(({ triggeringCard }) => !triggeringCard.buffs.has(BuffGwentResilience))
 			.perform(({ triggeringCard }) => triggeringCard.buffs.add(BuffGwentResilience, this))
-		this.createEffect(GameEventType.UNIT_DESTROYED)
+		this.createEffect(GameEventType.AFTER_UNIT_DESTROYED)
 			.require(({ triggeringUnit }) => !triggeringUnit.buffs.has(BuffGwentResilience))
 			.perform(({ triggeringUnit }) => triggeringUnit.buffs.add(BuffGwentResilience, this))
 	}

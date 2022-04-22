@@ -37,7 +37,7 @@ export default class GwentRuehin extends ServerCard {
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(() => {
 			const targets = game.board
-				.getUnitsOwnedByGroup(this.ownerGroup)
+				.getSplashableUnitsFor(this.ownerGroup)
 				.map((unit) => unit.card)
 				.concat(this.ownerPlayer.cardHand.allCards)
 				.concat(this.ownerPlayer.cardDeck.allCards)

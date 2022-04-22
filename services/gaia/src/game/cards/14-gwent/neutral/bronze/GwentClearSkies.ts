@@ -40,7 +40,7 @@ export default class GwentClearSkies extends ServerCard {
 
 		this.createEffect(GameEventType.SPELL_DEPLOYED).perform(({ owner }) => {
 			const alliesToBoost = game.board
-				.getUnitsOwnedByGroup(owner.group)
+				.getSplashableUnitsFor(owner.group)
 				.filter((unit) => unit.boardRow.buffs.buffs.some((buff) => buff.alignment === BuffAlignment.NEGATIVE))
 
 			alliesToBoost.forEach((ally) => {
