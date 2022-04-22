@@ -38,6 +38,10 @@ export default class GwentAelirenn extends ServerCard {
 			.require(() => game.board.getSplashableUnitsOfTribe(CardTribe.ELF, this.ownerGroup).length >= GwentAelirenn.ELF_COUNT)
 			.requireImmediate(() => game.board.getControlledRows(this.ownerPlayer).some((row) => row.isNotFull()))
 			.perform(() => {
+				if (this.unit) {
+					return
+				}
+
 				const allRows = game.board.getControlledRows(this.ownerPlayer).filter((row) => row.isNotFull())
 
 				const randomRow = getRandomArrayValue(allRows)
