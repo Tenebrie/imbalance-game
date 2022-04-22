@@ -41,7 +41,7 @@ export default class GwentDwarvenSkirmisher extends ServerCard {
 			.requireEnemy()
 			.perform(({ targetUnit }) => {
 				targetUnit.dealDamage(DamageInstance.fromCard(GwentDwarvenSkirmisher.DAMAGE, this))
-				if (targetUnit.card.stats.power > 0) {
+				if (targetUnit.card.stats.power - GwentDwarvenSkirmisher.DAMAGE > 0) {
 					this.buffs.addMultiple(BuffStrength, GwentDwarvenSkirmisher.BOOST, this)
 				}
 			})

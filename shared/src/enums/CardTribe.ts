@@ -17,6 +17,7 @@ enum CardTribe {
 	ELEMENTAL = 'elemental',
 	VOIDSPAWN = 'voidspawn',
 	MANIFESTATION = 'manifestation',
+	AEDIRN = 'aedirn',
 
 	DRACONID = 'draconid',
 	WILD_HUNT = 'wildHunt',

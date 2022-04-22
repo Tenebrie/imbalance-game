@@ -21,7 +21,7 @@ export default class GwentMahakamHornCreate extends ServerCard {
 			type: CardType.SPELL,
 			color: CardColor.SILVER,
 			faction: CardFaction.SCOIATAEL,
-			tribes: [CardTribe.ITEM],
+			tribes: [CardTribe.ITEM, CardTribe.DOOMED],
 			stats: {
 				cost: 0,
 				unitCost: 1,

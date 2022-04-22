@@ -12,7 +12,7 @@ export default class BuffGwentAmbush extends ServerCardBuff {
 		super(params, {
 			alignment: BuffAlignment.POSITIVE,
 			features: [BuffFeature.PROTECTED, BuffFeature.SKIP_ANIMATION],
-			cardFeatures: [CardFeature.UNTARGETABLE],
+			cardFeatures: [CardFeature.UNTARGETABLE, CardFeature.UNSPLASHABLE],
 		})
 
 		this.createLocalization({

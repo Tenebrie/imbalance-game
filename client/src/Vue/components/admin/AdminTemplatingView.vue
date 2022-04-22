@@ -132,6 +132,8 @@ export default defineComponent({
 				'Banish: Remove from the game',
 				'Duel: Units take turns dealing damage equal to their power until one of them is destroyed',
 				'Swap: Move a card from hand to deck and draw another in its place during your turn',
+				'Doomed: Status that removes the unit from the game when it leaves the battlefield',
+				"Lock: Status that disables a unit's abilities",
 			]
 
 			const keywordsToHighlight = linesToFilter

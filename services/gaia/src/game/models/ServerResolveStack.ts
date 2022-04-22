@@ -129,7 +129,7 @@ export default class ServerResolveStack implements ResolveStack {
 		if (resolvedCard.card.type === CardType.SPELL && resolvedCard.card.features.includes(CardFeature.HERO_POWER)) {
 			resolvedCard.owner.cardDeck.addSpellToTop(resolvedCard.card)
 		} else if (resolvedCard.card.type === CardType.SPELL) {
-			resolvedCard.owner.cardGraveyard.addSpell(resolvedCard.card)
+			resolvedCard.owner.cardGraveyard.addCard(resolvedCard.card)
 		}
 
 		this.game.events.postEvent(

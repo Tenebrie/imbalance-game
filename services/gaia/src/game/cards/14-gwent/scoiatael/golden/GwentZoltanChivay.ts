@@ -69,7 +69,7 @@ export default class GwentZoltanChivay extends ServerCard {
 					targetUnit.dealDamage(DamageInstance.fromCard(GwentZoltanChivay.DAMAGE, this))
 				}
 
-				if (targetRow.isNotFull() && targetUnit.card.stats.power > 0) {
+				if (targetUnit.card.stats.power > 0) {
 					Keywords.moveUnit(targetUnit, targetRow, targetRow.farRightUnitIndex)
 				}
 			})

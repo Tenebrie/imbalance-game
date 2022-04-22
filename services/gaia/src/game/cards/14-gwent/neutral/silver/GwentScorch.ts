@@ -31,8 +31,8 @@ export default class GwentScorch extends ServerCard {
 			},
 		})
 
-		this.createEffect(GameEventType.SPELL_DEPLOYED).perform(({ owner }) => {
-			const targets = getAllHighestUnits(game.board.getAllUnits())
+		this.createEffect(GameEventType.SPELL_DEPLOYED).perform(() => {
+			const targets = getAllHighestUnits(game.board.getAllSplashableUnits())
 			targets.forEach((target) => {
 				game.animation.thread(() => {
 					Keywords.destroyUnit({

@@ -63,6 +63,14 @@ const Keywords = {
 				return null
 			}
 			player.cardHand.addUnit(card)
+
+			player.game.events.postEvent(
+				GameEventCreators.cardDrawn({
+					game: player.game,
+					owner: player,
+					triggeringCard: card,
+				})
+			)
 			return card
 		},
 	},
@@ -70,6 +78,14 @@ const Keywords = {
 	drawExactCard: (player: ServerPlayerInGame, card: ServerCard): ServerCard => {
 		player.cardDeck.removeCard(card)
 		player.cardHand.addUnitCardAsDraw(card)
+		player.cardHand.addUnit(card)
+		player.game.events.postEvent(
+			GameEventCreators.cardDrawn({
+				game: player.game,
+				owner: player,
+				triggeringCard: card,
+			})
+		)
 		return card
 	},
 
@@ -254,11 +270,22 @@ const Keywords = {
 	returnCardFromHandToDeck: (card: ServerCard): void => {
 		const owner = card.ownerPlayer
 		owner.cardHand.discardCard(card)
-		if (card.type === CardType.UNIT) {
-			owner.cardDeck.addUnitToBottom(card)
-		} else {
-			owner.cardDeck.addSpellToBottom(card)
-		}
+		owner.cardDeck.addUnitToBottom(card)
+		card.game.events.postEvent(
+			GameEventCreators.cardReturned({
+				game: card.game,
+				owner: owner,
+				location: CardLocation.DECK,
+				triggeringCard: card,
+			})
+		)
+	},
+
+	returnCardFromBoardToDeck: (unit: ServerUnit): void => {
+		const card = unit.card
+		const owner = card.ownerPlayer
+		card.game.board.removeUnit(unit)
+		owner.cardDeck.addUnitToBottom(card)
 		card.game.events.postEvent(
 			GameEventCreators.cardReturned({
 				game: card.game,

@@ -383,6 +383,7 @@
 	"card.tribe.tactic": "Tactic",
 	"card.tribe.spell": "Spell",
 	"card.tribe.token": "Token",
+	"card.tribe.aedirn": "Aedirn",
 
 	"buff.buffProtector.name": "Protector (Service buff)",
 	"buff.buffProtector.description": "This card is a protector.",

@@ -31,7 +31,7 @@ export default class GwentEpidemic extends ServerCard {
 		})
 
 		this.createEffect(GameEventType.SPELL_DEPLOYED).perform(() => {
-			const sortedUnits = game.board.getAllUnits().sort((a, b) => a.card.stats.power - b.card.stats.power)
+			const sortedUnits = game.board.getAllSplashableUnits().sort((a, b) => a.card.stats.power - b.card.stats.power)
 			if (sortedUnits.length === 0) {
 				return
 			}
