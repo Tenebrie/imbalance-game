@@ -18,6 +18,7 @@ export default class GwentWeavessIncantationBoost extends ServerCard {
 			type: CardType.SPELL,
 			color: CardColor.BRONZE,
 			faction: CardFaction.MONSTER,
+			tribes: [CardTribe.DOOMED],
 			stats: {
 				cost: 0,
 				unitCost: 1,
