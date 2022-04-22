@@ -1,3 +1,4 @@
+import BuffFeature from '@shared/enums/BuffFeature'
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
 import CardFeature from '@shared/enums/CardFeature'
@@ -278,6 +279,7 @@ export default class ServerCard implements Card {
 
 		this.createCallback(GameEventType.CARD_BUFF_CREATED, validLocations)
 			.require(({ triggeringBuff }) => triggeringBuff.parent === this)
+			.require(({ triggeringBuff }) => triggeringBuff.buffFeatures.includes(BuffFeature.CAN_DESTROY))
 			.require(() => this.type === CardType.UNIT)
 			.require(() => this.stats.maxPower <= 0)
 			.perform(() => this.destroy())

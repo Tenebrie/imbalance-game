@@ -45,11 +45,9 @@ export const generateCardTemplate = (args: CardTemplateGeneratorArgs): string =>
 
 	let variableMatch = variableRegex.exec(description)
 	while (variableMatch) {
-		console.log(variableMatch[0])
 		const match = variableMatch[1]
 		const variableName = match.split('=')[0].trim()
 		const variableValue = match.split('=')[1].trim()
-		console.log(match)
 		cardVariables.push({
 			name: variableName,
 			value: Number(variableValue),

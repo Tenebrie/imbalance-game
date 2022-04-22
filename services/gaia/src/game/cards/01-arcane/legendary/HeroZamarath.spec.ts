@@ -1,79 +1,52 @@
 import CardFeature from '@shared/enums/CardFeature'
 import CardLocation from '@shared/enums/CardLocation'
-import ServerCard from '@src/game/models/ServerCard'
-import ServerGame from '@src/game/models/ServerGame'
+import TestingRulesetPVP from '@src/game/rulesets/testing/TestingRulesetPVP'
+import { setupTestGame, TestGame } from '@src/utils/TestGame'
 
-import TestGameTemplates from '../../../../utils/TestGameTemplates'
-import ServerOwnedCard from '../../../models/ServerOwnedCard'
-import ServerPlayerInGame from '../../../players/ServerPlayerInGame'
 import TestingSpellDeals100Damage from '../../11-testing/TestingSpellDeals100Damage'
 import TestingUnitNoEffect from '../../11-testing/TestingUnitNoEffect'
 import HeroZamarath from './HeroZamarath'
 
+const CardInTesting = HeroZamarath
+
 describe('HeroZamarath', () => {
-	let game: ServerGame
-	let cardInHand: ServerCard
-	let player: ServerPlayerInGame
-	let opponent: ServerPlayerInGame
-	let playerAction: (callback: () => void) => void
-	let startNextTurn: () => void
+	let game: TestGame
 
 	beforeEach(() => {
-		;({ game, cardInHand, player, opponent, playerAction, startNextTurn } = TestGameTemplates.singleCardTest(HeroZamarath))
+		game = setupTestGame(TestingRulesetPVP)
 	})
 
 	it('always has protector', () => {
-		expect(cardInHand.features.includes(CardFeature.PROTECTOR)).toBeTruthy()
+		expect(game.player.add(HeroZamarath).handle.features.includes(CardFeature.PROTECTOR)).toBeTruthy()
 	})
 
 	it('gets untargetable when played', () => {
-		playerAction(() => {
-			game.cardPlay.playCardAsPlayerAction(new ServerOwnedCard(cardInHand, player), 0, 0)
-		})
-		expect(cardInHand.location).toEqual(CardLocation.BOARD)
-		expect(cardInHand.features.includes(CardFeature.UNTARGETABLE)).toBeTruthy()
+		game.player.add(CardInTesting).play()
+		expect(game.player.find(CardInTesting).handle.location).toEqual(CardLocation.BOARD)
+		expect(game.player.find(CardInTesting).handle.features.includes(CardFeature.UNTARGETABLE)).toBeTruthy()
 	})
 
 	it('intercepts damage and survives with immunity', () => {
-		playerAction(() => {
-			game.cardPlay.playCardAsPlayerAction(new ServerOwnedCard(cardInHand, player), 1, 0)
-		})
+		game.player.add(CardInTesting).play()
+		game.player.summon(TestingUnitNoEffect, 'middle')
 
-		const targetUnit = new TestingUnitNoEffect(game)
-		playerAction(() => {
-			game.board.createUnit(targetUnit, player, 0, 0)
+		game.opponent.add(TestingSpellDeals100Damage).play().targetLast()
 
-			const opponentsCard = new TestingSpellDeals100Damage(game)
-			player.opponent.players[0].cardHand.addSpell(opponentsCard)
-			game.cardPlay.playCardFromHand(new ServerOwnedCard(opponentsCard, player.opponent.players[0]), 0, 0)
-			game.cardPlay.selectCardTarget(player.opponent.players[0], game.cardPlay.getDeployTargets()[0].target)
-		})
-
-		expect(targetUnit.stats.power).toEqual(20)
-		expect(cardInHand.stats.power).toEqual(24)
-		expect(cardInHand.stats.armor).toEqual(10)
+		expect(game.player.find(TestingUnitNoEffect).stats.power).toEqual(20)
+		expect(game.player.find(CardInTesting).stats.power).toEqual(24)
+		expect(game.player.find(CardInTesting).stats.armor).toEqual(10)
 	})
 
 	it('intercepts damage and dies without immunity', () => {
-		playerAction(() => {
-			game.cardPlay.playCardAsPlayerAction(new ServerOwnedCard(cardInHand, player), 1, 0)
-		})
+		game.player.add(CardInTesting).play()
+		game.player.summon(TestingUnitNoEffect, 'middle')
+		game.opponent.endTurn()
+		game.player.endTurn()
 
-		startNextTurn()
+		game.opponent.add(TestingSpellDeals100Damage).play().targetLast()
 
-		const targetUnit = new TestingUnitNoEffect(game)
-		playerAction(() => {
-			game.board.createUnit(targetUnit, player, 0, 0)
-		})
-		playerAction(() => {
-			const opponentsCard = new TestingSpellDeals100Damage(game)
-			opponent.cardHand.addSpell(opponentsCard)
-			game.cardPlay.playCardFromHand(new ServerOwnedCard(opponentsCard, opponent), 0, 0)
-			game.cardPlay.selectCardTarget(opponent, game.cardPlay.getDeployTargets()[0].target)
-		})
-
-		expect(targetUnit.stats.power).toEqual(20)
-		expect(cardInHand.stats.power).toEqual(0)
-		expect(cardInHand.stats.armor).toEqual(0)
+		expect(game.player.find(TestingUnitNoEffect).stats.power).toEqual(20)
+		expect(game.player.find(CardInTesting).stats.power).toEqual(0)
+		expect(game.player.find(CardInTesting).stats.armor).toEqual(0)
 	})
 })

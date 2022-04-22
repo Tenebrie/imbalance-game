@@ -9,7 +9,7 @@ import BuffExtraArmor from '@src/game/buffs/BuffExtraArmor'
 import ServerCard from '@src/game/models/ServerCard'
 import { DamageInstance } from '@src/game/models/ServerDamageSource'
 import ServerGame from '@src/game/models/ServerGame'
-import { getRandomArrayValue } from '@src/utils/Utils'
+import { getHighestUnit } from '@src/utils/Utils'
 
 export default class GwentImlerithSabbath extends ServerCard {
 	public static readonly POST_HEAL = 2
@@ -45,9 +45,10 @@ export default class GwentImlerithSabbath extends ServerCard {
 			.require(({ group }) => group.owns(this))
 			.perform(() => {
 				const sortedUnits = game.board.getUnitsOwnedByOpponent(this)
-				const highestPower = sortedUnits[0].card.stats.power
-				const highestUnits = sortedUnits.filter((unit) => unit.card.stats.power === highestPower)
-				const target = getRandomArrayValue(highestUnits)
+				const target = getHighestUnit(sortedUnits)
+				if (!target) {
+					return
+				}
 
 				for (let i = 0; i < 100; i++) {
 					target.dealDamage(DamageInstance.fromCard(this.stats.power, this))

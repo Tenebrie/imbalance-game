@@ -357,6 +357,7 @@ export default class ServerGame implements SourceGame {
 			playerToMove.onTurnEnd()
 			playerToMove = this.playersToMove.shift()
 		}
+		this.events.resolveEvents()
 
 		if (playerToMove) {
 			playerToMove.startTurn()
@@ -432,6 +433,7 @@ export default class ServerGame implements SourceGame {
 	}
 
 	private endCurrentRound(): void {
+		this.events.resolveEvents()
 		this.setTurnPhase(GameTurnPhase.ROUND_END)
 
 		const playerOne = this.players[0]

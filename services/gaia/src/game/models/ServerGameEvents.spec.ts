@@ -141,20 +141,6 @@ describe('ServerGameEvents', () => {
 				}
 			})
 
-			it('prioritizes units of active player', () => {
-				const probeCards: TestingUnitTurnEndEffectProbe[] = shuffle(new Array(2).fill(0).map(() => new TestingUnitTurnEndEffectProbe(game)))
-				const spies = probeCards.map((card) => jest.spyOn(card, 'onTurnEnd'))
-
-				game.board.createUnit(probeCards.shift()!, opponent, game.ruleset.constants.GAME_BOARD_ROW_COUNT / 2, 0)
-				game.board.createUnit(probeCards.shift()!, player, game.ruleset.constants.GAME_BOARD_ROW_COUNT / 2 - 1, 0)
-
-				startNextTurn()
-
-				for (let i = 0; i < spies.length - 1; i++) {
-					expect(spies[i].mock.invocationCallOrder[0]).toBeLessThan(spies[i + 1].mock.invocationCallOrder[0])
-				}
-			})
-
 			it('prioritizes units on the left before units on the right', () => {
 				const probeCards: TestingUnitTurnEndEffectProbe[] = shuffle(new Array(2).fill(0).map(() => new TestingUnitTurnEndEffectProbe(game)))
 				const spies = probeCards.map((card) => jest.spyOn(card, 'onTurnEnd'))
@@ -332,7 +318,7 @@ describe('ServerGameEvents', () => {
 
 			it('sorts many event callbacks correctly', () => {
 				const probeCards: TestingUnitTurnEndEffectProbe[] = shuffle(
-					new Array(24).fill(0).map(() => new TestingUnitTurnEndEffectProbe(game))
+					new Array(12).fill(0).map(() => new TestingUnitTurnEndEffectProbe(game))
 				)
 				const spies = probeCards.map((card) => jest.spyOn(card, 'onTurnEnd'))
 
@@ -349,20 +335,8 @@ describe('ServerGameEvents', () => {
 				game.players[0].players[0].cardGraveyard.addSpell(probeCards.shift()!)
 				game.players[0].players[0].cardGraveyard.addSpell(probeCards.shift()!)
 
-				game.board.createUnit(probeCards.shift()!, player, 2, 0)
-				game.board.createUnit(probeCards.shift()!, player, 1, 0)
-				game.board.createUnit(probeCards.shift()!, player, 0, 0)
-				game.board.createUnit(probeCards.shift()!, player, 0, 1)
-				game.board.createUnit(probeCards.shift()!, player, 0, 2)
-				game.players[1].players[0].cardHand.addUnit(probeCards.shift()!)
-				game.players[1].players[0].cardDeck.addUnitToBottom(probeCards.shift()!)
-				game.players[1].players[0].cardDeck.addUnitToBottom(probeCards.shift()!)
-				game.players[1].players[0].cardGraveyard.addUnit(probeCards.shift()!)
-				game.players[1].players[0].cardGraveyard.addUnit(probeCards.shift()!)
-				game.players[1].players[0].cardGraveyard.addSpell(probeCards.shift()!)
-				game.players[1].players[0].cardGraveyard.addSpell(probeCards.shift()!)
-
-				startNextTurn()
+				game.players[0].endTurn()
+				game.advanceCurrentTurn()
 
 				for (let i = 0; i < spies.length - 1; i++) {
 					expect(spies[i].mock.invocationCallOrder[0]).toBeLessThan(spies[i + 1].mock.invocationCallOrder[0])

@@ -272,12 +272,10 @@ export class ServerBotPlayerInGame extends ServerPlayerInGame {
 
 	public startMulligan(): void {
 		super.startMulligan()
-		// TODO: Validate that set timeout is not required anymore
 		IncomingMessageHandlers[GenericActionMessageType.CONFIRM_TARGETS](TargetMode.MULLIGAN, this.game, this)
 	}
 
 	public startTurn(): void {
-		// TODO: Validate that set timeout is not required anymore
 		this.botTakesTheirTurn().then(() => {
 			OutgoingMessageHandlers.executeMessageQueue(this.game)
 		})
