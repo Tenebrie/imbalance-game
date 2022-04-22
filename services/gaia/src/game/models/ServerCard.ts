@@ -40,6 +40,7 @@ import GameEventCreators, {
 	CardBuffCreatedEventArgs,
 	CardBuffRemovedEventArgs,
 	CardDestroyedEventArgs,
+	CardDiscardedEventArgs,
 	CardDrawnEventArgs,
 	CardMultibuffCreatedEventArgs,
 	CardPlayedEventArgs,
@@ -54,6 +55,7 @@ import GameEventCreators, {
 	CardTargetSelectedUnitEventArgs,
 	GameStartedEventArgs,
 	RoundEndedEventArgs,
+	RoundFinalizedEventArgs,
 	RoundStartedEventArgs,
 	RowBuffCreatedEventArgs,
 	RowBuffRemovedEventArgs,
@@ -420,24 +422,39 @@ export default class ServerCard implements Card {
 		return this.features.includes(CardFeature.AMBUSH) && !this.isRevealed
 	}
 
-	public boost(value: number | LeaderStatValueGetter, source: ServerBuffSource, threadType: AnimationThreadType = 'sync'): void {
+	public boost(
+		value: number | LeaderStatValueGetter,
+		source: ServerBuffSource,
+		threadType: AnimationThreadType = 'sync',
+		animation: 'split' | 'merge' = 'split'
+	): void {
 		const BuffStrength = require('../buffs/BuffStrength').default as BuffConstructor
 		this.game.animation.smartThread(threadType, () => {
-			this.buffs.addMultiple(BuffStrength, value, source)
+			this.buffs.addMultiple(BuffStrength, value, source, 'default', animation === 'merge')
 		})
 	}
 
-	public strengthen(value: number | LeaderStatValueGetter, source: ServerBuffSource, threadType: AnimationThreadType = 'sync'): void {
+	public strengthen(
+		value: number | LeaderStatValueGetter,
+		source: ServerBuffSource,
+		threadType: AnimationThreadType = 'sync',
+		animation: 'split' | 'merge' = 'split'
+	): void {
 		const BuffBaseStrength = require('../buffs/BuffBaseStrength').default as BuffConstructor
 		this.game.animation.smartThread(threadType, () => {
-			this.buffs.addMultiple(BuffBaseStrength, value, source)
+			this.buffs.addMultiple(BuffBaseStrength, value, source, 'default', animation === 'merge')
 		})
 	}
 
-	public weaken(value: number | LeaderStatValueGetter, source: ServerBuffSource, threadType: AnimationThreadType = 'sync'): void {
+	public weaken(
+		value: number | LeaderStatValueGetter,
+		source: ServerBuffSource,
+		threadType: AnimationThreadType = 'sync',
+		animation: 'split' | 'merge' = 'split'
+	): void {
 		const BuffBaseWeakness = require('../buffs/BuffBaseWeakness').default as BuffConstructor
 		this.game.animation.smartThread(threadType, () => {
-			this.buffs.addMultiple(BuffBaseWeakness, value, source)
+			this.buffs.addMultiple(BuffBaseWeakness, value, source, 'default', animation === 'merge')
 		})
 	}
 
@@ -735,6 +752,10 @@ export default class ServerCard implements Card {
 	protected createCallback(event: GameEventType.TURN_ENDED, location: CardLocation[] | 'any'): EventSubscription<TurnEndedEventArgs>
 	protected createCallback(event: GameEventType.ROUND_STARTED, location: CardLocation[] | 'any'): EventSubscription<RoundStartedEventArgs>
 	protected createCallback(event: GameEventType.ROUND_ENDED, location: CardLocation[] | 'any'): EventSubscription<RoundEndedEventArgs>
+	protected createCallback(
+		event: GameEventType.ROUND_FINALIZED,
+		location: CardLocation[] | 'any'
+	): EventSubscription<RoundFinalizedEventArgs>
 	protected createCallback(event: GameEventType.UNIT_MOVED, location: CardLocation[] | 'any'): EventSubscription<UnitMovedEventArgs>
 	protected createCallback(
 		event: GameEventType.BEFORE_CARD_TAKES_DAMAGE,
@@ -773,6 +794,7 @@ export default class ServerCard implements Card {
 		location: CardLocation[] | 'any'
 	): EventSubscription<UnitOrderedRowEventArgs>
 	protected createCallback(event: GameEventType.UNIT_CREATED, location: CardLocation[] | 'any'): EventSubscription<UnitCreatedEventArgs>
+	protected createCallback(event: GameEventType.CARD_DISCARDED, location: CardLocation[] | 'any'): EventSubscription<CardDiscardedEventArgs>
 	protected createCallback(event: GameEventType.CARD_DESTROYED, location: CardLocation[] | 'any'): EventSubscription<CardDestroyedEventArgs>
 	protected createCallback(event: GameEventType.UNIT_CONSUMED, location: CardLocation[] | 'any'): EventSubscription<UnitConsumedEventArgs>
 	protected createCallback(event: GameEventType.UNIT_DESTROYED, location: CardLocation[] | 'any'): EventSubscription<UnitDestroyedEventArgs>
@@ -866,6 +888,7 @@ export default class ServerCard implements Card {
 	protected createEffect(event: GameEventType.UNIT_DESTROYED): EventSubscription<UnitDestroyedEventArgs>
 	protected createEffect(event: GameEventType.AFTER_UNIT_DESTROYED): EventSubscription<UnitDestroyedEventArgs>
 	protected createEffect(event: GameEventType.CARD_DESTROYED): EventSubscription<CardDestroyedEventArgs>
+	protected createEffect(event: GameEventType.CARD_DISCARDED): EventSubscription<CardDiscardedEventArgs>
 	protected createEffect(event: GameEventType.CARD_POWER_RESTORED): EventSubscription<CardPowerRestoredEventArgs>
 	protected createEffect<ArgsType extends SharedEventArgs>(event: GameEventType): EventSubscription<ArgsType> {
 		return this.game.events

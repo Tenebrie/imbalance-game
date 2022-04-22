@@ -105,6 +105,14 @@ export default class ServerBoard implements Board {
 		return boardPower + leaderPower
 	}
 
+	public getTotalRowPower(targetRow: ServerBoardRow): number {
+		const rowPower = targetRow.splashableCards
+			.filter((unit) => !unit.card.features.includes(CardFeature.APATHY))
+			.map((unit) => unit.card.stats.power)
+			.reduce((total, value) => total + value, 0)
+		return rowPower
+	}
+
 	public isPositionAdjacentToUnit(unit: ServerUnit, rowIndex: number, unitIndex: number): boolean {
 		return unit.rowIndex === rowIndex && unitIndex <= unit.unitIndex + 1 && unitIndex >= unit.unitIndex
 	}

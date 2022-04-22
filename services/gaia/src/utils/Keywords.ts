@@ -62,15 +62,7 @@ const Keywords = {
 			if (!card) {
 				return null
 			}
-			player.cardHand.addUnit(card)
-
-			player.game.events.postEvent(
-				GameEventCreators.cardDrawn({
-					game: player.game,
-					owner: player,
-					triggeringCard: card,
-				})
-			)
+			player.cardHand.addUnitCardAsDraw(card)
 			return card
 		},
 	},
@@ -78,14 +70,6 @@ const Keywords = {
 	drawExactCard: (player: ServerPlayerInGame, card: ServerCard): ServerCard => {
 		player.cardDeck.removeCard(card)
 		player.cardHand.addUnitCardAsDraw(card)
-		player.cardHand.addUnit(card)
-		player.game.events.postEvent(
-			GameEventCreators.cardDrawn({
-				game: player.game,
-				owner: player,
-				triggeringCard: card,
-			})
-		)
 		return card
 	},
 
@@ -134,23 +118,27 @@ const Keywords = {
 		rowIndex: number
 		unitIndex: number
 		count: number | LeaderStatValueGetter
+		threadType?: AnimationThreadType
 	}): ServerUnit[] => {
 		const { owner, cardConstructor, rowIndex, unitIndex, count } = args
+		const threadType = args.threadType || 'sync'
 		const normalizedCount = count === undefined ? 1 : typeof count === 'function' ? count(owner.group) : count
 
 		const game = owner.game
 
 		const units: ServerUnit[] = []
 		for (let i = 0; i < normalizedCount; i++) {
-			game.animation.thread(() => {
+			game.animation.smartThread(threadType, () => {
 				const card = new cardConstructor(game)
-				const unit = game.board.createUnit(card, owner, rowIndex, unitIndex + 1)
+				const unit = game.board.createUnit(card, owner, rowIndex, unitIndex)
 				if (unit) {
 					units.push(unit)
 				}
 			})
 		}
-		game.animation.syncAnimationThreads()
+		if (threadType === 'sync') {
+			game.animation.syncAnimationThreads()
+		}
 		return units
 	},
 
@@ -296,6 +284,34 @@ const Keywords = {
 		)
 	},
 
+	returnCardFromGraveyardToHand: (card: ServerCard): void => {
+		const owner = card.ownerPlayer
+		owner.cardGraveyard.removeCard(card)
+		owner.cardHand.addUnit(card)
+		card.game.events.postEvent(
+			GameEventCreators.cardReturned({
+				game: card.game,
+				owner: owner,
+				location: CardLocation.HAND,
+				triggeringCard: card,
+			})
+		)
+	},
+
+	returnCardFromGraveyardToDeck: (card: ServerCard): void => {
+		const owner = card.ownerPlayer
+		owner.cardGraveyard.removeCard(card)
+		owner.cardDeck.addUnitToBottom(card)
+		card.game.events.postEvent(
+			GameEventCreators.cardReturned({
+				game: card.game,
+				owner: owner,
+				location: CardLocation.DECK,
+				triggeringCard: card,
+			})
+		)
+	},
+
 	transformCard: (card: ServerCard, targetCard: CardConstructor): ServerCard => {
 		const owner = card.ownerPlayer
 		const location = card.location
@@ -331,11 +347,14 @@ const Keywords = {
 		)!
 	},
 
-	destroyUnit: (args: { unit: ServerUnit; source?: ServerCard; affectedCards?: ServerCard[] }) => {
+	destroyUnit: (args: { unit: ServerUnit; source?: ServerCard; affectedCards?: ServerCard[]; threadType?: AnimationThreadType }) => {
 		const { unit, source, affectedCards } = args
-		unit.game.board.destroyUnit(unit, {
-			destroyer: source,
-			affectedCards,
+		const threadType = args.threadType || 'sync'
+		unit.game.animation.smartThread(threadType, () => {
+			unit.game.board.destroyUnit(unit, {
+				destroyer: source,
+				affectedCards,
+			})
 		})
 	},
 

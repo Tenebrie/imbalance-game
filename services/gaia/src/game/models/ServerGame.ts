@@ -542,6 +542,35 @@ export default class ServerGame implements SourceGame {
 			})
 		})
 
+		const getLastRoundVictoriousPlayer = () => {
+			if (playerOneTotalPower > playerTwoTotalPower) {
+				return playerOne
+			} else if (playerTwoTotalPower > playerOneTotalPower) {
+				return playerTwo
+			} else {
+				return null
+			}
+		}
+
+		const getLastRoundLosingPlayer = () => {
+			if (playerOneTotalPower > playerTwoTotalPower) {
+				return playerTwo
+			} else if (playerTwoTotalPower > playerOneTotalPower) {
+				return playerOne
+			} else {
+				return null
+			}
+		}
+
+		this.events.postEvent(
+			GameEventCreators.roundFinalized({
+				game: this,
+				isDraw: !!victoriousPlayer,
+				victoriousGroup: getLastRoundVictoriousPlayer(),
+				losingGroup: getLastRoundLosingPlayer(),
+			})
+		)
+
 		this.advancePhase()
 	}
 

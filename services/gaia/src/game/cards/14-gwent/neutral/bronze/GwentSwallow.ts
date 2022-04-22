@@ -36,10 +36,8 @@ export default class GwentSwallow extends ServerCard {
 			},
 		})
 
-		this.createDeployTargets(TargetType.UNIT)
-			.requireAllied()
-			.perform(({ targetUnit }) => {
-				targetUnit.buffs.addMultiple(BuffStrength, GwentSwallow.BONUS_POWER, this)
-			})
+		this.createDeployTargets(TargetType.UNIT).perform(({ targetUnit }) => {
+			targetUnit.buffs.addMultiple(BuffStrength, GwentSwallow.BONUS_POWER, this)
+		})
 	}
 }

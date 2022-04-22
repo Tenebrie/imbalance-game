@@ -300,7 +300,6 @@
 	"card.feature.nightwatch.text": "*Nightwatch*",
 	"card.feature.resilience.text": "*Resilience*",
 	"card.feature.spy.text": "*Spy*",
-	"card.feature.quick.text": "*Quick*",
 	"card.feature.apathy.text": "*Apathy*",
 	"card.feature.passive.text": "*Passive*",
 	"card.feature.heroPower.text": "*Leader Power*",
@@ -384,6 +383,10 @@
 	"card.tribe.spell": "Spell",
 	"card.tribe.token": "Token",
 	"card.tribe.aedirn": "Aedirn",
+	"card.tribe.witcher": "Witcher",
+	"card.tribe.cintra": "Cintra",
+	"card.tribe.temeria": "Temeria",
+	"card.tribe.redania": "Redania",
 
 	"buff.buffProtector.name": "Protector (Service buff)",
 	"buff.buffProtector.description": "This card is a protector.",

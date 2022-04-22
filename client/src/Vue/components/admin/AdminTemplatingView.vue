@@ -134,6 +134,7 @@ export default defineComponent({
 				'Swap: Move a card from hand to deck and draw another in its place during your turn',
 				'Doomed: Status that removes the unit from the game when it leaves the battlefield',
 				"Lock: Status that disables a unit's abilities",
+				'Drain: Deal damage and boost self by the same amount',
 			]
 
 			const keywordsToHighlight = linesToFilter

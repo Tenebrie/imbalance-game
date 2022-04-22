@@ -17,8 +17,9 @@ enum CardTribe {
 	ELEMENTAL = 'elemental',
 	VOIDSPAWN = 'voidspawn',
 	MANIFESTATION = 'manifestation',
-	AEDIRN = 'aedirn',
 
+	AEDIRN = 'aedirn',
+	TEMERIA = 'temeria',
 	DRACONID = 'draconid',
 	WILD_HUNT = 'wildHunt',
 	WITCHER = 'witcher',
@@ -45,6 +46,7 @@ enum CardTribe {
 	VODYANOY = 'vodyanoi',
 	OFFICER = 'officer',
 	REDANIA = 'redania',
+	CINTRA = 'cintra',
 	TOKEN = 'token',
 
 	LOST = 'lost',

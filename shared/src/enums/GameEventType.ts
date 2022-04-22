@@ -56,6 +56,7 @@ enum GameEventType {
 
 	TURN_ENDED = 'turnEnded',
 	ROUND_ENDED = 'roundEnded',
+	ROUND_FINALIZED = 'roundFullyEnded',
 
 	GAME_FINISHED = 'gameFinished',
 }

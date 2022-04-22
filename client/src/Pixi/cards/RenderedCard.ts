@@ -149,15 +149,15 @@ export default class RenderedCard implements Card {
 
 		/* Card quality overlay */
 		let overlaySprite
-		if (this.stats.unitCost > 0 && this.color === CardColor.BRONZE) {
+		if ((this.stats.unitCost > 0 || this.type === CardType.UNIT) && this.color === CardColor.BRONZE) {
 			overlaySprite = new PIXI.Sprite(TextureAtlas.getTexture('components/bg-overlay-unit-bronze'))
-		} else if (this.stats.unitCost > 0 && this.color === CardColor.SILVER) {
+		} else if ((this.stats.unitCost > 0 || this.type === CardType.UNIT) && this.color === CardColor.SILVER) {
 			overlaySprite = new PIXI.Sprite(TextureAtlas.getTexture('components/bg-overlay-unit-silver'))
-		} else if (this.stats.unitCost > 0 && this.color === CardColor.GOLDEN) {
+		} else if ((this.stats.unitCost > 0 || this.type === CardType.UNIT) && this.color === CardColor.GOLDEN) {
 			overlaySprite = new PIXI.Sprite(TextureAtlas.getTexture('components/bg-overlay-unit-golden'))
-		} else if (this.stats.unitCost > 0 && this.color === CardColor.LEADER) {
+		} else if ((this.stats.unitCost > 0 || this.type === CardType.UNIT) && this.color === CardColor.LEADER) {
 			overlaySprite = new PIXI.Sprite(TextureAtlas.getTexture('components/bg-overlay-unit-leader'))
-		} else if (this.stats.unitCost === 0) {
+		} else if (this.stats.unitCost === 0 && this.type === CardType.SPELL) {
 			overlaySprite = new PIXI.Sprite(TextureAtlas.getTexture('components/bg-overlay-spell'))
 		}
 		if (overlaySprite) {

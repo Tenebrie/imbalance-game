@@ -310,9 +310,7 @@ export default {
 		type: GameEventType.AFTER_UNIT_DESTROYED,
 		args: args,
 		effectSource: args.triggeringCard,
-		logVariables: {
-			triggeringUnit: args.triggeringUnit.card.id,
-		},
+		hiddenFromLogs: true,
 	}),
 
 	unitNightfall: (args: UnitNightfallEventArgs): GameEvent => ({
@@ -421,6 +419,11 @@ export default {
 		logVariables: {
 			group: args.group.id,
 		},
+	}),
+	roundFinalized: (args: RoundFinalizedEventArgs): GameEvent => ({
+		type: GameEventType.ROUND_FINALIZED,
+		args: args,
+		hiddenFromLogs: true,
 	}),
 
 	gameFinished: (args: GameFinishedEventArgs): GameEvent => ({
@@ -656,6 +659,11 @@ export interface TurnEndedEventArgs extends SharedEventArgs {
 }
 export interface RoundEndedEventArgs extends SharedEventArgs {
 	group: ServerPlayerGroup
+}
+export interface RoundFinalizedEventArgs extends SharedEventArgs {
+	isDraw: boolean
+	victoriousGroup: ServerPlayerGroup | null
+	losingGroup: ServerPlayerGroup | null
 }
 
 export interface GameFinishedEventArgs extends SharedEventArgs {

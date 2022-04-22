@@ -30,7 +30,7 @@ export default class GwentSheTrollOfVergen extends ServerCard {
 		this.createLocalization({
 			en: {
 				name: 'She-Troll of Vergen',
-				description: 'Play a Bronze *Deathwish* unit from your deck.\n*Consume* it and boost self by its base power.',
+				description: 'Play a Bronze *Deathwish* unit from your deck.\n*Consume* it and boost self by its power.',
 				flavor: 'Lover of elf and onion soup.',
 			},
 		})
@@ -41,7 +41,7 @@ export default class GwentSheTrollOfVergen extends ServerCard {
 			.require(({ targetCard }) => targetCard.color === CardColor.BRONZE)
 			.require(({ targetCard }) => targetCard.features.includes(CardFeature.HAS_DEATHWISH))
 			.perform(({ targetCard }) => {
-				Keywords.playCardFromDeckOrGraveyard(targetCard)
+				Keywords.playCardFromDeck(targetCard)
 				this.cardToConsume = targetCard
 			})
 
