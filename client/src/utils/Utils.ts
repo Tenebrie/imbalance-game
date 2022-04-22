@@ -78,6 +78,25 @@ export const isElectron = (): boolean => {
 	return false
 }
 
+export const getCardFactionTint = (faction: CardFaction) => {
+	switch (faction) {
+		case CardFaction.NORTH:
+			return 0x2b647a
+		case CardFaction.SKELLIGE:
+			return 0x3e1f66
+		case CardFaction.SCOIATAEL:
+			return 0xdcff9f
+		case CardFaction.NILFGAARD:
+			return 0x353535
+		case CardFaction.MONSTER:
+			return 0xff8383
+		case CardFaction.NEUTRAL:
+			return 0xffd98d
+		default:
+			return 0xffffff
+	}
+}
+
 export const getCardColorClasses = (color: CardColor) => {
 	return {
 		leader: color === CardColor.LEADER,

@@ -26,7 +26,7 @@ import RichTextAlign from '@/Pixi/render/RichTextAlign'
 import ScalingText from '@/Pixi/render/ScalingText'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
 import { getRenderScale } from '@/Pixi/renderer/RendererUtils'
-import Utils, { mergeCardFeatures, mergeCardTribes, snakeToCamelCase } from '@/utils/Utils'
+import Utils, { getCardFactionTint, mergeCardFeatures, mergeCardTribes, snakeToCamelCase } from '@/utils/Utils'
 import store from '@/Vue/store'
 
 type WorkshopCardProps = {
@@ -83,6 +83,8 @@ export default class RenderedCard implements Card {
 
 	public readonly cardTintOverlay: PIXI.Sprite
 	public readonly cardFullTintOverlay: PIXI.Sprite
+
+	private readonly factionTintableSprites: PIXI.Sprite[] = []
 
 	public readonly powerText: ScalingText
 	public readonly armorText: ScalingText
@@ -167,7 +169,9 @@ export default class RenderedCard implements Card {
 
 		/* Card mode container */
 		this.cardModeContainer = new PIXI.Container()
-		this.cardModeContainer.addChild(new PIXI.Sprite(TextureAtlas.getTexture('components/bg-name')))
+		const nameBackground = new PIXI.Sprite(TextureAtlas.getTexture('components/bg-name'))
+		this.factionTintableSprites.push(nameBackground)
+		this.cardModeContainer.addChild(nameBackground)
 		this.descriptionTextBackground = new DescriptionTextBackground()
 		if (Localization.getCardDescription(this)) {
 			this.descriptionTextBackground.position.set(0, this.artwork.texture.height + 1)
@@ -178,6 +182,7 @@ export default class RenderedCard implements Card {
 		const tribesContainer = new PIXI.Container()
 		for (let i = 0; i < tribeCount; i++) {
 			const tribeBackgroundSprite = new PIXI.Sprite(TextureAtlas.getTexture('components/bg-tribe'))
+			this.factionTintableSprites.push(tribeBackgroundSprite)
 			tribeBackgroundSprite.position.y += i * 40
 			tribesContainer.addChild(tribeBackgroundSprite)
 		}
@@ -189,13 +194,19 @@ export default class RenderedCard implements Card {
 		this.cardModeContainer.addChild(this.powerTextBackground)
 		this.cardModeContainer.addChild(this.armorTextBackground)
 		this.cardModeContainer.addChild(this.manacostTextBackground)
+		this.factionTintableSprites.push(this.powerTextBackground)
+		this.factionTintableSprites.push(this.armorTextBackground)
+		this.factionTintableSprites.push(this.manacostTextBackground)
 		internalContainer.addChild(this.cardModeContainer)
 
 		/* Unit mode container */
 		this.unitModeContainer = new PIXI.Container()
-		this.unitModeContainer.addChild(new PIXI.Sprite(TextureAtlas.getTexture('components/bg-power-zoom')))
+		const powerTextZoomBackground = new PIXI.Sprite(TextureAtlas.getTexture('components/bg-power-zoom'))
+		this.unitModeContainer.addChild(powerTextZoomBackground)
 		this.armorTextZoomBackground = new PIXI.Sprite(TextureAtlas.getTexture('components/bg-armor-zoom'))
 		this.unitModeContainer.addChild(this.armorTextZoomBackground)
+		this.factionTintableSprites.push(powerTextZoomBackground)
+		this.factionTintableSprites.push(this.armorTextZoomBackground)
 		internalContainer.addChild(this.unitModeContainer)
 
 		this.deployEffectContainer = new PIXI.Container()
@@ -234,6 +245,10 @@ export default class RenderedCard implements Card {
 		this.cardFullTintOverlay.tint = 0x000000
 		this.cardFullTintOverlay.anchor.set(0.5, 0.5)
 		this.coreContainer.addChild(this.cardFullTintOverlay)
+
+		this.factionTintableSprites.forEach((sprite) => {
+			sprite.tint = getCardFactionTint(this.faction)
+		})
 	}
 
 	public get name(): string {
