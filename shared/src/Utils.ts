@@ -110,6 +110,7 @@ export function sortCards<T extends Card | CardMessage>(inputArray: T[]): T[] {
 				Number(a.features.includes(CardFeature.PASSIVE)) - Number(b.features.includes(CardFeature.PASSIVE))) ||
 			a.color - b.color ||
 			a.type - b.type ||
+			a.faction - b.faction ||
 			(a.type === CardType.UNIT &&
 				(b.stats.basePower - a.stats.basePower ||
 					a.sortPriority - b.sortPriority ||

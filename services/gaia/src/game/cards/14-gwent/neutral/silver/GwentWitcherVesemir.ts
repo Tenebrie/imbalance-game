@@ -16,7 +16,7 @@ export default class GwentWitcherVesemir extends ServerCard {
 		super(game, {
 			type: CardType.UNIT,
 			color: CardColor.SILVER,
-			faction: CardFaction.MONSTER,
+			faction: CardFaction.NEUTRAL,
 			tribes: [CardTribe.WITCHER],
 			stats: {
 				power: 7,

@@ -21,6 +21,7 @@ export default class GwentUnicorn extends ServerCard {
 				power: 1,
 			},
 			expansionSet: ExpansionSet.GWENT,
+			hiddenFromLibrary: true,
 		})
 
 		this.createLocalization({

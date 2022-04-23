@@ -22,6 +22,7 @@ export default class GwentChironex extends ServerCard {
 				power: 4,
 			},
 			expansionSet: ExpansionSet.GWENT,
+			hiddenFromLibrary: true,
 		})
 
 		this.createLocalization({
