@@ -10,8 +10,6 @@ import ServerGame from '@src/game/models/ServerGame'
 import Keywords from '@src/utils/Keywords'
 import { getMultipleRandomArrayValues } from '@src/utils/Utils'
 
-import GwentReconnaissance from '../../neutral/bronze/GwentReconnaissance'
-
 export default class GwentElvenMercenary extends ServerCard {
 	public static readonly CARDS_TO_LOOK = 2
 
@@ -40,7 +38,7 @@ export default class GwentElvenMercenary extends ServerCard {
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(({ owner }) => {
 			const bronzeSpecialCards = owner.cardDeck.allCards.filter((card) => card.type === CardType.SPELL && card.color === CardColor.BRONZE)
-			this.cardsToChoose = getMultipleRandomArrayValues(bronzeSpecialCards, GwentReconnaissance.CARDS_TO_LOOK)
+			this.cardsToChoose = getMultipleRandomArrayValues(bronzeSpecialCards, GwentElvenMercenary.CARDS_TO_LOOK)
 		})
 
 		this.createDeployTargets(TargetType.CARD_IN_UNIT_DECK)

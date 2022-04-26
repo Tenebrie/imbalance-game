@@ -16,7 +16,7 @@ export default class GwentBlackBloodDestroy extends ServerCard {
 			type: CardType.SPELL,
 			color: CardColor.SILVER,
 			faction: CardFaction.NEUTRAL,
-			tribes: [CardTribe.ALCHEMY, CardTribe.ITEM],
+			tribes: [CardTribe.ALCHEMY, CardTribe.ITEM, CardTribe.DOOMED],
 			stats: {
 				cost: 0,
 				unitCost: 1,

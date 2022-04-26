@@ -19,7 +19,7 @@ export default class GwentMandrakeWeaken extends ServerCard {
 			type: CardType.SPELL,
 			color: CardColor.SILVER,
 			faction: CardFaction.NEUTRAL,
-			tribes: [CardTribe.ALCHEMY, CardTribe.ORGANIC],
+			tribes: [CardTribe.ALCHEMY, CardTribe.ORGANIC, CardTribe.DOOMED],
 			stats: {
 				cost: 0,
 				unitCost: 1,

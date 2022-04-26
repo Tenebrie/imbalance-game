@@ -35,7 +35,9 @@ export default class GwentIthlinneAegli extends ServerCard {
 			.require(({ targetCard }) => targetCard.color === CardColor.BRONZE)
 			.require(
 				({ targetCard }) =>
-					targetCard.type === CardType.SPELL || targetCard.tribes.includes(CardTribe.BOON) || targetCard.tribes.includes(CardTribe.HAZARD)
+					targetCard.tribes.includes(CardTribe.SPELL) ||
+					targetCard.tribes.includes(CardTribe.BOON) ||
+					targetCard.tribes.includes(CardTribe.HAZARD)
 			)
 			.perform(({ targetCard }) => {
 				Keywords.playCardFromDeck(targetCard)

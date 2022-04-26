@@ -24,7 +24,7 @@ export default class GwentBlackBloodCreate extends ServerCard {
 			type: CardType.SPELL,
 			color: CardColor.BRONZE,
 			faction: CardFaction.NEUTRAL,
-			tribes: [CardTribe.ALCHEMY, CardTribe.ITEM],
+			tribes: [CardTribe.ALCHEMY, CardTribe.ITEM, CardTribe.DOOMED],
 			stats: {
 				cost: 0,
 				unitCost: 1,

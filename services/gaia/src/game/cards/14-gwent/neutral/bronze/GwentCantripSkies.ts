@@ -15,7 +15,7 @@ export default class GwentCantripSkies extends ServerCard {
 			type: CardType.SPELL,
 			color: CardColor.BRONZE,
 			faction: CardFaction.NEUTRAL,
-			tribes: [CardTribe.TACTIC, CardTribe.TOKEN],
+			tribes: [CardTribe.TACTIC, CardTribe.TOKEN, CardTribe.DOOMED],
 			stats: {
 				cost: 0,
 				unitCost: 1,
