@@ -4,6 +4,7 @@ import CardTribe from '@shared/enums/CardTribe'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
+import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import ServerCard from '@src/game/models/ServerCard'
 import ServerGame from '@src/game/models/ServerGame'
 
@@ -33,7 +34,11 @@ export default class GwentEleyas extends ServerCard {
 
 		const boostEffect = () => this.boostBy(GwentEleyas.BOOST, this)
 
-		this.createEffect(GameEventType.CARD_DRAWN).perform(boostEffect)
-		this.createEffect(GameEventType.CARD_RETURNED).perform(boostEffect)
+		this.createEffect(GameEventType.CARD_DRAWN)
+			.require(() => game.turnPhase === GameTurnPhase.DEPLOY)
+			.perform(boostEffect)
+		this.createEffect(GameEventType.CARD_RETURNED)
+			.require(() => game.turnPhase === GameTurnPhase.DEPLOY)
+			.perform(boostEffect)
 	}
 }

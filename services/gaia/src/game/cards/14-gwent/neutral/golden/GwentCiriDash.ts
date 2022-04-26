@@ -4,6 +4,7 @@ import CardTribe from '@shared/enums/CardTribe'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
+import UnitDestructionReason from '@src/enums/UnitDestructionReason'
 import ServerCard from '@src/game/models/ServerCard'
 import ServerGame from '@src/game/models/ServerGame'
 import Keywords from '@src/utils/Keywords'
@@ -38,6 +39,8 @@ export default class GwentCiriDash extends ServerCard {
 		}
 
 		this.createEffect(GameEventType.CARD_DISCARDED).perform(() => returnToDeck())
-		this.createEffect(GameEventType.AFTER_UNIT_DESTROYED).perform(() => returnToDeck())
+		this.createEffect(GameEventType.AFTER_UNIT_DESTROYED)
+			.require(({ reason }) => reason === UnitDestructionReason.CARD_EFFECT)
+			.perform(() => returnToDeck())
 	}
 }

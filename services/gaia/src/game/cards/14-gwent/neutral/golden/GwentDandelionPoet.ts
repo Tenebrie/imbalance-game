@@ -1,10 +1,10 @@
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
-import CardFeature from '@shared/enums/CardFeature'
 import CardTribe from '@shared/enums/CardTribe'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
+import TargetType from '@shared/enums/TargetType'
 import ServerCard from '@src/game/models/ServerCard'
 import ServerGame from '@src/game/models/ServerGame'
 import Keywords from '@src/utils/Keywords'
@@ -16,7 +16,6 @@ export default class GwentDandelionPoet extends ServerCard {
 			color: CardColor.GOLDEN,
 			faction: CardFaction.NEUTRAL,
 			tribes: [CardTribe.SUPPORT],
-			features: [CardFeature.QUICK],
 			stats: {
 				power: 5,
 				armor: 0,
@@ -35,5 +34,7 @@ export default class GwentDandelionPoet extends ServerCard {
 		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(({ owner }) => {
 			Keywords.draw.topUnitCard(owner)
 		})
+
+		this.createDeployTargets(TargetType.CARD_IN_UNIT_HAND).perform(({ targetCard }) => Keywords.playCardFromHand(targetCard))
 	}
 }

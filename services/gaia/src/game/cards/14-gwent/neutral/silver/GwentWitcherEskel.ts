@@ -17,7 +17,7 @@ export default class GwentWitcherEskel extends ServerCard {
 			type: CardType.UNIT,
 			color: CardColor.SILVER,
 			faction: CardFaction.NEUTRAL,
-			tribes: [CardTribe.RELICT],
+			tribes: [CardTribe.WITCHER],
 			stats: {
 				power: 6,
 			},

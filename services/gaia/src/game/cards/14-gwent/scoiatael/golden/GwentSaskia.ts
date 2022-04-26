@@ -36,6 +36,7 @@ export default class GwentSaskia extends ServerCard {
 
 		this.createDeployTargets(TargetType.CARD_IN_UNIT_HAND)
 			.requireAllied()
+			.require(() => this.ownerPlayer.cardDeck.allCards.length > 0)
 			.targetCount(GwentSaskia.CARD_COUNT)
 			.perform(({ targetCard, player }) => {
 				const validCards = player.cardDeck.allCards.filter((card) => card.color === CardColor.BRONZE)

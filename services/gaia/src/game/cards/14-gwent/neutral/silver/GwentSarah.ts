@@ -33,14 +33,15 @@ export default class GwentSarah extends ServerCard {
 
 		this.createDeployTargets(TargetType.CARD_IN_UNIT_HAND)
 			.requireAllied()
+			.require(() => this.ownerPlayer.cardDeck.allCards.length > 0)
 			.perform(({ targetCard, player }) => {
-				Keywords.returnCardFromHandToDeck(targetCard)
 				const validCards = player.cardDeck.allCards.filter((card) => card.color === targetCard.color)
+				game.animation.instantThread(() => Keywords.returnCardFromHandToDeck(targetCard))
 				const cardToSwapFor = getRandomArrayValue(validCards)
 				if (!cardToSwapFor) {
 					return
 				}
-				Keywords.drawExactCard(player, cardToSwapFor)
+				game.animation.instantThread(() => Keywords.drawExactCard(player, cardToSwapFor))
 			})
 	}
 }

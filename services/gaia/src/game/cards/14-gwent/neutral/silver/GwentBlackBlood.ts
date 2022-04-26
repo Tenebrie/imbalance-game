@@ -15,7 +15,7 @@ export class GwentBlackBlood extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, {
 			type: CardType.SPELL,
-			color: CardColor.BRONZE,
+			color: CardColor.SILVER,
 			faction: CardFaction.NEUTRAL,
 			tribes: [CardTribe.ALCHEMY, CardTribe.ITEM],
 			stats: {
