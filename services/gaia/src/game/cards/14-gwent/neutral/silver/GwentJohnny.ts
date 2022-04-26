@@ -37,10 +37,10 @@ export default class GwentJohnny extends ServerCard {
 				Keywords.discardCard(targetCard)
 				const opponentStartingDeck = player.opponent.players[0].startingDeck
 				const validCards = opponentStartingDeck.unitCards.filter((card) => card.color === targetCard.color)
-				if (validCards.length === 0) {
+				const selectedCard = getRandomArrayValue(validCards)
+				if (!selectedCard) {
 					return
 				}
-				const selectedCard = getRandomArrayValue(validCards)
 				Keywords.addCardToHand.for(player).fromInstance(selectedCard)
 			})
 	}

@@ -36,6 +36,7 @@ export default class GwentDraug extends ServerCard {
 		this.createDeployTargets(TargetType.CARD_IN_UNIT_GRAVEYARD)
 			.targetCount(Constants.MAX_CARDS_PER_ROW)
 			.requireAllied()
+			.require(({ targetCard }) => targetCard.type === CardType.UNIT)
 			.require(() => !!this.unit && !this.unit.boardRow.isFull())
 			.perform(({ targetCard, player }) => {
 				const unit = this.unit!

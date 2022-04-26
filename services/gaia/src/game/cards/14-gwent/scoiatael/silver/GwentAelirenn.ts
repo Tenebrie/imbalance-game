@@ -44,8 +44,10 @@ export default class GwentAelirenn extends ServerCard {
 				}
 
 				const allRows = game.board.getControlledRows(this.ownerPlayer).filter((row) => row.isNotFull())
-
 				const randomRow = getRandomArrayValue(allRows)
+				if (!randomRow) {
+					return
+				}
 
 				Keywords.summonUnitFromDeck({
 					card: this,

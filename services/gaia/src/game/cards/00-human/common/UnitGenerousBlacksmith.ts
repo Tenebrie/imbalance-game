@@ -33,7 +33,7 @@ export default class UnitGenerousBlacksmith extends ServerCard {
 			.require(({ triggeringUnit }) => triggeringUnit.card !== this)
 			.require(({ fromRow, toRow }) => fromRow !== toRow)
 			.require(({ toRow, toIndex }) => toRow.index === this.unit!.rowIndex && Math.abs(toIndex - this.unit!.unitIndex) === 1)
-			.requireImmediate(({ triggeringUnit }) => triggeringUnit.isAlive())
+			.requireImmediate(({ triggeringUnit }) => triggeringUnit.isAlive)
 			.perform(({ triggeringUnit }) => {
 				triggeringUnit.buffs.addMultiple(BuffExtraArmor, this.bonusArmor, this)
 			})

@@ -35,7 +35,7 @@ export default class GwentUnicorn extends ServerCard {
 		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(() => {
 			const targets = game.board.getAllUnits().filter((unit) => unit.card !== this)
 			targets.forEach((unit) => {
-				unit.boost(GwentUnicorn.BOOST, this, 'stagger')
+				unit.boostBy(GwentUnicorn.BOOST, this, 'stagger')
 			})
 		})
 	}

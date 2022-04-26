@@ -43,15 +43,15 @@ export default class GwentBraenn extends ServerCard {
 						.getSplashableUnitsFor(player)
 						.filter((unit) => unit.card.tribes.includes(CardTribe.DRYAD) || unit.card.features.includes(CardFeature.AMBUSH))
 						.filter((unit) => unit !== this.unit)
-						.forEach((unit) => unit.boost(GwentBraenn.BOOST, this))
+						.forEach((unit) => unit.boostBy(GwentBraenn.BOOST, this))
 
 					this.ownerPlayer.cardHand.allCards
 						.filter((card) => card.tribes.includes(CardTribe.DRYAD) || card.features.includes(CardFeature.AMBUSH))
-						.forEach((card) => card.boost(GwentBraenn.BOOST, this))
+						.forEach((card) => card.boostBy(GwentBraenn.BOOST, this))
 
 					this.ownerPlayer.cardDeck.allCards
 						.filter((card) => card.tribes.includes(CardTribe.DRYAD) || card.features.includes(CardFeature.AMBUSH))
-						.forEach((card) => card.boost(GwentBraenn.BOOST, this))
+						.forEach((card) => card.boostBy(GwentBraenn.BOOST, this))
 				}
 			})
 	}

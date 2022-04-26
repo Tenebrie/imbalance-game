@@ -37,10 +37,10 @@ export default class GwentRoach extends ServerCard {
 			.require(({ triggeringCard }) => triggeringCard.color === CardColor.GOLDEN)
 			.perform(({ owner }) => {
 				const validRows = game.board.getControlledRows(owner).filter((row) => !row.isFull())
-				if (validRows.length === 0) {
+				const targetRow = getRandomArrayValue(validRows)
+				if (!targetRow) {
 					return
 				}
-				const targetRow = getRandomArrayValue(validRows)
 				Keywords.summonUnitFromDeck({
 					card: this,
 					owner,

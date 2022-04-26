@@ -10,7 +10,7 @@ import ServerBoardRow from '@src/game/models/ServerBoardRow'
 import { AnimationThreadType } from '@src/game/models/ServerGameAnimation'
 import ServerOwnedCard from '@src/game/models/ServerOwnedCard'
 import ServerUnit from '@src/game/models/ServerUnit'
-import { LeaderStatValueGetter } from '@src/utils/LeaderStats'
+import { ValueGetter } from '@src/utils/LeaderStats'
 
 import BuffUnitToSpellConversion from '../game/buffs/BuffUnitToSpellConversion'
 import CardLibrary, { CardConstructor } from '../game/libraries/CardLibrary'
@@ -52,8 +52,19 @@ type AddCardToHandOptions = {
 }
 
 const Keywords = {
-	moveUnit: (unit: ServerUnit, rowOrIndex: number | ServerBoardRow, unitIndex: number): void => {
-		unit.game.board.moveUnit(unit, toRowIndex(rowOrIndex), unitIndex)
+	moveUnit: (
+		unit: ServerUnit,
+		rowOrIndex: number | ServerBoardRow,
+		unitIndex: number,
+		args?: { charmingPlayer: ServerPlayerInGame }
+	): void => {
+		unit.game.board.moveUnit(unit, toRowIndex(rowOrIndex), unitIndex, args)
+	},
+
+	charmUnit: (unit: ServerUnit, rowOrIndex: number | ServerBoardRow, unitIndex: number, charmingPlayer: ServerPlayerInGame): void => {
+		unit.game.board.moveUnit(unit, toRowIndex(rowOrIndex), unitIndex, {
+			charmingPlayer,
+		})
 	},
 
 	draw: {
@@ -99,7 +110,7 @@ const Keywords = {
 		cardConstructor: CardConstructor
 		rowIndex: number
 		unitIndex: number
-		count?: number | LeaderStatValueGetter
+		count?: number | ValueGetter
 		threadType?: AnimationThreadType
 	}): ServerUnit | null => {
 		const { owner, cardConstructor, rowIndex, unitIndex } = args
@@ -117,7 +128,7 @@ const Keywords = {
 		cardConstructor: CardConstructor
 		rowIndex: number
 		unitIndex: number
-		count: number | LeaderStatValueGetter
+		count: number | ValueGetter
 		threadType?: AnimationThreadType
 	}): ServerUnit[] => {
 		const { owner, cardConstructor, rowIndex, unitIndex, count } = args

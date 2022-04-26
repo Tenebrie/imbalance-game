@@ -35,9 +35,10 @@ export default class GwentHawkerHealer extends ServerCard {
 		this.createDeployTargets(TargetType.UNIT)
 			.requireNotSelf()
 			.requireAllied()
+			.requireUnique()
 			.targetCount(GwentHawkerHealer.TARGET_COUNT)
 			.perform(({ targetUnit }) => {
-				targetUnit.boost(GwentHawkerHealer.BOOST, this)
+				targetUnit.boostBy(GwentHawkerHealer.BOOST, this)
 			})
 	}
 }

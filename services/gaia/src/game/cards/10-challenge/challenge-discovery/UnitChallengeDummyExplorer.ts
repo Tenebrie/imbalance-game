@@ -33,6 +33,9 @@ export default class UnitChallengeDummyExplorer extends ServerCard {
 		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(() => {
 			const validCards = CardLibrary.cards.filter((card) => card.isCollectible && card.color !== CardColor.LEADER).slice()
 			const targetCard = getRandomArrayValue(validCards)
+			if (!targetCard) {
+				return
+			}
 			Keywords.createCard.forOwnerOf(this).fromInstance(targetCard)
 			Keywords.createCard.forOwnerOf(this).fromInstance(targetCard)
 		})

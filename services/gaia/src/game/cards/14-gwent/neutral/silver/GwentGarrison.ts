@@ -51,7 +51,7 @@ export default class GwentGarrison extends ServerCard {
 				Keywords.createCard
 					.for(player)
 					.with((card) => {
-						card.boost(GwentGarrison.BOOST, this)
+						card.boostBy(GwentGarrison.BOOST, this)
 					})
 					.fromInstance(targetCard)
 			})

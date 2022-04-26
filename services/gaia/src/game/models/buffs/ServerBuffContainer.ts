@@ -4,7 +4,7 @@ import CardLocation from '@shared/enums/CardLocation'
 import BuffContainer from '@shared/models/BuffContainer'
 import OutgoingBoardUpdateMessages from '@src/game/handlers/outgoing/OutgoingBoardUpdateMessages'
 import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
-import { LeaderStatValueGetter } from '@src/utils/LeaderStats'
+import { ValueGetter } from '@src/utils/LeaderStats'
 import { getClassFromConstructor } from '@src/utils/Utils'
 
 import OutgoingCardUpdateMessages from '../../handlers/outgoing/OutgoingCardUpdateMessages'
@@ -93,7 +93,7 @@ export default class ServerBuffContainer implements BuffContainer {
 
 	public addMultiple(
 		prototype: BuffConstructor,
-		count: number | LeaderStatValueGetter,
+		count: number | ValueGetter,
 		source: ServerBuffSource | null,
 		duration: number | 'default' = 'default',
 		mergeAnimation = false

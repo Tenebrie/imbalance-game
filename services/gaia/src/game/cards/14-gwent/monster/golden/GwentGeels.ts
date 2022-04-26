@@ -36,7 +36,15 @@ export default class GwentGeels extends ServerCard {
 		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(({ owner }) => {
 			const goldenCards = owner.cardDeck.allCards.filter((card) => card.color === CardColor.GOLDEN)
 			const silverCards = owner.cardDeck.allCards.filter((card) => card.color === CardColor.SILVER)
-			this.cardsToChoose = [getRandomArrayValue(goldenCards), getRandomArrayValue(silverCards)]
+			const targetGoldenCard = getRandomArrayValue(goldenCards)
+			const targetSilverCard = getRandomArrayValue(silverCards)
+			this.cardsToChoose = []
+			if (targetGoldenCard) {
+				this.cardsToChoose.push(targetGoldenCard)
+			}
+			if (targetSilverCard) {
+				this.cardsToChoose.push(targetSilverCard)
+			}
 		})
 
 		this.createDeployTargets(TargetType.CARD_IN_UNIT_DECK)
@@ -47,7 +55,7 @@ export default class GwentGeels extends ServerCard {
 					player.cardDeck.removeCard(card)
 					player.cardDeck.addUnitToTop(card)
 				})
-				Keywords.playCardFromDeckOrGraveyard(targetCard)
+				Keywords.playCardFromDeck(targetCard)
 			})
 	}
 }

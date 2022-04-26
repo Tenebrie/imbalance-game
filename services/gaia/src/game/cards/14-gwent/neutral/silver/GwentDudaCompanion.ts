@@ -39,7 +39,7 @@ export default class GwentDudaCompanion extends ServerCard {
 				.filter((unit) => game.board.getHorizontalUnitDistance(triggeringUnit, unit) <= GwentDudaCompanion.DISTANCE)
 
 			targets.forEach((unit) => {
-				unit.boost(GwentDudaCompanion.BOOST, this, 'stagger')
+				unit.boostBy(GwentDudaCompanion.BOOST, this, 'stagger')
 			})
 		})
 	}

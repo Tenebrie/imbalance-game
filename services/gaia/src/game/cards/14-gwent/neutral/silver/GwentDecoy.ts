@@ -37,7 +37,7 @@ export default class GwentDecoy extends ServerCard {
 			.require(({ targetCard }) => [CardColor.BRONZE, CardColor.SILVER].includes(targetCard.color))
 			.perform(({ targetCard, targetUnit }) => {
 				Keywords.returnCardFromBoardToHand(targetUnit)
-				targetCard.boost(GwentDecoy.BOOST, this)
+				targetCard.boostBy(GwentDecoy.BOOST, this)
 				Keywords.playCardFromHand(targetCard)
 			})
 	}

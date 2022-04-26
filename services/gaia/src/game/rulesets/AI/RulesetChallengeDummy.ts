@@ -41,6 +41,22 @@ export default class RulesetChallengeDummy extends ServerRuleset {
 					{ card: UnitChallengeDummyRoyalWarrior, count: Constants.CARD_LIMIT_SILVER },
 					{ card: UnitChallengeDummyVanillaWarrior, count: Constants.CARD_LIMIT_BRONZE },
 				],
+				// deck: [
+				// 	GwentFrancescaFindabair,
+				// 	GwentAglais,
+				// 	GwentOperator,
+				// 	GwentPaulieDahlberg,
+				// 	GwentElvenScout,
+				// 	GwentElvenScout,
+				// 	GwentElvenScout,
+				// 	GwentElvenScout,
+				// 	GwentElvenScout,
+				// 	GwentMahakamDefender,
+				// 	GwentMahakamDefender,
+				// 	GwentMahakamDefender,
+				// 	GwentMahakamDefender,
+				// 	GwentWardancer,
+				// ],
 			})
 	}
 }

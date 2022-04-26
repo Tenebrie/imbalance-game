@@ -39,7 +39,7 @@ export default class GwentTrissButterflies extends ServerCard {
 				const alliedUnits = game.board.getSplashableUnitsFor(group).filter((unit) => unit.card !== this)
 				const targets = getAllLowestUnits(alliedUnits)
 				targets.forEach((target) => {
-					target.boost(GwentTrissButterflies.BOOST, this, 'stagger')
+					target.boostBy(GwentTrissButterflies.BOOST, this, 'stagger')
 				})
 			})
 	}

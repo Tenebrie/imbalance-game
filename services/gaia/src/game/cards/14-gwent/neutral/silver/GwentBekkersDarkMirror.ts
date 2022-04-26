@@ -46,7 +46,7 @@ export default class GwentBekkersDarkMirror extends ServerCard {
 
 			const damage = Math.min(GwentBekkersDarkMirror.POWER_TO_TRANSFER, highestUnit.stats.power)
 			highestUnit.weaken(damage, this, 'parallel')
-			lowestUnit.boost(damage, this, 'parallel')
+			lowestUnit.boostBy(damage, this, 'parallel')
 		})
 	}
 }

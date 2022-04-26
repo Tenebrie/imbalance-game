@@ -3,7 +3,7 @@ import ServerCard from '@src/game/models/ServerCard'
 import { ServerCardTargetCard, ServerCardTargetRow } from '@src/game/models/ServerCardTarget'
 import OrderTargetDefinition from '@src/game/models/targetDefinitions/OrderTargetDefinition'
 import TargetValidatorArguments from '@src/types/TargetValidatorArguments'
-import { LeaderStatValueGetter } from '@src/utils/LeaderStats'
+import { ValueGetter } from '@src/utils/LeaderStats'
 import { v4 as getRandomId } from 'uuid'
 
 export default class OrderTargetDefinitionBuilder<EventArgs extends TargetValidatorArguments> {
@@ -11,8 +11,8 @@ export default class OrderTargetDefinitionBuilder<EventArgs extends TargetValida
 	private readonly card: ServerCard
 	private readonly targetType: TargetType
 
-	private __targetCount: number | LeaderStatValueGetter = 1
-	private __totalTargetCount: number | LeaderStatValueGetter = Infinity
+	private __targetCount: number | ValueGetter = 1
+	private __totalTargetCount: number | ValueGetter = Infinity
 	private __conditions: ((args: EventArgs) => boolean)[] = []
 	private __performCallbacks: ((args: EventArgs) => void)[] = []
 	private __evaluator: ((args: EventArgs) => number) | null = null
@@ -45,7 +45,7 @@ export default class OrderTargetDefinitionBuilder<EventArgs extends TargetValida
 	 *
 	 * Only applicable to this target definition
 	 */
-	public targetCount(count: number | LeaderStatValueGetter): OrderTargetDefinitionBuilder<EventArgs> {
+	public targetCount(count: number | ValueGetter): OrderTargetDefinitionBuilder<EventArgs> {
 		this.__targetCount = count
 		return this
 	}
@@ -57,7 +57,7 @@ export default class OrderTargetDefinitionBuilder<EventArgs extends TargetValida
 	 *
 	 * Applicable to all target definitions on this card
 	 */
-	public totalTargetCount(count: number | LeaderStatValueGetter): OrderTargetDefinitionBuilder<EventArgs> {
+	public totalTargetCount(count: number | ValueGetter): OrderTargetDefinitionBuilder<EventArgs> {
 		this.__totalTargetCount = count
 		return this
 	}

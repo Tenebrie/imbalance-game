@@ -50,7 +50,7 @@ export default class GwentFrancescaFindabair extends ServerCard {
 				Keywords.drawExactCard(player, targetCard)
 
 				if (targetCard.type === CardType.UNIT) {
-					targetCard.boost(GwentFrancescaFindabair.BOOST, this)
+					targetCard.boostBy(GwentFrancescaFindabair.BOOST, this)
 				}
 			})
 	}

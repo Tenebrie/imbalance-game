@@ -24,7 +24,7 @@ import {
 	RowTargetValidatorArguments,
 	UnitTargetValidatorArguments,
 } from '@src/types/TargetValidatorArguments'
-import { LeaderStatValueGetter } from '@src/utils/LeaderStats'
+import { ValueGetter } from '@src/utils/LeaderStats'
 import { createRandomId, getClassFromConstructor, getLeaderTextVariables } from '@src/utils/Utils'
 
 import BotCardEvaluation from '../AI/BotCardEvaluation'
@@ -422,8 +422,8 @@ export default class ServerCard implements Card {
 		return this.features.includes(CardFeature.AMBUSH) && !this.isRevealed
 	}
 
-	public boost(
-		value: number | LeaderStatValueGetter,
+	public boostBy(
+		value: number | ValueGetter,
 		source: ServerBuffSource,
 		threadType: AnimationThreadType = 'sync',
 		animation: 'split' | 'merge' = 'split'
@@ -434,8 +434,28 @@ export default class ServerCard implements Card {
 		})
 	}
 
+	public boostTo(
+		value: number | ValueGetter,
+		source: ServerBuffSource,
+		threadType: AnimationThreadType = 'sync',
+		animation: 'split' | 'merge' = 'split'
+	): void {
+		if (typeof value === 'function') {
+			value = value(source)
+		}
+		const currentPower = this.stats.power
+		const missingPower = value - currentPower
+		if (missingPower <= 0) {
+			return
+		}
+		const BuffStrength = require('../buffs/BuffStrength').default as BuffConstructor
+		this.game.animation.smartThread(threadType, () => {
+			this.buffs.addMultiple(BuffStrength, missingPower, source, 'default', animation === 'merge')
+		})
+	}
+
 	public strengthen(
-		value: number | LeaderStatValueGetter,
+		value: number | ValueGetter,
 		source: ServerBuffSource,
 		threadType: AnimationThreadType = 'sync',
 		animation: 'split' | 'merge' = 'split'
@@ -447,7 +467,7 @@ export default class ServerCard implements Card {
 	}
 
 	public weaken(
-		value: number | LeaderStatValueGetter,
+		value: number | ValueGetter,
 		source: ServerBuffSource,
 		threadType: AnimationThreadType = 'sync',
 		animation: 'split' | 'merge' = 'split'
@@ -878,6 +898,7 @@ export default class ServerCard implements Card {
 	 */
 	protected createEffect(event: GameEventType.CARD_TARGETS_CONFIRMED): EventSubscription<CardTargetsConfirmedEventArgs>
 	protected createEffect(event: GameEventType.CARD_PRE_RESOLVED): EventSubscription<CardPreResolvedEventArgs>
+	protected createEffect(event: GameEventType.CARD_MULTIBUFF_CREATED): EventSubscription<CardMultibuffCreatedEventArgs>
 	protected createEffect(event: GameEventType.CARD_RESOLVED): EventSubscription<CardResolvedEventArgs>
 	protected createEffect(event: GameEventType.BEFORE_CARD_TAKES_DAMAGE): EventSubscription<BeforeCardTakesDamageEventArgs>
 	protected createEffect(event: GameEventType.CARD_TAKES_DAMAGE): EventSubscription<CardTakesDamageEventArgs>

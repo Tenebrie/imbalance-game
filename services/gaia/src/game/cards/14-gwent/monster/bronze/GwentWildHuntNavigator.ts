@@ -36,7 +36,7 @@ export default class GwentWildHuntNavigator extends ServerCard {
 			.require(({ targetCard }) => targetCard.color === CardColor.BRONZE)
 			.require(({ targetCard }) => !targetCard.tribes.includes(CardTribe.MAGE))
 			.perform(({ targetCard }) => {
-				Keywords.playCardFromDeckOrGraveyard(targetCard)
+				Keywords.playCardFromDeck(targetCard)
 			})
 	}
 }

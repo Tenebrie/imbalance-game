@@ -80,6 +80,11 @@ export default defineComponent({
 			const typedEvent = event as ClipboardEvent
 			const items = typedEvent.clipboardData?.items || []
 
+			const activeElement = document.activeElement
+			if (activeElement && ['INPUT', 'TEXTAREA'].includes(activeElement.tagName)) {
+				return
+			}
+
 			for (let i = 0; i < items.length; i++) {
 				if (items[i].kind !== 'string') {
 					return

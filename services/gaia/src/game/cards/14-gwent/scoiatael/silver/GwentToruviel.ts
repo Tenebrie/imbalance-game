@@ -58,7 +58,7 @@ export default class GwentToruviel extends ServerCard {
 					}
 
 					if (!unit.card.features.includes(CardFeature.UNSPLASHABLE)) {
-						unit.boost(GwentToruviel.BOOST, this)
+						unit.boostBy(GwentToruviel.BOOST, this)
 					}
 				})
 			})

@@ -36,10 +36,10 @@ export default class GwentIrisCompanions extends ServerCard {
 			.perform(({ targetCard, player }) => {
 				Keywords.drawExactCard(player, targetCard)
 				const cardsInHand = player.cardHand.allCards
-				if (cardsInHand.length === 0) {
+				const cardToDiscard = getRandomArrayValue(cardsInHand)
+				if (!cardToDiscard) {
 					return
 				}
-				const cardToDiscard = getRandomArrayValue(cardsInHand)
 				Keywords.discardCard(cardToDiscard)
 			})
 	}

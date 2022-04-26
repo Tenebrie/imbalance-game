@@ -15,7 +15,7 @@ import ServerCard from '@src/game/models/ServerCard'
 import { DamageInstance } from '@src/game/models/ServerDamageSource'
 import ServerGame from '@src/game/models/ServerGame'
 import Keywords from '@src/utils/Keywords'
-import { LeaderStatValueGetter } from '@src/utils/LeaderStats'
+import { ValueGetter } from '@src/utils/LeaderStats'
 
 const tierToFeature = (tier: number): CardFeature => {
 	switch (tier) {
@@ -117,13 +117,13 @@ export class BaseRitesActiveItem extends ItemRitesBase {
 		})
 	}
 
-	public addSingleTargetDamage(damage: number | LeaderStatValueGetter): void {
+	public addSingleTargetDamage(damage: number | ValueGetter): void {
 		this.createDeployTargets(TargetType.UNIT)
 			.requireEnemy()
 			.perform(({ targetUnit }) => targetUnit.dealDamage(DamageInstance.fromCard(damage, this)))
 	}
 
-	public addSingleTargetDamageWithSplash(damage: number | LeaderStatValueGetter, splashDamage: number | LeaderStatValueGetter): void {
+	public addSingleTargetDamageWithSplash(damage: number | ValueGetter, splashDamage: number | ValueGetter): void {
 		this.createDeployTargets(TargetType.UNIT)
 			.requireEnemy()
 			.perform(({ targetUnit }) => {
@@ -138,7 +138,7 @@ export class BaseRitesActiveItem extends ItemRitesBase {
 			})
 	}
 
-	public addSingleTargetDamageWithEffect(damage: number | LeaderStatValueGetter, effect: BuffConstructor): void {
+	public addSingleTargetDamageWithEffect(damage: number | ValueGetter, effect: BuffConstructor): void {
 		this.createDeployTargets(TargetType.UNIT)
 			.requireEnemy()
 			.perform(({ targetUnit }) => {

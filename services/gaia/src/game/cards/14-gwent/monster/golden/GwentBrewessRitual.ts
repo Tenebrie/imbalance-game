@@ -38,6 +38,7 @@ export default class GwentBrewessRitual extends ServerCard {
 		this.createDeployTargets(TargetType.CARD_IN_UNIT_GRAVEYARD)
 			.targetCount(GwentBrewessRitual.TARGETS)
 			.requireAllied()
+			.require(({ targetCard }) => targetCard.color === CardColor.BRONZE)
 			.require(({ targetCard }) => targetCard.features.includes(CardFeature.HAS_DEATHWISH))
 			.perform(({ targetCard, player }) => {
 				Keywords.playCardFromGraveyard(targetCard, player)

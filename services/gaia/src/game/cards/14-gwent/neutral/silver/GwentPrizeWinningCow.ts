@@ -40,10 +40,10 @@ export default class GwentPrizeWinningCow extends ServerCard {
 			.require(({ reason }) => reason === UnitDestructionReason.CARD_EFFECT)
 			.perform(({ owner }) => {
 				const validRows = game.board.getControlledRows(owner).filter((row) => !row.isFull())
-				if (validRows.length === 0) {
+				const targetRow = getRandomArrayValue(validRows)
+				if (!targetRow) {
 					return
 				}
-				const targetRow = getRandomArrayValue(validRows)
 				Keywords.summonUnit({
 					cardConstructor: GwentChort,
 					owner,

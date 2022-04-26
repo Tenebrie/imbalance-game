@@ -39,6 +39,9 @@ export default class GwentWardancer extends ServerCard {
 			}
 
 			const randomRow = getRandomArrayValue(allRows)
+			if (!randomRow) {
+				return
+			}
 
 			Keywords.summonUnitFromDeck({ card: this, owner, rowIndex: randomRow.index, unitIndex: randomRow.farRightUnitIndex })
 		})

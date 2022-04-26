@@ -36,11 +36,12 @@ export default class GwentAvallachSage extends ServerCard {
 			const validTargets = deck.unitCards
 				.filter((card) => card.type === CardType.UNIT)
 				.filter((card) => card.color === CardColor.GOLDEN || card.color === CardColor.SILVER)
-			if (!validTargets) {
+			const target = getRandomArrayValue(validTargets)
+			if (!target) {
 				return
 			}
 
-			Keywords.createCard.for(owner).fromInstance(getRandomArrayValue(validTargets))
+			Keywords.createCard.for(owner).fromInstance(target)
 		})
 	}
 }

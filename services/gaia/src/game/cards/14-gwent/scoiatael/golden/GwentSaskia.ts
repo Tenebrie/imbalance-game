@@ -40,12 +40,12 @@ export default class GwentSaskia extends ServerCard {
 			.perform(({ targetCard, player }) => {
 				const validCards = player.cardDeck.allCards.filter((card) => card.color === CardColor.BRONZE)
 				Keywords.returnCardFromHandToDeck(targetCard)
-
-				if (validCards.length === 0) {
+				const cardToDraw = getRandomArrayValue(validCards)
+				if (!cardToDraw) {
 					return
 				}
 
-				Keywords.drawExactCard(player, getRandomArrayValue(validCards))
+				Keywords.drawExactCard(player, cardToDraw)
 			})
 	}
 }

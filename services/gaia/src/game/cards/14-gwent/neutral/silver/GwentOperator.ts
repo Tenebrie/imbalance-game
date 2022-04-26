@@ -8,6 +8,7 @@ import BuffGwentSingleUsed from '@src/game/buffs/14-gwent/BuffGwentSingleUsed'
 import ServerCard from '@src/game/models/ServerCard'
 import ServerGame from '@src/game/models/ServerGame'
 import Keywords from '@src/utils/Keywords'
+import { isTruce } from '@src/utils/Utils'
 
 export default class GwentOperator extends ServerCard {
 	constructor(game: ServerGame) {
@@ -32,6 +33,7 @@ export default class GwentOperator extends ServerCard {
 		})
 
 		this.createDeployTargets(TargetType.CARD_IN_UNIT_HAND)
+			.require(() => isTruce(game))
 			.require(() => !this.buffs.has(BuffGwentSingleUsed))
 			.requireAllied()
 			.require(({ targetCard }) => targetCard.color === CardColor.BRONZE)

@@ -14,7 +14,7 @@ export default class BuffGwentRowFrost extends ServerRowBuff {
 			alignment: BuffAlignment.NEGATIVE,
 		})
 
-		this.createCallback(GameEventType.TURN_ENDED)
+		this.createCallback(GameEventType.TURN_STARTED)
 			.require(({ group }) => group.owns(this))
 			.perform(() => this.onTurnStarted())
 	}

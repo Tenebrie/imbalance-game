@@ -39,7 +39,7 @@ export default class UnitSupplyWagon extends ServerCard {
 			unit.buffs.addMultiple(BuffStrength, this.extraPower, this)
 			this.game.animation.commitAnimationThread()
 		})
-		adjacentUnits = adjacentUnits.filter((unit) => unit.isAlive())
+		adjacentUnits = adjacentUnits.filter((unit) => unit.isAlive)
 		if (adjacentUnits.length === 0) {
 			return
 		}

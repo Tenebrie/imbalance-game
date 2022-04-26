@@ -40,7 +40,7 @@ export default class GwentIrisVonEverec extends ServerCard {
 			const validUnits = oppositeRow.splashableCards
 			const targets = getMultipleRandomArrayValues(validUnits, GwentIrisVonEverec.TARGETS)
 			targets.forEach((unit) => {
-				unit.boost(GwentIrisVonEverec.BOOST, this, 'stagger')
+				unit.boostBy(GwentIrisVonEverec.BOOST, this, 'stagger')
 			})
 		})
 	}

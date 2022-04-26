@@ -36,10 +36,11 @@ export default class GwentSarah extends ServerCard {
 			.perform(({ targetCard, player }) => {
 				Keywords.returnCardFromHandToDeck(targetCard)
 				const validCards = player.cardDeck.allCards.filter((card) => card.color === targetCard.color)
-				if (validCards.length === 0) {
+				const cardToSwapFor = getRandomArrayValue(validCards)
+				if (!cardToSwapFor) {
 					return
 				}
-				Keywords.drawExactCard(player, getRandomArrayValue(validCards))
+				Keywords.drawExactCard(player, cardToSwapFor)
 			})
 	}
 }

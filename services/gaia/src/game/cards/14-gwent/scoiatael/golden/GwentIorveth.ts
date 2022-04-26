@@ -42,7 +42,7 @@ export default class GwentIorveth extends ServerCard {
 					console.log(this.ownerPlayer.cardHand.allCards)
 					this.ownerPlayer.cardHand.allCards
 						.filter((card) => card.tribes.includes(CardTribe.ELF))
-						.forEach((card) => card.boost(GwentIorveth.BOOST, this))
+						.forEach((card) => card.boostBy(GwentIorveth.BOOST, this))
 				}
 			})
 	}

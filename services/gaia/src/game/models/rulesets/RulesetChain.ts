@@ -53,14 +53,15 @@ export class RulesetChain {
 			throw new Error(`No rulesets found with featureLink ${JSON.stringify(featureLink)}`)
 		}
 		const filteredRulesets = validRulesets.filter((ruleset) => ruleset.isValidChainFrom(game))
-		if (filteredRulesets.length === 0) {
+		const targetRuleset = getRandomArrayValue(filteredRulesets)
+		if (!targetRuleset) {
 			throw new Error(
 				`No rulesets accepted feature link ${JSON.stringify(featureLink)}. Matching rulesets: ${JSON.stringify(
 					validRulesets.map((ruleset) => ruleset.class)
 				)}`
 			)
 		}
-		return getRandomArrayValue(filteredRulesets).constructor as RulesetConstructor
+		return targetRuleset.constructor as RulesetConstructor
 	}
 }
 

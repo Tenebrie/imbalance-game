@@ -42,7 +42,7 @@ export default class GwentVriheddNeophyte extends ServerCard {
 
 			shuffle(units)
 				.slice(0, GwentVriheddNeophyte.UNIT_COUNT)
-				.forEach((unit) => unit.boost(GwentVriheddNeophyte.BOOST, this))
+				.forEach((unit) => unit.boostBy(GwentVriheddNeophyte.BOOST, this))
 		})
 	}
 }

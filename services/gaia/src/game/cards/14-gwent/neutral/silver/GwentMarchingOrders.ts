@@ -42,7 +42,7 @@ export default class GwentMarchingOrders extends ServerCard {
 			if (!target) {
 				return
 			}
-			target.boost(GwentMarchingOrders.BOOST, this)
+			target.boostBy(GwentMarchingOrders.BOOST, this)
 			Keywords.playCardFromDeck(target)
 		})
 	}

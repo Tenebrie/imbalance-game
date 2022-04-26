@@ -47,13 +47,13 @@ export default class GwentArachasBehemoth extends ServerCard {
 		this.createCallback(GameEventType.UNIT_CONSUMED, [CardLocation.BOARD])
 			.require(() => this.triggersRemaining > 0)
 			.perform(() => {
+				this.triggersRemaining -= 1
 				const validRows = game.board.getControlledRows(this.ownerGroup).filter((row) => !row.isFull())
-				if (validRows.length === 0) {
+				const targetRow = getRandomArrayValue(validRows)
+				if (!targetRow) {
 					return
 				}
 
-				this.triggersRemaining -= 1
-				const targetRow = getRandomArrayValue(validRows)
 				Keywords.summonUnit({
 					owner: this.ownerPlayer,
 					cardConstructor: GwentArachasDrone,

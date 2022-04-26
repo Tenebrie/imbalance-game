@@ -423,7 +423,10 @@ export const validateEditorDeck = (unpopulatedDeck: EditorDeck): { valid: boolea
 export const snakeToCamelCase = (str: string): string =>
 	str.toLowerCase().replace(/([-_][a-z])/g, (group) => group.toUpperCase().replace('-', '').replace('_', ''))
 
-export const getRandomArrayValue = <T>(array: T[]): T => {
+export const getRandomArrayValue = <T>(array: T[]): T | null => {
+	if (array.length === 0) {
+		return null
+	}
 	return array[Math.floor(Math.random() * array.length)]
 }
 export const getMultipleRandomArrayValues = <T>(array: T[], maxCount: number): T[] => {

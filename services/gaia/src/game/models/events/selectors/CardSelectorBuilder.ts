@@ -1,4 +1,4 @@
-import { LeaderStatValueGetter } from '@src/utils/LeaderStats'
+import { ValueGetter } from '@src/utils/LeaderStats'
 
 import { BuffConstructor } from '../../buffs/ServerBuffContainer'
 import ServerGame from '../../ServerGame'
@@ -70,7 +70,7 @@ export class CardSelectorBuilder {
 	 * While the selector is true, the target card will have the specified buff.
 	 * The buff will also be non-dispellable.
 	 */
-	public provide(buff: BuffConstructor, count: number | LeaderStatValueGetter = 1): CardSelectorBuilder {
+	public provide(buff: BuffConstructor, count: number | ValueGetter = 1): CardSelectorBuilder {
 		this.__provideBuffs.push({ buff, count })
 		return this
 	}
@@ -80,7 +80,7 @@ export class CardSelectorBuilder {
 	 * While the selector is true, this card will have the specified buff.
 	 * The buff will also be non-dispellable.
 	 */
-	public provideSelf(buff: BuffConstructor, count: number | LeaderStatValueGetter = 1): CardSelectorBuilder {
+	public provideSelf(buff: BuffConstructor, count: number | ValueGetter = 1): CardSelectorBuilder {
 		this.__provideSelfBuffs.push({ buff, count })
 		return this
 	}

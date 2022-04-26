@@ -55,7 +55,7 @@ export default class GwentWolfsbane extends ServerCard {
 				const lowestAlly = getLowestUnit(allies)
 				const highestEnemy = getHighestUnit(enemies)
 				if (lowestAlly) {
-					lowestAlly.boost(GwentWolfsbane.BOOST, this, 'parallel')
+					lowestAlly.boostBy(GwentWolfsbane.BOOST, this, 'parallel')
 				}
 				if (highestEnemy) {
 					highestEnemy.dealDamage(DamageInstance.fromCard(GwentWolfsbane.DAMAGE, this), 'parallel')

@@ -48,7 +48,11 @@ export default class GwentDolBlathannaBowman extends ServerCard {
 		this.createEffect(GameEventType.UNIT_MOVED).perform(() => {
 			const triggeringUnit = this.unit!
 			const enemyUnits = this.game.board.getAllUnits().filter((unit) => unit.owner !== triggeringUnit.owner)
-			getRandomArrayValue(enemyUnits).dealDamage(DamageInstance.fromUnit(GwentDolBlathannaBowman.DAMAGE, triggeringUnit))
+			const target = getRandomArrayValue(enemyUnits)
+			if (!target) {
+				return
+			}
+			target.dealDamage(DamageInstance.fromUnit(GwentDolBlathannaBowman.DAMAGE, triggeringUnit))
 		})
 
 		this.createCallback(GameEventType.UNIT_MOVED, [CardLocation.BOARD])

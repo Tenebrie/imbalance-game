@@ -36,7 +36,7 @@ export default class GwentCommandersHorn extends ServerCard {
 				(unit) => game.board.getHorizontalUnitDistance(unit, targetUnit) <= 2
 			)
 			adjacentUnits.forEach((unit) => {
-				unit.boost(GwentCommandersHorn.BOOST, this, 'stagger')
+				unit.boostBy(GwentCommandersHorn.BOOST, this, 'stagger')
 			})
 		})
 	}

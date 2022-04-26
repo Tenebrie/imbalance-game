@@ -36,7 +36,7 @@ export default class GwentSaesenthessis extends ServerCard {
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(() => {
 			const dwarfCount = game.board.getSplashableUnitsOfTribe(CardTribe.DWARF, this.ownerGroup).length
-			this.boost(dwarfCount * GwentSaesenthessis.BOOST, this)
+			this.boostBy(dwarfCount * GwentSaesenthessis.BOOST, this)
 		})
 
 		this.createDeployTargets(TargetType.UNIT)

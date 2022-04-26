@@ -1,15 +1,15 @@
 import TargetType from '@shared/enums/TargetType'
 import ServerCard from '@src/game/models/ServerCard'
 import TargetValidatorArguments from '@src/types/TargetValidatorArguments'
-import { LeaderStatValueGetter } from '@src/utils/LeaderStats'
+import { ValueGetter } from '@src/utils/LeaderStats'
 
 export default class DeployTargetDefinition<EventArgs extends TargetValidatorArguments> {
 	public readonly id: string
 	public readonly card: ServerCard
 	public readonly targetType: TargetType
 
-	private readonly __targetCount: number | LeaderStatValueGetter
-	private readonly __totalTargetCount: number | LeaderStatValueGetter
+	private readonly __targetCount: number | ValueGetter
+	private readonly __totalTargetCount: number | ValueGetter
 	private readonly __conditions: ((args: EventArgs) => boolean)[]
 	private readonly __performCallbacks: ((args: EventArgs) => void)[]
 	private readonly __finalizeCallbacks: ((args: EventArgs) => void)[]
@@ -21,8 +21,8 @@ export default class DeployTargetDefinition<EventArgs extends TargetValidatorArg
 		id: string,
 		card: ServerCard,
 		targetType: TargetType,
-		targetCount: number | LeaderStatValueGetter,
-		totalTargetCount: number | LeaderStatValueGetter,
+		targetCount: number | ValueGetter,
+		totalTargetCount: number | ValueGetter,
 		conditions: ((args: EventArgs) => boolean)[],
 		performCallbacks: ((args: EventArgs) => void)[],
 		finalizeCallbacks: ((args: EventArgs) => void)[],

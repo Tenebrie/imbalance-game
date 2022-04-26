@@ -2,7 +2,7 @@ import Unit from '@shared/models/Unit'
 import { OrderTarget } from '@src/game/models/ServerBoardOrders'
 import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
 import ServerPlayerInGame from '@src/game/players/ServerPlayerInGame'
-import { LeaderStatValueGetter } from '@src/utils/LeaderStats'
+import { ValueGetter } from '@src/utils/LeaderStats'
 
 import ServerBuffContainer, { ServerBuffSource } from './buffs/ServerBuffContainer'
 import ServerBoardRow from './ServerBoardRow'
@@ -57,15 +57,19 @@ export default class ServerUnit implements Unit {
 		return this.card.buffs
 	}
 
-	public boost(value: number | LeaderStatValueGetter, source: ServerBuffSource, animation: AnimationThreadType = 'sync'): void {
-		this.card.boost(value, source, animation)
+	public boostBy(value: number | ValueGetter, source: ServerBuffSource, animation: AnimationThreadType = 'sync'): void {
+		this.card.boostBy(value, source, animation)
 	}
 
-	public strengthen(value: number | LeaderStatValueGetter, source: ServerBuffSource, animation: AnimationThreadType = 'sync'): void {
+	public boostTo(value: number | ValueGetter, source: ServerBuffSource, animation: AnimationThreadType = 'sync'): void {
+		this.card.boostTo(value, source, animation)
+	}
+
+	public strengthen(value: number | ValueGetter, source: ServerBuffSource, animation: AnimationThreadType = 'sync'): void {
 		this.card.strengthen(value, source, animation)
 	}
 
-	public weaken(value: number | LeaderStatValueGetter, source: ServerBuffSource, animation: AnimationThreadType = 'sync'): void {
+	public weaken(value: number | ValueGetter, source: ServerBuffSource, animation: AnimationThreadType = 'sync'): void {
 		this.card.weaken(value, source, animation)
 	}
 
@@ -77,7 +81,7 @@ export default class ServerUnit implements Unit {
 		this.card.heal(healingInstance)
 	}
 
-	public isAlive(): boolean {
+	public get isAlive(): boolean {
 		return !this.card.isDead
 	}
 

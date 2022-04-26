@@ -44,8 +44,11 @@ export default class GwentSheldonSkaggs extends ServerCard {
 					const otherRows = game.board.rows
 						.filter((row) => row.owner?.owns(this))
 						.filter((row) => row.index !== unit.boardRow.index)
-						.filter((row) => row.isNotFull)
+						.filter((row) => row.isNotFull())
 					const rowToMove = getRandomArrayValue(otherRows)
+					if (!rowToMove) {
+						return
+					}
 					Keywords.moveUnit(unit, rowToMove, rowToMove.farRightUnitIndex)
 					this.buffs.addMultiple(BuffStrength, GwentSheldonSkaggs.BOOST, this)
 				})

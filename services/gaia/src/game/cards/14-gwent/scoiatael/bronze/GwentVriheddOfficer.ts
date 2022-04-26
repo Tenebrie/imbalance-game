@@ -35,7 +35,7 @@ export default class GwentVriheddOfficer extends ServerCard {
 			.perform(({ targetCard, player }) => {
 				Keywords.returnCardFromHandToDeck(targetCard)
 				Keywords.draw.topUnitCard(player)
-				this.boost(targetCard.stats.basePower, this)
+				this.boostBy(targetCard.stats.basePower, this)
 			})
 	}
 }

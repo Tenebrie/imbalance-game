@@ -31,7 +31,7 @@ export default class GwentEleyas extends ServerCard {
 			},
 		})
 
-		const boostEffect = () => this.boost(GwentEleyas.BOOST, this)
+		const boostEffect = () => this.boostBy(GwentEleyas.BOOST, this)
 
 		this.createEffect(GameEventType.CARD_DRAWN).perform(boostEffect)
 		this.createEffect(GameEventType.CARD_RETURNED).perform(boostEffect)

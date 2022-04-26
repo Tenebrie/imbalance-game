@@ -33,7 +33,7 @@ export default class GwentHawkerSupport extends ServerCard {
 		this.createDeployTargets(TargetType.CARD_IN_UNIT_HAND)
 			.requireAllied()
 			.perform(({ targetCard }) => {
-				targetCard.boost(GwentHawkerSupport.BOOST, this)
+				targetCard.boostBy(GwentHawkerSupport.BOOST, this)
 			})
 	}
 }

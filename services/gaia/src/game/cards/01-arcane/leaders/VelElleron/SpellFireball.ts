@@ -45,7 +45,7 @@ export default class SpellFireball extends ServerCard {
 
 		target.dealDamage(DamageInstance.fromCard(this.baseDamage, this))
 
-		const survivingAreaTargets = areaTargets.filter((target) => target.isAlive())
+		const survivingAreaTargets = areaTargets.filter((target) => target.isAlive)
 		if (survivingAreaTargets.length === 0) {
 			return
 		}

@@ -36,7 +36,7 @@ export default class GwentWhispessTribute extends ServerCard {
 			.require(({ targetCard }) => targetCard.color === CardColor.BRONZE || targetCard.color === CardColor.SILVER)
 			.require(({ targetCard }) => targetCard.tribes.includes(CardTribe.ORGANIC))
 			.perform(({ targetCard }) => {
-				Keywords.playCardFromDeckOrGraveyard(targetCard)
+				Keywords.playCardFromDeck(targetCard)
 			})
 	}
 }

@@ -35,7 +35,7 @@ export default class GwentRegis extends ServerCard {
 			.perform(({ targetUnit }) => {
 				const totalBoost = targetUnit.buffs.getIntensity(BuffStrength)
 				targetUnit.buffs.removeAll(BuffStrength, this)
-				this.boost(totalBoost, targetUnit.card, 'stagger')
+				this.boostBy(totalBoost, targetUnit.card, 'stagger')
 			})
 	}
 }

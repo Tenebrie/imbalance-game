@@ -36,7 +36,7 @@ export default class GwentDandelionVainglory extends ServerCard {
 			const alliesCount = owner.startingDeck.unitCards.filter((card) =>
 				validSubstrings.some((substr) => card.class.toLowerCase().includes(substr))
 			).length
-			this.boost(GwentDandelionVainglory.BOOST * alliesCount, this)
+			this.boostBy(GwentDandelionVainglory.BOOST * alliesCount, this)
 		})
 	}
 }

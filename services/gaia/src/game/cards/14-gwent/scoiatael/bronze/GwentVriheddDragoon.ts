@@ -41,11 +41,12 @@ export default class GwentVriheddDragoon extends ServerCard {
 					(card) => card.type === CardType.UNIT && !card.features.includes(CardFeature.SPY)
 				)
 
-				if (units.length === 0) {
+				const targetUnit = getRandomArrayValue(units)
+				if (!targetUnit) {
 					return
 				}
 
-				getRandomArrayValue(units).boost(GwentVriheddDragoon.BOOST, this)
+				targetUnit.boostBy(GwentVriheddDragoon.BOOST, this)
 			})
 	}
 }

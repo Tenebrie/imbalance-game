@@ -41,10 +41,10 @@ export default class GwentNivellen extends ServerCard {
 						.getControlledRows(unit.owner)
 						.filter((row) => row !== unit.boardRow)
 						.filter((row) => row.isNotFull())
-					if (validTargetRows.length === 0) {
+					const targetRow = getRandomArrayValue(validTargetRows)
+					if (!targetRow) {
 						return
 					}
-					const targetRow = getRandomArrayValue(validTargetRows)
 					game.animation.instantThread(() => {
 						Keywords.moveUnit(unit, targetRow.index, targetRow.farRightUnitIndex)
 					})

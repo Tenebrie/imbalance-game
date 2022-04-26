@@ -38,7 +38,7 @@ export default class GwentDudu extends ServerCard {
 				if (difference <= 0) {
 					return
 				}
-				this.boost(difference, this)
+				this.boostBy(difference, this)
 			})
 	}
 }

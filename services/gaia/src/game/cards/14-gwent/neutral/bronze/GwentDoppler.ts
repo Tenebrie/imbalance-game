@@ -36,7 +36,11 @@ export default class GwentDoppler extends ServerCard {
 			const validCards = CardLibrary.cards.filter(
 				(card) => card.isCollectible && card.faction === faction && card.color === CardColor.BRONZE && card.type === CardType.UNIT
 			)
-			Keywords.createCard.forOwnerOf(this).fromInstance(getRandomArrayValue(validCards))
+			const target = getRandomArrayValue(validCards)
+			if (!target) {
+				return
+			}
+			Keywords.createCard.forOwnerOf(this).fromInstance(target)
 		})
 	}
 }

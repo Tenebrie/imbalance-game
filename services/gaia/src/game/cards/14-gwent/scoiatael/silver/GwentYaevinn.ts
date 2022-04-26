@@ -40,19 +40,20 @@ export default class GwentYaevinn extends ServerCard {
 		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(({ owner }) => {
 			const specialCards = owner.cardDeck.allCards.filter((card) => card.type === CardType.SPELL)
 
-			if (specialCards.length === 0) {
+			const targetSpecialCard = getRandomArrayValue(specialCards)
+			if (!targetSpecialCard) {
 				return
 			}
 
-			this.cardsToChoose.push(getRandomArrayValue(specialCards))
+			this.cardsToChoose.push(targetSpecialCard)
 
 			const unitCards = owner.cardDeck.allCards.filter((card) => card.type === CardType.UNIT)
-
-			if (unitCards.length === 0) {
+			const targetUnitCard = getRandomArrayValue(unitCards)
+			if (!targetUnitCard) {
 				return
 			}
 
-			this.cardsToChoose.push(getRandomArrayValue(unitCards))
+			this.cardsToChoose.push(targetUnitCard)
 		})
 
 		this.createDeployTargets(TargetType.CARD_IN_UNIT_DECK)

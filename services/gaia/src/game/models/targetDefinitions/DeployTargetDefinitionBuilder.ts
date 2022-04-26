@@ -3,7 +3,7 @@ import ServerCard from '@src/game/models/ServerCard'
 import { ServerCardTargetCard, ServerCardTargetRow } from '@src/game/models/ServerCardTarget'
 import DeployTargetDefinition from '@src/game/models/targetDefinitions/DeployTargetDefinition'
 import TargetValidatorArguments from '@src/types/TargetValidatorArguments'
-import { LeaderStatValueGetter } from '@src/utils/LeaderStats'
+import { ValueGetter } from '@src/utils/LeaderStats'
 import { v4 as getRandomId } from 'uuid'
 
 export default class DeployTargetDefinitionBuilder<EventArgs extends TargetValidatorArguments> {
@@ -11,8 +11,8 @@ export default class DeployTargetDefinitionBuilder<EventArgs extends TargetValid
 	private readonly card: ServerCard
 	private readonly targetType: TargetType
 
-	private __targetCount: number | LeaderStatValueGetter = 1
-	private __totalTargetCount: number | LeaderStatValueGetter = Infinity
+	private __targetCount: number | ValueGetter = 1
+	private __totalTargetCount: number | ValueGetter = Infinity
 	private __conditions: ((args: EventArgs) => boolean)[] = []
 	private __performCallbacks: ((args: EventArgs) => void)[] = []
 	private __finalizeCallbacks: ((args: EventArgs) => void)[] = []
@@ -49,7 +49,7 @@ export default class DeployTargetDefinitionBuilder<EventArgs extends TargetValid
 	 *
 	 * Only applicable to this target definition
 	 */
-	public targetCount(count: number | LeaderStatValueGetter): DeployTargetDefinitionBuilder<EventArgs> {
+	public targetCount(count: number | ValueGetter): DeployTargetDefinitionBuilder<EventArgs> {
 		this.__targetCount = count
 		return this
 	}
@@ -61,7 +61,7 @@ export default class DeployTargetDefinitionBuilder<EventArgs extends TargetValid
 	 *
 	 * Applicable to all target definitions on this card
 	 */
-	public totalTargetCount(count: number | LeaderStatValueGetter): DeployTargetDefinitionBuilder<EventArgs> {
+	public totalTargetCount(count: number | ValueGetter): DeployTargetDefinitionBuilder<EventArgs> {
 		this.__totalTargetCount = count
 		return this
 	}

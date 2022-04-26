@@ -39,7 +39,7 @@ export default class GwentNecromancy extends ServerCard {
 				return
 			}
 			const boostValue = this.cardToBanish.stats.basePower
-			this.unitToBoost.boost(boostValue, this)
+			this.unitToBoost.boostBy(boostValue, this)
 			this.cardToBanish.ownerPlayer.cardGraveyard.removeCard(this.cardToBanish)
 		}
 

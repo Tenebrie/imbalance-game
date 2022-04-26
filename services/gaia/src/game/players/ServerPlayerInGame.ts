@@ -363,10 +363,10 @@ export class ServerBotPlayerInGame extends ServerPlayerInGame {
 					const playableCards = this.cardHand.unitCards.filter(
 						(card) => card.targeting.getPlayTargets(this, { checkMana: true }).length > 0
 					)
-					if (playableCards.length === 0) {
+					const card = getRandomArrayValue(playableCards)
+					if (!card) {
 						break
 					}
-					const card = getRandomArrayValue(playableCards)
 					this.botPlaysCard(false, card.id)
 				}
 			} catch (e) {

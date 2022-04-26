@@ -40,6 +40,7 @@ export default class GwentMahakamAle extends ServerCard {
 			const targets = alliedRows
 				.map((row) => getRandomArrayValue(row.cards.filter((unit) => !unit.card.features.includes(CardFeature.UNTARGETABLE))))
 				.filter((unit) => !!unit)
+				.map((unit) => unit!)
 			targets.forEach((unit) => {
 				game.animation.thread(() => {
 					unit.buffs.addMultiple(BuffStrength, GwentMahakamAle.BOOST, this)

@@ -34,10 +34,10 @@ export default class GwentDwarvenAgitator extends ServerCard {
 			const validCards = owner.cardDeck.allCards.filter(
 				(card) => card.tribes.includes(CardTribe.DWARF) && card.color === CardColor.BRONZE && card.class !== this.class
 			)
-			if (validCards.length === 0) {
+			const cardToPlay = getRandomArrayValue(validCards)
+			if (!cardToPlay) {
 				return
 			}
-			const cardToPlay = getRandomArrayValue(validCards)
 			Keywords.createCard.for(owner).fromInstance(cardToPlay)
 		})
 	}

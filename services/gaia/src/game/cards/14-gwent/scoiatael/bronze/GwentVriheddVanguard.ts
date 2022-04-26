@@ -35,7 +35,7 @@ export default class GwentVriheddVanguard extends ServerCard {
 			game.board
 				.getSplashableUnitsOfTribe(CardTribe.ELF, this.ownerGroup)
 				.filter((unit) => unit.card !== this)
-				.forEach((unit) => unit.boost(GwentVriheddVanguard.BOOST, this))
+				.forEach((unit) => unit.boostBy(GwentVriheddVanguard.BOOST, this))
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(boostEffect)
 		this.createEffect(GameEventType.CARD_RETURNED).perform(boostEffect)

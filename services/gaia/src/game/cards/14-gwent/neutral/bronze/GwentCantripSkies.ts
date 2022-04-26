@@ -34,11 +34,11 @@ export default class GwentCantripSkies extends ServerCard {
 
 		this.createEffect(GameEventType.SPELL_DEPLOYED).perform(({ owner }) => {
 			const validCards = owner.cardDeck.allCards.filter((card) => card.type === CardType.UNIT && card.color === CardColor.BRONZE)
-			if (validCards.length === 0) {
+			const targetCard = getRandomArrayValue(validCards)
+			if (!targetCard) {
 				return
 			}
-			const targetCard = getRandomArrayValue(validCards)
-			Keywords.playCardFromDeckOrGraveyard(targetCard)
+			Keywords.playCardFromDeck(targetCard)
 		})
 	}
 }
