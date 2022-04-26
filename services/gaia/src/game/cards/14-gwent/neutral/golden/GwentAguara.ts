@@ -14,6 +14,8 @@ import GwentAguaraCharm from './GwentAguaraCharm'
 import GwentAguaraDamage from './GwentAguaraDamage'
 
 export default class GwentAguara extends ServerCard {
+	private excludedCard: ServerCard | null = null
+
 	constructor(game: ServerGame) {
 		super(game, {
 			type: CardType.UNIT,
@@ -37,6 +39,7 @@ export default class GwentAguara extends ServerCard {
 		})
 
 		this.createDeployTargets(TargetType.CARD_IN_LIBRARY)
+			.targetCount(2)
 			.require(
 				({ targetCard }) =>
 					targetCard instanceof GwentAguaraBoostBoard ||
@@ -44,7 +47,9 @@ export default class GwentAguara extends ServerCard {
 					targetCard instanceof GwentAguaraDamage ||
 					targetCard instanceof GwentAguaraCharm
 			)
+			.require(({ targetCard }) => targetCard !== this.excludedCard)
 			.perform(({ targetCard }) => {
+				this.excludedCard = targetCard
 				Keywords.createCard.forOwnerOf(this).fromInstance(targetCard)
 			})
 	}

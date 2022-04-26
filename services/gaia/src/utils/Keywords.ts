@@ -269,7 +269,7 @@ const Keywords = {
 	returnCardFromHandToDeck: (card: ServerCard): void => {
 		const owner = card.ownerPlayer
 		owner.cardHand.discardCard(card)
-		owner.cardDeck.addUnitToBottom(card)
+		owner.cardDeck.shuffleUnitIn(card)
 		card.game.events.postEvent(
 			GameEventCreators.cardReturned({
 				game: card.game,
@@ -284,7 +284,7 @@ const Keywords = {
 		const card = unit.card
 		const owner = card.ownerPlayer
 		card.game.board.removeUnit(unit)
-		owner.cardDeck.addUnitToBottom(card)
+		owner.cardDeck.shuffleUnitIn(card)
 		card.game.events.postEvent(
 			GameEventCreators.cardReturned({
 				game: card.game,
@@ -312,7 +312,7 @@ const Keywords = {
 	returnCardFromGraveyardToDeck: (card: ServerCard): void => {
 		const owner = card.ownerPlayer
 		owner.cardGraveyard.removeCard(card)
-		owner.cardDeck.addUnitToBottom(card)
+		owner.cardDeck.shuffleUnitIn(card)
 		card.game.events.postEvent(
 			GameEventCreators.cardReturned({
 				game: card.game,

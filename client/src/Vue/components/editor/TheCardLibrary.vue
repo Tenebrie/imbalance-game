@@ -16,6 +16,7 @@
 </template>
 
 <script lang="ts">
+import CardFaction from '@shared/enums/CardFaction'
 import CardFeature from '@shared/enums/CardFeature'
 import Language from '@shared/enums/Language'
 import CardMessage from '@shared/models/network/card/CardMessage'
@@ -73,6 +74,16 @@ export default defineComponent({
 				)
 			}
 
+			const isViableForCurrentDeck = (card: CardMessage): boolean => {
+				const currentDeck = store.getters.editor.currentDeck
+				return (
+					!currentDeck ||
+					currentDeck.faction === CardFaction.NEUTRAL ||
+					card.faction === CardFaction.NEUTRAL ||
+					card.faction === currentDeck.faction
+				)
+			}
+
 			const stripFormatting = (str: string): string => {
 				return str.replace(/\*/g, '')
 			}
@@ -89,6 +100,7 @@ export default defineComponent({
 
 			const results = store.state.editor.cardLibrary
 				.filter((card) => isCollectible(card))
+				.filter((card) => isViableForCurrentDeck(card))
 				.filter((card) => selectedColor === null || selectedColor.includes(card.color))
 				.filter((card) => selectedFaction === null || selectedFaction.includes(card.faction))
 				.map((card) => ({

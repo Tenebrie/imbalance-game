@@ -58,6 +58,12 @@ export default class ServerDeck implements CardDeck {
 		OutgoingMessageHandlers.notifyAboutCardAddedToUnitDeck(this.owner, card)
 	}
 
+	public shuffleUnitIn(card: ServerCard): void {
+		const targetPosition = Math.floor(Math.random() * (this.unitCards.length + 1))
+		this.unitCards.splice(targetPosition, 0, card)
+		OutgoingMessageHandlers.notifyAboutCardAddedToUnitDeck(this.owner, card)
+	}
+
 	public addSpellToBottom(card: ServerCard): void {
 		this.spellCards.push(card)
 		OutgoingMessageHandlers.notifyAboutCardAddedToSpellDeck(this.owner, card)

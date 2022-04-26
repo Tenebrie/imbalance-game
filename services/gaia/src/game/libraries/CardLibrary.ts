@@ -1,4 +1,4 @@
-import { printLibraryBreakdown } from '@src/utils/LibraryPrinter'
+import { printFactionBreakdown, printLibraryBreakdown } from '@src/utils/LibraryPrinter'
 import { colorize, colorizeId, getClassFromConstructor } from '@src/utils/Utils'
 import moment from 'moment'
 
@@ -62,6 +62,7 @@ class InternalCardLibrary {
 		}
 
 		console.info('Card library breakdown:', printLibraryBreakdown(filteredCards))
+		console.info('Gwent faction breakdown:', printFactionBreakdown(filteredCards))
 		console.info(colorize('Card library loaded successfully', AsciiColor.GREEN) + '\n')
 	}
 
