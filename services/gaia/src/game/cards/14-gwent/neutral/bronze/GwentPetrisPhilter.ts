@@ -27,7 +27,7 @@ export default class GwentPetrisPhilter extends ServerCard {
 		})
 		this.dynamicTextVariables = {
 			boost: GwentPetrisPhilter.BOOST,
-			targets: GwentPetrisPhilter.BOOST,
+			targets: GwentPetrisPhilter.TARGETS,
 		}
 
 		this.createLocalization({
