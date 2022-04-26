@@ -5,6 +5,7 @@ import CardTribe from '@shared/enums/CardTribe'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
+import BotCardEvaluation from '@src/game/AI/BotCardEvaluation'
 import BuffStrength from '@src/game/buffs/BuffStrength'
 
 import ServerCard from '../../../../models/ServerCard'
@@ -28,6 +29,8 @@ export default class GwentYarpenZigrin extends ServerCard {
 			boost: GwentYarpenZigrin.BOOST,
 		}
 
+		this.createPlayTargets().evaluate(({ targetRow }) => (targetRow.hasBoon ? 1 : 0))
+
 		this.createLocalization({
 			en: {
 				name: 'Yarpen Zigrin',
@@ -35,6 +38,8 @@ export default class GwentYarpenZigrin extends ServerCard {
 				flavor: "Ever hear o' the dragon Ocvist? From Quartz Mountain? Well, Yarpen Zigrin and his band o' dwarves did 'im in.",
 			},
 		})
+
+		this.botEvaluation = new CustomBotEvaluation(this)
 
 		this.makeResilient()
 
@@ -44,5 +49,11 @@ export default class GwentYarpenZigrin extends ServerCard {
 			.perform(() => {
 				this.buffs.addMultiple(BuffStrength, GwentYarpenZigrin.BOOST, this)
 			})
+	}
+}
+
+class CustomBotEvaluation extends BotCardEvaluation {
+	get expectedValue(): number {
+		return 980
 	}
 }

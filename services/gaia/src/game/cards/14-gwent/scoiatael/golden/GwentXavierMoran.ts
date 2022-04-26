@@ -4,13 +4,14 @@ import CardTribe from '@shared/enums/CardTribe'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
+import BotCardEvaluation from '@src/game/AI/BotCardEvaluation'
 import BuffBaseStrength from '@src/game/buffs/BuffBaseStrength'
 
 import ServerCard from '../../../../models/ServerCard'
 import ServerGame from '../../../../models/ServerGame'
 
 export default class GwentXavierMoran extends ServerCard {
-	lastPlayedDwarf?: ServerCard
+	public lastPlayedDwarf?: ServerCard
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -23,6 +24,8 @@ export default class GwentXavierMoran extends ServerCard {
 			},
 			expansionSet: ExpansionSet.GWENT,
 		})
+
+		this.createPlayTargets().evaluate(({ targetRow }) => (targetRow.hasBoon ? 1 : 0))
 
 		this.createLocalization({
 			en: {
@@ -44,5 +47,14 @@ export default class GwentXavierMoran extends ServerCard {
 			.perform(() => {
 				this.buffs.addMultiple(BuffBaseStrength, this.lastPlayedDwarf!.stats.basePower, this)
 			})
+
+		this.botEvaluation = new CustomBotEvaluation(this)
+	}
+}
+
+class CustomBotEvaluation extends BotCardEvaluation {
+	get expectedValue(): number {
+		const lastDwarfPower = (this.card as GwentXavierMoran).lastPlayedDwarf?.stats.power || 0
+		return this.card.stats.power + lastDwarfPower
 	}
 }

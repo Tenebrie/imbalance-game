@@ -299,14 +299,17 @@ export default class ServerBoard implements Board {
 		if (!context) {
 			return []
 		}
-		const playerGroup: ServerPlayerGroup =
+		const playerGroup: ServerPlayerGroup | null =
 			context instanceof ServerPlayerGroup
 				? context
 				: context instanceof ServerCard
-				? context.ownerGroup
+				? context.ownerGroupNullable
 				: context instanceof ServerUnit
-				? context.card.ownerGroup
+				? context.card.ownerGroupNullable
 				: context.group
+		if (!playerGroup) {
+			return []
+		}
 		return this.getAllSplashableUnits().filter((unit) => unit.owner === playerGroup)
 	}
 
@@ -314,14 +317,18 @@ export default class ServerBoard implements Board {
 		if (!context) {
 			return []
 		}
-		const playerGroup: ServerPlayerGroup =
+		const playerGroup: ServerPlayerGroup | null =
 			context instanceof ServerPlayerGroup
 				? context
 				: context instanceof ServerCard
-				? context.ownerGroup
+				? context.ownerGroupNullable
 				: context instanceof ServerUnit
-				? context.card.ownerGroup
+				? context.card.ownerGroupNullable
 				: context.group
+
+		if (!playerGroup) {
+			return []
+		}
 		return this.getSplashableUnitsFor(playerGroup.opponent)
 	}
 

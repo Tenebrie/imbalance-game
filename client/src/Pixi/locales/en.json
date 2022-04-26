@@ -139,6 +139,7 @@
 	"filter.experimental": "Work-in-progress cards",
 
 	"ruleset.rulesetChallengeDummy.label": "<b>AI:</b> Target Dummy",
+	"ruleset.rulesetChallengeDwarves.label": "<b>AI:</b> Dwarves and Beers!",
 	"ruleset.rulesetEpicDummyFight.label": "<b>Special:</b> Epic Dummy Fight",
 	"ruleset.rulesetBrawlDiscovery.label": "<b>Special:</b> Discovery League",
 

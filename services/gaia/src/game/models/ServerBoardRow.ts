@@ -1,4 +1,5 @@
 import Constants from '@shared/Constants'
+import BuffAlignment from '@shared/enums/BuffAlignment'
 import CardFeature from '@shared/enums/CardFeature'
 import BoardRow from '@shared/models/BoardRow'
 import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
@@ -33,6 +34,14 @@ export default class ServerBoardRow implements BoardRow {
 
 	public get splashableCards(): ServerUnit[] {
 		return this.cards.filter((unit) => !unit.card.features.includes(CardFeature.UNSPLASHABLE)).sort((a, b) => a.unitIndex - b.unitIndex)
+	}
+
+	public get hasBoon(): boolean {
+		return this.buffs.buffs.some((buff) => buff.alignment === BuffAlignment.POSITIVE)
+	}
+
+	public get hasHazard(): boolean {
+		return this.buffs.buffs.some((buff) => buff.alignment === BuffAlignment.NEGATIVE)
 	}
 
 	public isFull(): boolean {

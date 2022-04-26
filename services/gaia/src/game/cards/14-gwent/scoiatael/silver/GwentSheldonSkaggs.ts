@@ -4,6 +4,7 @@ import CardTribe from '@shared/enums/CardTribe'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
+import BotCardEvaluation from '@src/game/AI/BotCardEvaluation'
 import BuffStrength from '@src/game/buffs/BuffStrength'
 import Keywords from '@src/utils/Keywords'
 import { getRandomArrayValue } from '@src/utils/Utils'
@@ -37,6 +38,10 @@ export default class GwentSheldonSkaggs extends ServerCard {
 			},
 		})
 
+		this.botEvaluation = new CustomBotEvaluation(this)
+
+		this.createPlayTargets().evaluate(({ targetRow }) => targetRow.splashableCards.length)
+
 		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(({ triggeringUnit }) => {
 			triggeringUnit.boardRow.splashableCards
 				.filter((unit) => unit !== triggeringUnit)
@@ -53,5 +58,18 @@ export default class GwentSheldonSkaggs extends ServerCard {
 					this.buffs.addMultiple(BuffStrength, GwentSheldonSkaggs.BOOST, this)
 				})
 		})
+	}
+}
+
+class CustomBotEvaluation extends BotCardEvaluation {
+	get expectedValue(): number {
+		const card = this.card
+		const game = card.game
+		const bestRow = game.board
+			.getControlledRows(card.ownerPlayer)
+			.filter((row) => row.isNotFull())
+			.map((row) => row.splashableCards.length)
+			.sort((a, b) => b - a)
+		return this.card.stats.power + bestRow[0] || 0
 	}
 }

@@ -5,6 +5,7 @@ import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
 import TargetType from '@shared/enums/TargetType'
+import BotCardEvaluation from '@src/game/AI/BotCardEvaluation'
 import ServerCard from '@src/game/models/ServerCard'
 import { DamageInstance } from '@src/game/models/ServerDamageSource'
 import ServerGame from '@src/game/models/ServerGame'
@@ -26,6 +27,8 @@ export default class GwentSaesenthessis extends ServerCard {
 			expansionSet: ExpansionSet.GWENT,
 		})
 
+		this.createPlayTargets().evaluate(({ targetRow }) => (targetRow.hasBoon ? 1 : 0))
+
 		this.createLocalization({
 			en: {
 				name: `Saesenthessis`,
@@ -46,5 +49,14 @@ export default class GwentSaesenthessis extends ServerCard {
 				const elfCount = game.board.getSplashableUnitsOfTribe(CardTribe.ELF, this.ownerGroup).length
 				targetUnit.dealDamage(DamageInstance.fromCard(elfCount * GwentSaesenthessis.DAMAGE, this))
 			})
+
+		this.botEvaluation = new CustomBotEvaluation(this)
+	}
+}
+
+class CustomBotEvaluation extends BotCardEvaluation {
+	get expectedValue(): number {
+		const dwarfCount = this.card.game.board.getSplashableUnitsOfTribe(CardTribe.DWARF, this.card.ownerGroupNullable).length
+		return this.card.stats.power + dwarfCount
 	}
 }

@@ -4,6 +4,7 @@ import CardTribe from '@shared/enums/CardTribe'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import TargetType from '@shared/enums/TargetType'
+import BotCardEvaluation from '@src/game/AI/BotCardEvaluation'
 import BuffStrength from '@src/game/buffs/BuffStrength'
 
 import ServerCard from '../../../../models/ServerCard'
@@ -27,6 +28,8 @@ export default class GwentMahakamGuard extends ServerCard {
 			boost: GwentMahakamGuard.BOOST,
 		}
 
+		this.createPlayTargets().evaluate(({ targetRow }) => (targetRow.hasBoon ? 1 : 0))
+
 		this.createLocalization({
 			en: {
 				name: 'Mahakam Guard',
@@ -41,5 +44,14 @@ export default class GwentMahakamGuard extends ServerCard {
 			.perform(({ targetUnit }) => {
 				targetUnit.buffs.addMultiple(BuffStrength, GwentMahakamGuard.BOOST, this)
 			})
+
+		this.botEvaluation = new CustomBotEvaluation(this)
+	}
+}
+
+class CustomBotEvaluation extends BotCardEvaluation {
+	get expectedValue(): number {
+		const bonusPower = this.game.board.getSplashableUnitsFor(this.card).length > 0 ? GwentMahakamGuard.BOOST : 0
+		return this.card.stats.power + bonusPower
 	}
 }

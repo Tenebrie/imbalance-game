@@ -4,6 +4,7 @@ import CardTribe from '@shared/enums/CardTribe'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import TargetType from '@shared/enums/TargetType'
+import BotCardEvaluation from '@src/game/AI/BotCardEvaluation'
 import BuffStrength from '@src/game/buffs/BuffStrength'
 import { DamageInstance } from '@src/game/models/ServerDamageSource'
 
@@ -30,6 +31,8 @@ export default class GwentDwarvenSkirmisher extends ServerCard {
 			boost: GwentDwarvenSkirmisher.BOOST,
 		}
 
+		this.createPlayTargets().evaluate(({ targetRow }) => (targetRow.hasBoon ? 1 : 0))
+
 		this.createLocalization({
 			en: {
 				name: 'Dwarven Skirmisher',
@@ -39,11 +42,29 @@ export default class GwentDwarvenSkirmisher extends ServerCard {
 		})
 		this.createDeployTargets(TargetType.UNIT)
 			.requireEnemy()
+			.evaluate(({ targetCard }) => targetCard.stats.power)
 			.perform(({ targetUnit }) => {
 				targetUnit.dealDamage(DamageInstance.fromCard(GwentDwarvenSkirmisher.DAMAGE, this))
 				if (targetUnit.card.stats.power - GwentDwarvenSkirmisher.DAMAGE > 0) {
 					this.buffs.addMultiple(BuffStrength, GwentDwarvenSkirmisher.BOOST, this)
 				}
 			})
+
+		this.botEvaluation = new CustomBotEvaluation(this)
+	}
+}
+
+class CustomBotEvaluation extends BotCardEvaluation {
+	get expectedValue(): number {
+		const strongestEnemyPower =
+			this.card.game.board
+				.getSplashableUnitsForOpponentOf(this.card)
+				.map((unit) => unit.stats.power)
+				.sort((a, b) => b - a)[0] || 0
+		const bonusPower =
+			strongestEnemyPower > GwentDwarvenSkirmisher.DAMAGE
+				? GwentDwarvenSkirmisher.DAMAGE + GwentDwarvenSkirmisher.BOOST
+				: strongestEnemyPower
+		return this.card.stats.power + bonusPower
 	}
 }

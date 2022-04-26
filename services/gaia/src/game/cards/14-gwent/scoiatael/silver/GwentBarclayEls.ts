@@ -4,6 +4,7 @@ import CardTribe from '@shared/enums/CardTribe'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
+import BotCardEvaluation from '@src/game/AI/BotCardEvaluation'
 import BuffBaseStrength from '@src/game/buffs/BuffBaseStrength'
 import Keywords from '@src/utils/Keywords'
 import { getRandomArrayValue } from '@src/utils/Utils'
@@ -29,11 +30,13 @@ export default class GwentBarclayEls extends ServerCard {
 			boost: GwentBarclayEls.BOOST,
 		}
 
+		this.createPlayTargets().evaluate(({ targetRow }) => (targetRow.hasBoon ? 1 : 0))
+
 		this.createLocalization({
 			en: {
 				name: 'Barclay Els',
 				description: 'Play a random Bronze or Silver Dwarf from your deck and Strengthen it by {boost}.',
-				flavor: "Our mead smells rotten to ye, do it? Easy to fix – I'll break yer nose!",
+				flavor: "Our mead smells rotten to ye, do it? Easy to fix - I'll break yer nose!",
 			},
 		})
 
@@ -52,5 +55,13 @@ export default class GwentBarclayEls extends ServerCard {
 
 			cardToPlay.buffs.addMultiple(BuffBaseStrength, GwentBarclayEls.BOOST, this)
 		})
+
+		this.botEvaluation = new CustomBotEvaluation(this)
+	}
+}
+
+class CustomBotEvaluation extends BotCardEvaluation {
+	get expectedValue(): number {
+		return 97
 	}
 }

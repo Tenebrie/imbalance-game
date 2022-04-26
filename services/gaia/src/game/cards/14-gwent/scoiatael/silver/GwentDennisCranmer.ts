@@ -4,6 +4,7 @@ import CardTribe from '@shared/enums/CardTribe'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
+import BotCardEvaluation from '@src/game/AI/BotCardEvaluation'
 import BuffBaseStrength from '@src/game/buffs/BuffBaseStrength'
 
 import ServerCard from '../../../../models/ServerCard'
@@ -35,6 +36,10 @@ export default class GwentDennisCranmer extends ServerCard {
 			},
 		})
 
+		this.botEvaluation = new CustomBotEvaluation(this)
+
+		this.createPlayTargets().evaluate(({ targetRow }) => (targetRow.hasBoon ? 1 : 0))
+
 		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(({ owner }) => {
 			const dennis = game.board.getSplashableUnitsFor(owner).find((unit) => unit.card instanceof GwentDennisCranmer)?.card
 
@@ -51,5 +56,11 @@ export default class GwentDennisCranmer extends ServerCard {
 			})
 			game.animation.syncAnimationThreads()
 		})
+	}
+}
+
+class CustomBotEvaluation extends BotCardEvaluation {
+	get expectedValue(): number {
+		return 99
 	}
 }

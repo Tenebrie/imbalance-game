@@ -617,7 +617,11 @@ export default class ServerCard implements Card {
 	}
 
 	public get isDead(): boolean {
-		return this.ownerPlayer.cardGraveyard.allCards.includes(this)
+		const owner = this.ownerPlayerNullable
+		if (!owner) {
+			return false
+		}
+		return owner.cardGraveyard.allCards.includes(this)
 	}
 
 	/* Destroy this card / unit
