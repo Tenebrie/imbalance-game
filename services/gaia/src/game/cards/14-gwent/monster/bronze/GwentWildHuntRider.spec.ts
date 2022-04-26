@@ -17,9 +17,9 @@ describe('GwentWildHuntRider', () => {
 	describe('when biting frost triggers on the opposite row', () => {
 		beforeEach(() => {
 			game.player.summon(CardInTesting)
-			game.player.endTurn()
 			game.opponent.getFrontRow().buffs.add(BuffGwentRowFrost)
-			game.opponent.add(TestingUnit100Power).play()
+			game.opponent.summon(TestingUnit100Power)
+			game.player.endTurn()
 		})
 
 		it('deals extra damage', () => {
@@ -34,9 +34,9 @@ describe('GwentWildHuntRider', () => {
 			game.player.summon(CardInTesting)
 			game.player.summon(CardInTesting)
 			game.player.summon(CardInTesting)
-			game.player.endTurn()
 			game.opponent.getFrontRow().buffs.add(BuffGwentRowFrost)
-			game.opponent.add(TestingUnit100Power).play()
+			game.opponent.summon(TestingUnit100Power)
+			game.player.endTurn()
 		})
 
 		it('deals extra damage', () => {
@@ -47,9 +47,9 @@ describe('GwentWildHuntRider', () => {
 	describe('when biting frost triggers on the different row', () => {
 		beforeEach(() => {
 			game.player.summon(CardInTesting, 'back')
-			game.player.endTurn()
 			game.opponent.getFrontRow().buffs.add(BuffGwentRowFrost)
-			game.opponent.add(TestingUnit100Power).play()
+			game.opponent.summon(TestingUnit100Power)
+			game.player.endTurn()
 		})
 
 		it('deals base damage', () => {

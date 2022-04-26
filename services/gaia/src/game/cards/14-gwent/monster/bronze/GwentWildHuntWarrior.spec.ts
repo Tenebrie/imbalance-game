@@ -77,7 +77,7 @@ describe('GwentWildHuntWarrior', () => {
 		})
 
 		it('deals damage to the enemy', () => {
-			expect(game.board.find(TestingUnit100Power).stats.power).toEqual(100 - GwentWildHuntWarrior.DAMAGE)
+			expect(game.board.find(TestingUnit100Power).stats.power).toEqual(100 - GwentWildHuntWarrior.DAMAGE - BuffGwentRowFrost.DAMAGE)
 		})
 
 		it('boosts self', () => {
