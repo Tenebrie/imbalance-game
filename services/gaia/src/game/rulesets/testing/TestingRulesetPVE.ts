@@ -12,6 +12,7 @@ export default class TestingRulesetPVE extends ServerRuleset {
 			category: RulesetCategory.PVE,
 			constants: {
 				SKIP_MULLIGAN: true,
+				PASSIVE_LEADERS: true,
 			},
 		})
 
@@ -26,7 +27,7 @@ export default class TestingRulesetPVE extends ServerRuleset {
 				{
 					type: 'ai',
 					deck: [TestingLeader],
-					behaviour: AIBehaviour.DEFAULT,
+					behaviour: AIBehaviour.RANDOM,
 				},
 			])
 	}

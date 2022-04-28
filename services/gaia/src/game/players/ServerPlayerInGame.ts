@@ -1,4 +1,3 @@
-import Constants from '@shared/Constants'
 import AIBehaviour from '@shared/enums/AIBehaviour'
 import CardFeature from '@shared/enums/CardFeature'
 import GameTurnPhase from '@shared/enums/GameTurnPhase'
@@ -15,7 +14,6 @@ import GameLibrary from '@src/game/libraries/GameLibrary'
 import ServerEditorDeck from '@src/game/models/ServerEditorDeck'
 import { EventSubscriber } from '@src/game/models/ServerGameEvents'
 import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
-import OvermindClient from '@src/routers/overmind/OvermindClient'
 import { getCardBaseExpectedValue, getRandomArrayValue, safeWhile } from '@src/utils/Utils'
 
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
@@ -260,8 +258,6 @@ export default class ServerPlayerInGame implements PlayerInGame {
 export class ServerBotPlayerInGame extends ServerPlayerInGame {
 	public readonly behaviour: AIBehaviour
 
-	private overmindId!: string
-
 	constructor(game: ServerGame, player: ServerPlayer, deck: ServerEditorDeck, behaviour: AIBehaviour) {
 		super(game, {
 			player,
@@ -273,17 +269,30 @@ export class ServerBotPlayerInGame extends ServerPlayerInGame {
 
 	public startMulligan(): void {
 		super.startMulligan()
-		this.botTakesTheirMulligan().then(() => {
-			IncomingMessageHandlers[GenericActionMessageType.CONFIRM_TARGETS](TargetMode.MULLIGAN, this.game, this)
-			OutgoingMessageHandlers.executeMessageQueue(this.game)
-		})
+		setTimeout(() => {
+			this.botTakesTheirMulligan().then(() => {
+				IncomingMessageHandlers[GenericActionMessageType.CONFIRM_TARGETS](TargetMode.MULLIGAN, this.game, this)
+				OutgoingMessageHandlers.executeMessageQueue(this.game)
+			})
+		}, 0)
 	}
 
 	public startTurn(): void {
-		this.botTakesTheirTurn().then(() => {
-			IncomingMessageHandlers[GenericActionMessageType.TURN_END](null, this.game, this)
-			OutgoingMessageHandlers.executeMessageQueue(this.game)
-		})
+		console.log('start')
+		if (process.env.JEST_WORKER_ID !== undefined) {
+			this.botTakesTheirTurn().then(() => {
+				IncomingMessageHandlers[GenericActionMessageType.TURN_END](null, this.game, this)
+				OutgoingMessageHandlers.executeMessageQueue(this.game)
+			})
+		} else {
+			setTimeout(() => {
+				console.log('w')
+				this.botTakesTheirTurn().then(() => {
+					IncomingMessageHandlers[GenericActionMessageType.TURN_END](null, this.game, this)
+					OutgoingMessageHandlers.executeMessageQueue(this.game)
+				})
+			}, 0)
+		}
 	}
 
 	public get isHuman(): boolean {
@@ -292,40 +301,6 @@ export class ServerBotPlayerInGame extends ServerPlayerInGame {
 
 	public get isBot(): boolean {
 		return true
-	}
-
-	public setOvermindId(id: string): void {
-		this.overmindId = id
-	}
-
-	private async overmindPlaysCard(): Promise<void> {
-		const playableCards = this.getCardsWithLeader(this).filter(
-			(card) => card.targeting.getPlayTargets(this, { checkMana: true }).length > 0
-		)
-
-		if (playableCards.length === 0) {
-			return
-		}
-
-		const padArray = <T>(value: T[], length: number): (T | null)[] => [...value, ...Array(Math.max(0, length - value.length)).fill(null)]
-
-		const alliedUnits = this.game.board
-			.getControlledRows(this)
-			.map((row) => row.cards.map((unit) => unit.card))
-			.flatMap((arr) => padArray(arr, Constants.MAX_CARDS_PER_ROW))
-
-		const enemyUnits = this.game.board
-			.getControlledRows(this.opponent)
-			.map((row) => row.cards.map((unit) => unit.card))
-			.flatMap((arr) => padArray<ServerCard>(arr, Constants.MAX_CARDS_PER_ROW))
-
-		const cardToPlay = await OvermindClient.getMove(this.overmindId, {
-			playableCards,
-			allCardsInHand: this.getCardsWithLeader(this),
-			alliedUnits,
-			enemyUnits,
-		})
-		this.botPlaysCard(false, cardToPlay)
 	}
 
 	private async botTakesTheirMulligan(): Promise<void> {
@@ -387,10 +362,22 @@ export class ServerBotPlayerInGame extends ServerPlayerInGame {
 		if (!opponent) {
 			return
 		}
-		const botBoonCount = this.game.board.getControlledRows(this).filter((row) => row.hasBoon).length
-		const botHazardCount = this.game.board.getControlledRows(this).filter((row) => row.hasHazard).length
-		const opponentBoonCount = this.game.board.getControlledRows(opponent).filter((row) => row.hasBoon).length
-		const opponentHazardCount = this.game.board.getControlledRows(opponent).filter((row) => row.hasHazard).length
+		const botBoonCount = this.game.board
+			.getControlledRows(this)
+			.filter((row) => row.hasBoon)
+			.filter((row) => row.cards.length > 0).length
+		const botHazardCount = this.game.board
+			.getControlledRows(this)
+			.filter((row) => row.hasHazard)
+			.filter((row) => row.cards.length > 0).length
+		const opponentBoonCount = this.game.board
+			.getControlledRows(opponent)
+			.filter((row) => row.hasBoon)
+			.filter((row) => row.cards.length > 0).length
+		const opponentHazardCount = this.game.board
+			.getControlledRows(opponent)
+			.filter((row) => row.hasHazard)
+			.filter((row) => row.cards.length > 0).length
 
 		const botTotalPower = this.game.board.getTotalPlayerPower(this.group) + botBoonCount * 2 - botHazardCount * 2
 		const opponentTotalPower = this.game.board.getTotalPlayerPower(opponent) + opponentBoonCount * 2 - opponentHazardCount * 2
@@ -398,30 +385,35 @@ export class ServerBotPlayerInGame extends ServerPlayerInGame {
 		const opponentCardCount = this.getCardsWithLeader(opponent.players[0]).length
 
 		const maxSelfProfit = botCardCount * botBoonCount - botCardCount * opponentHazardCount
-		const maxOponentProfit = opponentCardCount * opponentBoonCount - opponentCardCount * botHazardCount
+		const maxOpponentProfit = opponentCardCount * opponentBoonCount - opponentCardCount * botHazardCount
+
+		const goodLeadThreshold = 11 + botBoonCount * 3.5 - opponentBoonCount * 3.5 + opponentHazardCount * 3.5 - botHazardCount * 3.5
 
 		const bestBotScore = this.getBestPlayableCardScore()
 		const botWonRound =
 			this.game.board.getTotalPlayerPower(this.group) > this.game.board.getTotalPlayerPower(opponent) && opponent.roundEnded
-		const botLostRound = opponentTotalPower + maxOponentProfit > botTotalPower + bestBotScore + maxSelfProfit && opponent.roundWins === 0
+		const botLostRound = opponentTotalPower + maxOpponentProfit > botTotalPower + bestBotScore + maxSelfProfit && opponent.roundWins === 0
 		const botHasGoodLead =
-			(botTotalPower > opponentTotalPower + 11 ||
+			(botTotalPower > opponentTotalPower + goodLeadThreshold ||
 				(botTotalPower > opponentTotalPower && botCardCount > opponentCardCount) ||
-				(botTotalPower > opponentTotalPower && maxOponentProfit > maxSelfProfit)) &&
+				(botTotalPower >= opponentTotalPower && botCardCount > opponentCardCount + 1) ||
+				(botTotalPower > opponentTotalPower && maxOpponentProfit > maxSelfProfit)) &&
 			this.opponent.roundWins === 0
+		const botCanDrawEffectively =
+			this.group.roundWins === 0 &&
+			this.opponent.roundWins === 0 &&
+			botTotalPower === opponentTotalPower &&
+			botHazardCount + opponentBoonCount > botBoonCount + opponentHazardCount
 
 		if (this.behaviour === AIBehaviour.DEFAULT) {
-			if (botWonRound || botLostRound || botHasGoodLead) {
+			if (botWonRound || botLostRound || botHasGoodLead || botCanDrawEffectively) {
 				return
 			}
 
 			try {
-				safeWhile(
-					() => this.canPlayUnitCard(),
-					() => {
-						this.botPlaysCard(false)
-					}
-				)
+				if (this.canPlayUnitCard()) {
+					this.botPlaysCard(false)
+				}
 			} catch (e) {
 				console.error('Unknown AI error', e)
 			}
@@ -438,21 +430,6 @@ export class ServerBotPlayerInGame extends ServerPlayerInGame {
 						break
 					}
 					this.botPlaysCard(false, card.id)
-				}
-			} catch (e) {
-				console.error('Unknown AI error', e)
-				GameLibrary.destroyGame(this.game, GameCloseReason.AI_ACTION_LOGIC_ERROR)
-			}
-		} else if (this.behaviour === AIBehaviour.OVERMIND) {
-			if (botWonRound || botLostRound || botHasGoodLead) {
-				return
-			}
-
-			try {
-				let attempts = 0
-				while (this.canPlayUnitCard() && attempts < 10) {
-					attempts += 1
-					await this.overmindPlaysCard()
 				}
 			} catch (e) {
 				console.error('Unknown AI error', e)
@@ -545,7 +522,11 @@ export class ServerBotPlayerInGame extends ServerPlayerInGame {
 	}
 
 	private getCardsWithLeader(player: ServerPlayerInGame): ServerCard[] {
-		return player.cardHand.allCards.concat(player.leader.features.includes(CardFeature.UNPLAYABLE) ? [] : player.leader)
+		const cards = player.cardHand.allCards
+		if (!player.leader.features.includes(CardFeature.UNPLAYABLE) && !this.game.ruleset.constants.PASSIVE_LEADERS) {
+			cards.push(player.leader)
+		}
+		return cards
 	}
 
 	private canPlayUnitCard(): boolean {

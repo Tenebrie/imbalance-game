@@ -1,6 +1,5 @@
 import Constants from '@shared/Constants'
 import AccessLevel from '@shared/enums/AccessLevel'
-import AIBehaviour from '@shared/enums/AIBehaviour'
 import CardFeature from '@shared/enums/CardFeature'
 import CardLocation from '@shared/enums/CardLocation'
 import CardTribe from '@shared/enums/CardTribe'
@@ -291,7 +290,7 @@ const setupTestGamePlayers = (game: ServerGame): TestGamePlayer[][] => {
 			() => {
 				const player = new ServerBotPlayer()
 				const slot = playerGroup.slots.grabOpenBotSlot()
-				game.addBotPlayer(player, playerGroup, ServerEditorDeck.fromConstructors(slot.deck), AIBehaviour.DEFAULT)
+				game.addBotPlayer(player, playerGroup, ServerEditorDeck.fromConstructors(slot.deck), slot.behaviour)
 			}
 		)
 	})

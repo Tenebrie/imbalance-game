@@ -100,10 +100,7 @@ export class CardBotMetadata {
 		const boonsPreferenceScore = Number(args.targetRow.hasBoon) * (this.boonsPreference === 'prefer' ? 15 : -15)
 		const hazardsPreferenceScore = Number(args.targetRow.hasHazard) * (this.hazardsPreference === 'prefer' ? 50 : -50)
 		const crowdsPreferenceScore = (() => {
-			if (allRowsHaveHazards) {
-				return 100
-			}
-			if (allOtherRowsHaveHazards && this.crowdsPreference === 'avoid') {
+			if (!allRowsHaveHazards && allOtherRowsHaveHazards && this.crowdsPreference === 'avoid') {
 				return 0
 			}
 			return this.game.board.getTotalRowPower(args.targetRow) * (this.crowdsPreference === 'prefer' ? 1 : -1)

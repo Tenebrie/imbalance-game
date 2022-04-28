@@ -30,7 +30,7 @@ export default class TestingRulesetCoop extends ServerRuleset {
 				{
 					type: 'ai',
 					deck: [TestingLeader],
-					behaviour: AIBehaviour.DEFAULT,
+					behaviour: AIBehaviour.RANDOM,
 				},
 			])
 	}

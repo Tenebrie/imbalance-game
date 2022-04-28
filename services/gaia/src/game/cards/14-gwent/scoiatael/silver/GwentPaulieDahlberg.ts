@@ -43,7 +43,7 @@ export default class GwentPaulieDahlberg extends ServerCard {
 			const bestDwarf = this.ownerPlayer.cardGraveyard.allCards
 				.filter((card) => card.tribes.includes(CardTribe.DWARF) && !card.tribes.includes(CardTribe.SUPPORT))
 				.filter((card) => card.color === CardColor.BRONZE)
-				.map((card) => card.botMetadata.evaluateExpectedScore())
+				.map((card) => card.botMetadata.evaluateBotScore())
 				.sort((a, b) => b - a)
 			return bestDwarf[0] || 0
 		})

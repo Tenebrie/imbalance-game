@@ -34,6 +34,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 				SKIP_MULLIGAN: true,
 				FIRST_GROUP_MOVES_FIRST: true,
 				ROUND_WINS_REQUIRED: 3,
+				PASSIVE_LEADERS: true,
 			},
 			hiddenFromMenu: true,
 		})
@@ -45,7 +46,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 			})
 			.addGroup({
 				type: 'ai',
-				behaviour: AIBehaviour.DEFAULT,
+				behaviour: AIBehaviour.RANDOM,
 				deck: [LeaderTutorialOpponent, { card: UnitChallengeDummyVanillaWarrior, count: 1 }],
 			})
 

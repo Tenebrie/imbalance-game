@@ -268,6 +268,7 @@ describe('ServerGame Game finishing', () => {
 				game = setupTestGame(TestingRulesetPVE)
 				game.player.summon(TestingUnit100Power)
 				game.player.endRound()
+				game.opponent.endRound()
 				game.player.endRound()
 			})
 
@@ -289,6 +290,8 @@ describe('ServerGame Game finishing', () => {
 				game = setupTestGame(TestingRulesetPVE)
 				game.opponent.summon(TestingUnit100Power)
 				game.player.endRound()
+				game.opponent.endRound()
+				game.opponent.endRound()
 				game.player.endRound()
 			})
 
@@ -309,6 +312,7 @@ describe('ServerGame Game finishing', () => {
 			beforeEach(() => {
 				game = setupTestGame(TestingRulesetPVE)
 				game.player.endRound()
+				game.opponent.endRound()
 				game.player.endRound()
 			})
 
@@ -381,6 +385,7 @@ describe('ServerGame Game finishing', () => {
 		beforeEach(() => {
 			game = setupTestGame(TestingRulesetPVE)
 			game.player.endRound()
+			game.opponent.endRound()
 			game.player.endRound()
 		})
 

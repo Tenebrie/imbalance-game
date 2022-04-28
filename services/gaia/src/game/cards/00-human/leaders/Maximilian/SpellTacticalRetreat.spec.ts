@@ -66,7 +66,7 @@ describe('SpellTacticalRetreat', () => {
 
 		it('moves within the row', () => {
 			expect(game.board.find(TestingUnit100Power).getRowDistance()).toEqual('front')
-			expect(game.board.find(TestingUnit100Power).getRowPosition()).toEqual(1)
+			expect(game.board.find(TestingUnit100Power).getRowPosition()).toEqual(2)
 		})
 	})
 

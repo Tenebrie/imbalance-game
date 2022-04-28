@@ -15,6 +15,7 @@ describe('GwentImlerithSabbath', () => {
 	const errorSpy = jest.spyOn(ServerPlayer.prototype, 'sendGlobalMessage')
 
 	beforeAll(() => {
+		jest.useFakeTimers()
 		game = setupTestGame(TestingRulesetGwent)
 		imlerithBasePower = game.player.add(CardInTesting).stats.basePower
 	})

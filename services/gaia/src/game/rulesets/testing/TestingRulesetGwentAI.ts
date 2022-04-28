@@ -15,6 +15,8 @@ export default class TestingRulesetGwentAI extends ServerRuleset {
 			category: RulesetCategory.PVE,
 			constants: {
 				SKIP_MULLIGAN: true,
+				FIRST_GROUP_MOVES_FIRST: true,
+				PASSIVE_LEADERS: true,
 			},
 		})
 

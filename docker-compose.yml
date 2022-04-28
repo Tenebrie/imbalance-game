@@ -39,24 +39,6 @@ services:
             - ./shared/src:/app/shared/src:cached
         tty: true
         restart: "no"
-    overmind:
-        build:
-            context: ./
-            dockerfile: ./services/overmind/Dockerfile
-        working_dir: /app/services/overmind
-        environment:
-            NODE_ENV: development
-            GAME_SERVER: 'http://gaia:3000'
-        depends_on:
-            - gaia
-        ports:
-            - 3001:3001
-        command: yarn serve
-        volumes:
-            - ./services/overmind/src:/app/services/overmind/src:cached
-            - ./shared/src:/app/shared/src:cached
-        tty: true
-        restart: "no"
     postgres:
         image: postgres:11.5-alpine
         environment:

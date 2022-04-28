@@ -45,7 +45,6 @@ import FeedbackRouter from './routers/FeedbackRouter'
 import GamesRouter from './routers/GamesRouter'
 import HealthRouter from './routers/HealthRouter'
 import ModalsRouter from './routers/ModalsRouter'
-import OvermindRouter from './routers/overmind/OvermindRouter'
 import PlayRouter from './routers/PlayRouter'
 import RulesetsRouter from './routers/RulesetsRouter'
 import SessionRouter from './routers/SessionRouter'
@@ -128,7 +127,6 @@ app.use('/api/user/profile', UserProfileRouter)
 app.use('/api/feedback', FeedbackRouter)
 app.use('/api/version', VersionRouter)
 app.use('/api/workshop', WorkshopRouter)
-app.use('/api/overmind', OvermindRouter)
 
 /* WS routers */
 app.use('/api/game', PlayRouter)
