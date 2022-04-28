@@ -278,7 +278,6 @@ export class ServerBotPlayerInGame extends ServerPlayerInGame {
 	}
 
 	public startTurn(): void {
-		console.log('start')
 		if (process.env.JEST_WORKER_ID !== undefined) {
 			this.botTakesTheirTurn().then(() => {
 				IncomingMessageHandlers[GenericActionMessageType.TURN_END](null, this.game, this)
@@ -286,7 +285,6 @@ export class ServerBotPlayerInGame extends ServerPlayerInGame {
 			})
 		} else {
 			setTimeout(() => {
-				console.log('w')
 				this.botTakesTheirTurn().then(() => {
 					IncomingMessageHandlers[GenericActionMessageType.TURN_END](null, this.game, this)
 					OutgoingMessageHandlers.executeMessageQueue(this.game)
