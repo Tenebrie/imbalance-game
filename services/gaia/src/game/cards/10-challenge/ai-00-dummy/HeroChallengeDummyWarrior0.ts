@@ -5,8 +5,6 @@ import ExpansionSet from '@shared/enums/ExpansionSet'
 import ServerCard from '@src/game/models/ServerCard'
 import ServerGame from '@src/game/models/ServerGame'
 
-import BotCardEvaluation from '../../../AI/BotCardEvaluation'
-
 export default class HeroChallengeDummyWarrior0 extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, {
@@ -19,12 +17,5 @@ export default class HeroChallengeDummyWarrior0 extends ServerCard {
 			expansionSet: ExpansionSet.BASE,
 			hiddenFromLibrary: true,
 		})
-		this.botEvaluation = new CustomBotEvaluation(this)
-	}
-}
-
-class CustomBotEvaluation extends BotCardEvaluation {
-	get expectedValue(): number {
-		return 9
 	}
 }

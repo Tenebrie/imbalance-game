@@ -27,11 +27,12 @@ import {
 import { ValueGetter } from '@src/utils/LeaderStats'
 import { createRandomId, getClassFromConstructor, getLeaderTextVariables } from '@src/utils/Utils'
 
-import BotCardEvaluation from '../AI/BotCardEvaluation'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import CardLibrary, { CardConstructor } from '../libraries/CardLibrary'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import ServerBuffContainer, { BuffConstructor, ServerBuffSource } from './buffs/ServerBuffContainer'
+import { CardBotMetadata, getDefaultCardBotMetadata } from './events/botEvaluator/CardBotMetadata'
+import { CardBotMetadataBuilder } from './events/botEvaluator/CardBotMetadataBuilder'
 import { EventHook } from './events/EventHook'
 import { EventSubscription } from './events/EventSubscription'
 import GameEventCreators, {
@@ -168,7 +169,6 @@ export default class ServerCard implements Card {
 
 	public localization: CardLocalization
 	public dynamicTextVariables: ServerRichTextVariables = {}
-	public botEvaluation: BotCardEvaluation = new BotCardEvaluation(this)
 	public readonly generatedArtworkMagicString: string
 
 	public readonly baseRelatedCards: CardConstructor[] = []
@@ -181,6 +181,9 @@ export default class ServerCard implements Card {
 	public readonly deckAddedCards: CardConstructor[] = []
 
 	public readonly isBronzeOrSilver: boolean
+
+	private __botMetadata
+	private __botMetadataBuilder: CardBotMetadataBuilder | null = null
 
 	constructor(game: ServerGame, props: ServerCardProps) {
 		const cardClass = getClassFromConstructor(this.constructor as CardConstructor)
@@ -196,6 +199,7 @@ export default class ServerCard implements Card {
 		this.faction = props.faction
 
 		this.isBronzeOrSilver = this.color === CardColor.BRONZE || this.color === CardColor.SILVER
+		this.__botMetadata = getDefaultCardBotMetadata(this)
 
 		this.stats = new ServerCardStats(this, {
 			power: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.power || 0 : 0,
@@ -324,6 +328,14 @@ export default class ServerCard implements Card {
 
 	public get unit(): ServerUnit | null {
 		return this.game.board.findUnitById(this.id) || null
+	}
+
+	public get botMetadata(): CardBotMetadata {
+		if (this.__botMetadataBuilder) {
+			this.__botMetadata = this.__botMetadataBuilder.__build()
+			this.__botMetadataBuilder = null
+		}
+		return this.__botMetadata
 	}
 
 	public get ownerPlayerNullable(): ServerPlayerInGame | null {
@@ -975,6 +987,15 @@ export default class ServerCard implements Card {
 	 */
 	protected createSelfSelector(): CardSelectorBuilder {
 		return this.game.events.createSelector(this).requireTarget(({ target }) => target === this)
+	}
+
+	/*
+	 * Define card metadata used for AI evaluation
+	 */
+	protected createBotEvaluation(): CardBotMetadataBuilder {
+		const builder = new CardBotMetadataBuilder(this)
+		this.__botMetadataBuilder = builder
+		return builder
 	}
 
 	protected createLocalization(localization: PartialCardLocalization): void {

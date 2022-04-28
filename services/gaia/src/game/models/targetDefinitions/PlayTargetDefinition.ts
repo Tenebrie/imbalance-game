@@ -39,8 +39,8 @@ export default class PlayTargetDefinition {
 		return this.conditions.every((condition) => condition(args))
 	}
 
-	public evaluate(args: PlayTargetValidatorArguments, defaultValue: number): number {
-		return this.evaluator ? this.evaluator(args) : defaultValue
+	public evaluate(args: PlayTargetValidatorArguments): number {
+		return this.evaluator ? this.evaluator(args) : 0
 	}
 
 	public static base(game: ServerGame): PlayTargetDefinition {

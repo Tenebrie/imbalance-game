@@ -4,7 +4,6 @@ import CardTribe from '@shared/enums/CardTribe'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
-import BotCardEvaluation from '@src/game/AI/BotCardEvaluation'
 import BuffBaseStrength from '@src/game/buffs/BuffBaseStrength'
 
 import ServerCard from '../../../../models/ServerCard'
@@ -48,13 +47,6 @@ export default class GwentXavierMoran extends ServerCard {
 				this.buffs.addMultiple(BuffBaseStrength, this.lastPlayedDwarf!.stats.basePower, this)
 			})
 
-		this.botEvaluation = new CustomBotEvaluation(this)
-	}
-}
-
-class CustomBotEvaluation extends BotCardEvaluation {
-	get expectedValue(): number {
-		const lastDwarfPower = (this.card as GwentXavierMoran).lastPlayedDwarf?.stats.power || 0
-		return this.card.stats.power + lastDwarfPower
+		this.createBotEvaluation().evaluateScore(() => this.lastPlayedDwarf?.stats.power || 0)
 	}
 }

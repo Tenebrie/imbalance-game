@@ -224,11 +224,12 @@ export default class ServerCardTarget {
 		targetMode: TargetMode,
 		sourceCard: ServerCard,
 		targetRow: ServerBoardRow,
+		expectedValue: number,
 		targetLabel = ''
 	): ServerCardTargetRow {
 		const order = new ServerCardTargetRow(rootId, targetMode, TargetType.BOARD_ROW, sourceCard, targetRow)
 		order.targetLabel = targetLabel
-		order.expectedValue = 0
+		order.expectedValue = expectedValue
 		return order
 	}
 
@@ -238,11 +239,12 @@ export default class ServerCardTarget {
 		sourceCard: ServerCard,
 		targetRow: ServerBoardRow,
 		targetPosition: number,
+		expectedValue: number,
 		targetLabel = ''
 	): ServerCardTargetPosition {
 		const order = new ServerCardTargetPosition(rootId, targetMode, TargetType.BOARD_POSITION, sourceCard, targetRow, targetPosition)
 		order.targetLabel = targetLabel
-		order.expectedValue = 0
+		order.expectedValue = expectedValue
 		return order
 	}
 

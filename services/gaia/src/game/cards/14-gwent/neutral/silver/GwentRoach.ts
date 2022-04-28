@@ -48,5 +48,7 @@ export default class GwentRoach extends ServerCard {
 					unitIndex: targetRow.farRightUnitIndex,
 				})
 			})
+
+		this.createBotEvaluation().setMulliganPreference('avoid')
 	}
 }

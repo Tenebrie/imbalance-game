@@ -10,6 +10,7 @@ import OrderTargetDefinitionBuilder from '@src/game/models/targetDefinitions/Ord
 import PlayTargetDefinition from '@src/game/models/targetDefinitions/PlayTargetDefinition'
 import PlayTargetDefinitionBuilder from '@src/game/models/targetDefinitions/PlayTargetDefinitionBuilder'
 import TargetValidatorArguments, {
+	CardTargetValidatorArguments,
 	PositionTargetValidatorArguments,
 	RowTargetValidatorArguments,
 	UnitTargetValidatorArguments,
@@ -74,12 +75,11 @@ export class ServerCardTargeting {
 		return targetDefinitions
 			.map((targetDefinition) => {
 				return this.game.board.rows
-					.flatMap((row, index) => {
+					.flatMap((row) => {
 						const positions = [...Array(row.cards.length + 1).keys()]
 						return positions.map((pos) => ({
 							row: row,
 							position: pos,
-							rowIndex: index,
 						}))
 					})
 					.filter((rowPosition) =>
@@ -90,8 +90,32 @@ export class ServerCardTargeting {
 							targetPosition: rowPosition.position,
 						})
 					)
+					.map((rowPosition) => ({
+						row: rowPosition.row,
+						unitIndex: rowPosition.position,
+						expectedValue:
+							targetDefinition.evaluate({
+								card: this.card,
+								owner: cardOwner,
+								targetRow: rowPosition.row,
+								targetPosition: rowPosition.position,
+							}) +
+							this.card.botMetadata.evaluateBotPlayRowScore({
+								card: this.card,
+								owner: cardOwner,
+								targetRow: rowPosition.row,
+								targetPosition: rowPosition.position,
+							}),
+					}))
 					.map((target) => ({
-						target: ServerCardTarget.cardTargetPosition(targetDefinition.id, TargetMode.CARD_PLAY, this.card, target.row, target.position),
+						target: ServerCardTarget.cardTargetPosition(
+							targetDefinition.id,
+							TargetMode.CARD_PLAY,
+							this.card,
+							target.row,
+							target.unitIndex,
+							target.expectedValue
+						),
 						definition: targetDefinition,
 					}))
 			})
@@ -164,23 +188,13 @@ export class ServerCardTargeting {
 			)
 			.map((unit) => ({
 				unit: unit,
-				expectedValue: targetDefinition.evaluate(
-					{
-						player: this.card.ownerPlayer,
-						sourceCard: this.card,
-						targetCard: unit.card,
-						targetUnit: unit,
-						previousTargets: previousTargets.map((wrapper) => wrapper.target),
-					},
-					0
-				),
-			}))
-			.map((tuple) => ({
-				unit: tuple.unit,
-				expectedValue: Math.max(
-					tuple.expectedValue * tuple.unit.card.botEvaluation.threatMultiplier,
-					tuple.unit.card.botEvaluation.baseThreat
-				),
+				expectedValue: targetDefinition.evaluate({
+					player: this.card.ownerPlayer,
+					sourceCard: this.card,
+					targetCard: unit.card,
+					targetUnit: unit,
+					previousTargets: previousTargets.map((wrapper) => wrapper.target),
+				}),
 			}))
 			.map((tuple) =>
 				ServerCardTarget.cardTargetUnit(
@@ -207,8 +221,24 @@ export class ServerCardTargeting {
 					previousTargets: previousTargets.map((previousTarget) => previousTarget.target),
 				})
 			)
-			.map((targetRow) =>
-				ServerCardTarget.cardTargetRow(targetDefinition.id, TargetMode.DEPLOY_EFFECT, this.card, targetRow, targetDefinition.label)
+			.map((row) => ({
+				row: row,
+				expectedValue: targetDefinition.evaluate({
+					player: this.card.ownerPlayer,
+					sourceCard: this.card,
+					targetRow: row,
+					previousTargets: previousTargets.map((previousTarget) => previousTarget.target),
+				}),
+			}))
+			.map((tuple) =>
+				ServerCardTarget.cardTargetRow(
+					targetDefinition.id,
+					TargetMode.DEPLOY_EFFECT,
+					this.card,
+					tuple.row,
+					tuple.expectedValue,
+					targetDefinition.label
+				)
 			)
 	}
 
@@ -222,7 +252,7 @@ export class ServerCardTargeting {
 				return positions.map((pos) => ({
 					row: row,
 					position: pos,
-					rowIndex: index,
+					unitIndex: index,
 				}))
 			})
 			.filter((rowPosition) =>
@@ -234,13 +264,25 @@ export class ServerCardTargeting {
 					previousTargets: previousTargets.map((previousTarget) => previousTarget.target),
 				})
 			)
-			.map((target) =>
+			.map((rowPosition) => ({
+				row: rowPosition.row,
+				unitIndex: rowPosition.unitIndex,
+				expectedValue: targetDefinition.evaluate({
+					player: this.card.ownerPlayer,
+					sourceCard: this.card,
+					targetRow: rowPosition.row,
+					targetPosition: rowPosition.position,
+					previousTargets: previousTargets.map((previousTarget) => previousTarget.target),
+				}),
+			}))
+			.map((tuple) =>
 				ServerCardTarget.cardTargetPosition(
 					targetDefinition.id,
 					TargetMode.DEPLOY_EFFECT,
 					this.card,
-					target.row,
-					target.position,
+					tuple.row,
+					tuple.unitIndex,
+					tuple.expectedValue,
 					targetDefinition.label
 				)
 			)
@@ -248,7 +290,7 @@ export class ServerCardTargeting {
 
 	public getDeployTargetsForDefinitionAsCards(
 		targetType: CardTargetTypes,
-		targetDefinition: DeployTargetDefinition<any>,
+		targetDefinition: DeployTargetDefinition<CardTargetValidatorArguments>,
 		previousTargets: ResolutionStackTarget[]
 	): ServerCardTargetCard[] {
 		let targets: ServerCardTargetCard[] = []
@@ -272,7 +314,7 @@ export class ServerCardTargeting {
 	}
 
 	private getValidCardLibraryTargets(
-		targetDefinition: DeployTargetDefinition<any>,
+		targetDefinition: DeployTargetDefinition<CardTargetValidatorArguments>,
 		previousTargets: ResolutionStackTarget[] = []
 	): ServerCardTargetCard[] {
 		return sortCards(
@@ -280,6 +322,7 @@ export class ServerCardTargeting {
 				.filter((card) => this.card.isExperimental || card.isExperimental === this.card.isExperimental)
 				.filter((card) =>
 					targetDefinition.require({
+						player: this.card.ownerPlayer,
 						sourceCard: this.card,
 						targetCard: card,
 						previousTargets: previousTargets.map((previousTarget) => previousTarget.target),
@@ -291,7 +334,7 @@ export class ServerCardTargeting {
 	}
 
 	private getValidUnitHandTargets(
-		targetDefinition: DeployTargetDefinition<any>,
+		targetDefinition: DeployTargetDefinition<CardTargetValidatorArguments>,
 		previousTargets: ResolutionStackTarget[] = []
 	): ServerCardTargetCard[] {
 		return sortCards(
@@ -302,6 +345,7 @@ export class ServerCardTargeting {
 				.filter((unit) => !unit.features.includes(CardFeature.UNTARGETABLE))
 				.filter((card) =>
 					targetDefinition.require({
+						player: this.card.ownerPlayer,
 						sourceCard: this.card,
 						targetCard: card,
 						previousTargets: previousTargets.map((previousTarget) => previousTarget.target),
@@ -319,7 +363,7 @@ export class ServerCardTargeting {
 	}
 
 	private getValidSpellHandTargets(
-		targetDefinition: DeployTargetDefinition<any>,
+		targetDefinition: DeployTargetDefinition<CardTargetValidatorArguments>,
 		previousTargets: ResolutionStackTarget[] = []
 	): ServerCardTargetCard[] {
 		return sortCards(
@@ -330,6 +374,7 @@ export class ServerCardTargeting {
 				.filter((unit) => !unit.features.includes(CardFeature.UNTARGETABLE))
 				.filter((card) =>
 					targetDefinition.require({
+						player: this.card.ownerPlayer,
 						sourceCard: this.card,
 						targetCard: card,
 						previousTargets: previousTargets.map((previousTarget) => previousTarget.target),
@@ -347,7 +392,7 @@ export class ServerCardTargeting {
 	}
 
 	private getValidUnitDeckTargets(
-		targetDefinition: DeployTargetDefinition<any>,
+		targetDefinition: DeployTargetDefinition<CardTargetValidatorArguments>,
 		previousTargets: ResolutionStackTarget[] = []
 	): ServerCardTargetCard[] {
 		let targetedCards = this.game.players
@@ -356,6 +401,7 @@ export class ServerCardTargeting {
 			.reduce((accumulator, cards) => accumulator.concat(cards))
 			.filter((card) =>
 				targetDefinition.require({
+					player: this.card.ownerPlayer,
 					sourceCard: this.card,
 					targetCard: card,
 					previousTargets: previousTargets.map((previousTarget) => previousTarget.target),
@@ -378,7 +424,7 @@ export class ServerCardTargeting {
 	}
 
 	private getValidSpellDeckTargets(
-		targetDefinition: DeployTargetDefinition<any>,
+		targetDefinition: DeployTargetDefinition<CardTargetValidatorArguments>,
 		previousTargets: ResolutionStackTarget[] = []
 	): ServerCardTargetCard[] {
 		let targetedCards = this.game.players
@@ -387,6 +433,7 @@ export class ServerCardTargeting {
 			.reduce((accumulator, cards) => accumulator.concat(cards))
 			.filter((card) =>
 				targetDefinition.require({
+					player: this.card.ownerPlayer,
 					sourceCard: this.card,
 					targetCard: card,
 					previousTargets: previousTargets.map((previousTarget) => previousTarget.target),
@@ -409,7 +456,7 @@ export class ServerCardTargeting {
 	}
 
 	private getValidUnitGraveyardTargets(
-		targetDefinition: DeployTargetDefinition<any>,
+		targetDefinition: DeployTargetDefinition<CardTargetValidatorArguments>,
 		previousTargets: ResolutionStackTarget[] = []
 	): ServerCardTargetCard[] {
 		const targetedCards = this.game.players
@@ -418,6 +465,7 @@ export class ServerCardTargeting {
 			.reduce((accumulator, cards) => accumulator.concat(cards))
 			.filter((card) =>
 				targetDefinition.require({
+					player: this.card.ownerPlayer,
 					sourceCard: this.card,
 					targetCard: card,
 					previousTargets: previousTargets.map((previousTarget) => previousTarget.target),
@@ -436,7 +484,7 @@ export class ServerCardTargeting {
 	}
 
 	private getValidSpellGraveyardTargets(
-		targetDefinition: DeployTargetDefinition<any>,
+		targetDefinition: DeployTargetDefinition<CardTargetValidatorArguments>,
 		previousTargets: ResolutionStackTarget[] = []
 	): ServerCardTargetCard[] {
 		const targetedCards = this.game.players
@@ -445,6 +493,7 @@ export class ServerCardTargeting {
 			.reduce((accumulator, cards) => accumulator.concat(cards))
 			.filter((card) =>
 				targetDefinition.require({
+					player: this.card.ownerPlayer,
 					sourceCard: this.card,
 					targetCard: card,
 					previousTargets: previousTargets.map((previousTarget) => previousTarget.target),
@@ -507,23 +556,13 @@ export class ServerCardTargeting {
 			)
 			.map((unit) => ({
 				unit: unit,
-				expectedValue: targetDefinition.evaluate(
-					{
-						player: this.card.unit!.originalOwner,
-						sourceCard: this.card,
-						previousTargets: applicablePreviousTargets.map((previousTarget) => previousTarget.target),
-						targetCard: unit.card,
-						targetUnit: unit,
-					},
-					0
-				),
-			}))
-			.map((tuple) => ({
-				unit: tuple.unit,
-				expectedValue: Math.max(
-					tuple.expectedValue * tuple.unit.card.botEvaluation.threatMultiplier,
-					tuple.unit.card.botEvaluation.baseThreat
-				),
+				expectedValue: targetDefinition.evaluate({
+					player: this.card.unit!.originalOwner,
+					sourceCard: this.card,
+					previousTargets: applicablePreviousTargets.map((previousTarget) => previousTarget.target),
+					targetCard: unit.card,
+					targetUnit: unit,
+				}),
 			}))
 			.map((tuple) => ({
 				target: ServerCardTarget.cardTargetUnit(
@@ -561,7 +600,23 @@ export class ServerCardTargeting {
 				})
 			)
 			.map((row) => ({
-				target: ServerCardTarget.cardTargetRow(targetDefinition.id, TargetMode.UNIT_ORDER, this.card, row, targetDefinition.label),
+				row: row,
+				expectedValue: targetDefinition.evaluate({
+					player: this.card.unit!.originalOwner,
+					sourceCard: this.card,
+					targetRow: row,
+					previousTargets: applicablePreviousTargets.map((previousTarget) => previousTarget.target),
+				}),
+			}))
+			.map((tuple) => ({
+				target: ServerCardTarget.cardTargetRow(
+					targetDefinition.id,
+					TargetMode.UNIT_ORDER,
+					this.card,
+					tuple.row,
+					tuple.expectedValue,
+					targetDefinition.label
+				),
 				definition: targetDefinition,
 			}))
 	}

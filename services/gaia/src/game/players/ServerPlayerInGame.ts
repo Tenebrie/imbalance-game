@@ -1,8 +1,9 @@
 import Constants from '@shared/Constants'
 import AIBehaviour from '@shared/enums/AIBehaviour'
-import CardType from '@shared/enums/CardType'
+import CardFeature from '@shared/enums/CardFeature'
 import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import TargetMode from '@shared/enums/TargetMode'
+import AnonymousTargetMessage from '@shared/models/network/AnonymousTargetMessage'
 import CardPlayedMessage from '@shared/models/network/CardPlayedMessage'
 import CardTargetMessage from '@shared/models/network/CardTargetMessage'
 import { GenericActionMessageType } from '@shared/models/network/messageHandlers/ClientToServerGameMessages'
@@ -15,7 +16,7 @@ import ServerEditorDeck from '@src/game/models/ServerEditorDeck'
 import { EventSubscriber } from '@src/game/models/ServerGameEvents'
 import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
 import OvermindClient from '@src/routers/overmind/OvermindClient'
-import { getRandomArrayValue, safeWhile } from '@src/utils/Utils'
+import { getCardBaseExpectedValue, getRandomArrayValue, safeWhile } from '@src/utils/Utils'
 
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import GameEventCreators from '../models/events/GameEventCreators'
@@ -272,11 +273,15 @@ export class ServerBotPlayerInGame extends ServerPlayerInGame {
 
 	public startMulligan(): void {
 		super.startMulligan()
-		IncomingMessageHandlers[GenericActionMessageType.CONFIRM_TARGETS](TargetMode.MULLIGAN, this.game, this)
+		this.botTakesTheirMulligan().then(() => {
+			IncomingMessageHandlers[GenericActionMessageType.CONFIRM_TARGETS](TargetMode.MULLIGAN, this.game, this)
+			OutgoingMessageHandlers.executeMessageQueue(this.game)
+		})
 	}
 
 	public startTurn(): void {
 		this.botTakesTheirTurn().then(() => {
+			IncomingMessageHandlers[GenericActionMessageType.TURN_END](null, this.game, this)
 			OutgoingMessageHandlers.executeMessageQueue(this.game)
 		})
 	}
@@ -294,7 +299,9 @@ export class ServerBotPlayerInGame extends ServerPlayerInGame {
 	}
 
 	private async overmindPlaysCard(): Promise<void> {
-		const playableCards = this.cardHand.unitCards.filter((card) => card.targeting.getPlayTargets(this, { checkMana: true }).length > 0)
+		const playableCards = this.getCardsWithLeader(this).filter(
+			(card) => card.targeting.getPlayTargets(this, { checkMana: true }).length > 0
+		)
 
 		if (playableCards.length === 0) {
 			return
@@ -314,40 +321,103 @@ export class ServerBotPlayerInGame extends ServerPlayerInGame {
 
 		const cardToPlay = await OvermindClient.getMove(this.overmindId, {
 			playableCards,
-			allCardsInHand: this.cardHand.unitCards,
+			allCardsInHand: this.getCardsWithLeader(this),
 			alliedUnits,
 			enemyUnits,
 		})
 		this.botPlaysCard(false, cardToPlay)
 	}
 
-	private async botTakesTheirTurn(): Promise<void> {
-		const botTotalPower = this.game.board.getTotalPlayerPower(this.group)
-		const opponentTotalPower = this.opponentNullable ? this.game.board.getTotalPlayerPower(this.opponentNullable) : 0
+	private async botTakesTheirMulligan(): Promise<void> {
+		const mulligan = (card: ServerCard): void => {
+			const message = new AnonymousTargetMessage(ServerCardTarget.anonymousTargetCardInUnitHand(TargetMode.MULLIGAN, card))
+			IncomingMessageHandlers[GenericActionMessageType.ANONYMOUS_TARGET](message, this.game, this)
+			this.game.events.resolveEvents()
+		}
 
-		const botWonRound = botTotalPower > opponentTotalPower && this.opponentNullable && this.opponentNullable.roundEnded
-		const botLostRound = opponentTotalPower > botTotalPower + 55 && this.opponent.roundWins === 0
-		const botHasGoodLead = botTotalPower > opponentTotalPower + 40 && this.opponent.roundWins === 0
+		let mulligansLeft = this.game.maxMulligans - this.cardsMulliganed
+		safeWhile(
+			() => mulligansLeft > 0,
+			(breakWhile) => {
+				const interestingCards = this.cardHand.allCards.filter((card) => card.botMetadata.mulliganPreference !== 'ignore')
+				if (interestingCards.length === 0) {
+					breakWhile()
+					return
+				}
+
+				const cardsToAvoid = interestingCards.filter((card) => card.botMetadata.mulliganPreference === 'avoid')
+				const cardsToKeepSingular = interestingCards
+					.filter((card) => card.botMetadata.mulliganPreference === 'singular')
+					.map((card) => ({
+						card,
+						count: interestingCards.filter((filteredCard) => filteredCard.class === card.class).length,
+					}))
+					.filter((tuple) => tuple.count > 1)
+				const cardsToPrefer = this.cardDeck.allCards.filter((card) => card.botMetadata.mulliganPreference === 'prefer')
+
+				const cardToAvoid = getRandomArrayValue(cardsToAvoid)
+				const cardToKeepSingular = getRandomArrayValue(cardsToKeepSingular)
+				const cardToDigFor = getRandomArrayValue(cardsToPrefer)
+				if (cardToAvoid) {
+					console.log(`Bot mulliganed ${cardToAvoid.class} because it's to be avoided.`)
+					mulligan(cardToAvoid)
+				} else if (cardToKeepSingular) {
+					console.log(`Bot mulliganed ${cardToKeepSingular.card.class} because it has ${cardToKeepSingular.count} copies of it.`)
+					mulligan(cardToKeepSingular.card)
+				} else if (cardToDigFor && mulligansLeft > 1) {
+					const randomCard = getRandomArrayValue(this.cardHand.allCards.filter((card) => card.botMetadata.mulliganPreference === 'ignore'))
+					if (!randomCard) {
+						breakWhile()
+						return
+					}
+					mulligan(randomCard)
+					console.log(`Bot mulliganed ${randomCard.class} because it's looking for ${cardToDigFor.class}.`)
+				} else {
+					breakWhile()
+					return
+				}
+
+				mulligansLeft = this.game.maxMulligans - this.cardsMulliganed
+			}
+		)
+	}
+
+	private async botTakesTheirTurn(): Promise<void> {
+		const opponent = this.opponentNullable
+		if (!opponent) {
+			return
+		}
+		const botBoonCount = this.game.board.getControlledRows(this).filter((row) => row.hasBoon).length
+		const botHazardCount = this.game.board.getControlledRows(this).filter((row) => row.hasHazard).length
+		const opponentBoonCount = this.game.board.getControlledRows(opponent).filter((row) => row.hasBoon).length
+		const opponentHazardCount = this.game.board.getControlledRows(opponent).filter((row) => row.hasHazard).length
+
+		const botTotalPower = this.game.board.getTotalPlayerPower(this.group) + botBoonCount * 2 - botHazardCount * 2
+		const opponentTotalPower = this.game.board.getTotalPlayerPower(opponent) + opponentBoonCount * 2 - opponentHazardCount * 2
+		const botCardCount = this.getCardsWithLeader(this).length
+		const opponentCardCount = this.getCardsWithLeader(opponent.players[0]).length
+
+		const maxSelfProfit = botCardCount * botBoonCount - botCardCount * opponentHazardCount
+		const maxOponentProfit = opponentCardCount * opponentBoonCount - opponentCardCount * botHazardCount
+
+		const bestBotScore = this.getBestPlayableCardScore()
+		const botWonRound =
+			this.game.board.getTotalPlayerPower(this.group) > this.game.board.getTotalPlayerPower(opponent) && opponent.roundEnded
+		const botLostRound = opponentTotalPower + maxOponentProfit > botTotalPower + bestBotScore + maxSelfProfit && opponent.roundWins === 0
+		const botHasGoodLead =
+			(botTotalPower > opponentTotalPower + 11 ||
+				(botTotalPower > opponentTotalPower && botCardCount > opponentCardCount) ||
+				(botTotalPower > opponentTotalPower && maxOponentProfit > maxSelfProfit)) &&
+			this.opponent.roundWins === 0
 
 		if (this.behaviour === AIBehaviour.DEFAULT) {
-			if (botHasGoodLead && !botWonRound) {
-				safeWhile(
-					() => this.hasAnySpellPlays(),
-					() => {
-						this.botPlaysCard(true)
-					}
-				)
-			}
-
 			if (botWonRound || botLostRound || botHasGoodLead) {
-				this.botEndsTurn()
 				return
 			}
 
 			try {
 				safeWhile(
-					() =>
-						this.canPlayUnitCard() || (this.hasHighValueSpellPlays() && this.game.turnPhase === GameTurnPhase.DEPLOY && this.unitMana > 0),
+					() => this.canPlayUnitCard(),
 					() => {
 						this.botPlaysCard(false)
 					}
@@ -360,7 +430,7 @@ export class ServerBotPlayerInGame extends ServerPlayerInGame {
 				let attempts = 0
 				while (this.canPlayUnitCard() && attempts < 10) {
 					attempts += 1
-					const playableCards = this.cardHand.unitCards.filter(
+					const playableCards = this.getCardsWithLeader(this).filter(
 						(card) => card.targeting.getPlayTargets(this, { checkMana: true }).length > 0
 					)
 					const card = getRandomArrayValue(playableCards)
@@ -375,7 +445,6 @@ export class ServerBotPlayerInGame extends ServerPlayerInGame {
 			}
 		} else if (this.behaviour === AIBehaviour.OVERMIND) {
 			if (botWonRound || botLostRound || botHasGoodLead) {
-				this.botEndsTurn()
 				return
 			}
 
@@ -390,19 +459,25 @@ export class ServerBotPlayerInGame extends ServerPlayerInGame {
 				GameLibrary.destroyGame(this.game, GameCloseReason.AI_ACTION_LOGIC_ERROR)
 			}
 		}
-		this.botEndsTurn()
 	}
 
 	private botPlaysCard(spellsOnly: boolean, targetCardId?: string): void {
-		const baseCards = spellsOnly ? this.cardHand.spellCards : this.cardHand.allCards
+		const baseCards = spellsOnly ? this.cardHand.spellCards : this.getCardsWithLeader(this)
 
 		const cards = sortCards(baseCards)
 			.filter((card) => card.targeting.getPlayTargets(this, { checkMana: true }).length > 0)
 			.map((card) => ({
 				card: card,
-				bestExpectedValue: this.getBestExpectedValue(card),
+				bestExpectedValue: card.botMetadata.evaluateBotScore() - getCardBaseExpectedValue(card),
 			}))
 			.sort((a, b) => b.bestExpectedValue - a.bestExpectedValue)
+		console.info(
+			'Bot card weights:',
+			cards.map((card) => ({
+				card: card.card.class,
+				value: card.bestExpectedValue,
+			}))
+		)
 
 		const selectedCard = targetCardId ? cards.find((card) => card.card.id === targetCardId)?.card : cards[0].card
 		if (!selectedCard) {
@@ -412,11 +487,28 @@ export class ServerBotPlayerInGame extends ServerPlayerInGame {
 		const validRows = this.game.board.rows
 			.filter((row) => row.owner === this.group)
 			.filter((row) => !row.isFull())
-			.reverse()
+			.map((row) => ({
+				row,
+				expectedScore: selectedCard.botMetadata.evaluateBotPlayRowScore({
+					card: selectedCard,
+					owner: selectedCard.ownerPlayer,
+					targetRow: row,
+					targetPosition: row.farRightUnitIndex,
+				}),
+			}))
+			.sort((a, b) => b.expectedScore - a.expectedScore)
 
-		const distanceFromFront = 0
-		const targetRow = validRows[Math.min(distanceFromFront, validRows.length - 1)]
-		const cardPlayerMessage = CardPlayedMessage.fromCardOnRow(selectedCard, targetRow.index, targetRow.cards.length)
+		if (validRows.length === 0) {
+			return
+		}
+		const highestScore = validRows[0].expectedScore
+		const rowsWithHighestScore = validRows.filter((row) => row.expectedScore === highestScore)
+		const targetRow = getRandomArrayValue(rowsWithHighestScore)
+		if (!targetRow) {
+			return
+		}
+
+		const cardPlayerMessage = CardPlayedMessage.fromCardOnRow(selectedCard, targetRow.row.index, targetRow.row.cards.length)
 		IncomingMessageHandlers[GenericActionMessageType.CARD_PLAY](cardPlayerMessage, this.game, this)
 
 		safeWhile(
@@ -440,42 +532,24 @@ export class ServerBotPlayerInGame extends ServerPlayerInGame {
 		}
 	}
 
-	private botEndsTurn(): void {
-		IncomingMessageHandlers[GenericActionMessageType.TURN_END](null, this.game, this)
-	}
-
-	private getBestExpectedValue(card: ServerCard): number {
-		const targets = card.targeting.getDeployTargets()
-
-		const cardBaseValue = card.type === CardType.SPELL ? card.stats.baseSpellCost * 2 : card.stats.basePower
-		const spellExtraValue = this.cardHand.unitCards.length <= 2 ? 1 : 0
-
-		if (targets.length === 0) {
-			return card.botEvaluation.expectedValue - cardBaseValue + spellExtraValue
-		}
-		const bestTargetingValue = targets.sort((a, b) => b.target.expectedValue - a.target.expectedValue)[0].target.expectedValue || 0
-		return bestTargetingValue + card.botEvaluation.expectedValue - cardBaseValue + spellExtraValue
-	}
-
-	private canPlayUnitCard(): boolean {
-		return this.cardHand.unitCards.filter((card) => card.targeting.getPlayTargets(this, { checkMana: true }).length > 0).length > 0
-	}
-
-	private hasHighValueSpellPlays(): boolean {
+	private getBestPlayableCardScore(): number {
 		return (
-			sortCards(this.cardHand.spellCards)
+			sortCards(this.getCardsWithLeader(this))
 				.filter((card) => card.targeting.getPlayTargets(this, { checkMana: true }).length > 0)
 				.map((card) => ({
 					card: card,
-					bestExpectedValue: this.getBestExpectedValue(card),
+					bestExpectedValue: card.botMetadata.evaluateExpectedScore(),
 				}))
-				.filter((tuple) => tuple.bestExpectedValue > 0).length > 0
+				.sort((a, b) => b.bestExpectedValue - a.bestExpectedValue)[0]?.bestExpectedValue || 0
 		)
 	}
 
-	private hasAnySpellPlays(): boolean {
-		return (
-			sortCards(this.cardHand.spellCards).filter((card) => card.targeting.getPlayTargets(this, { checkMana: true }).length > 0).length > 0
-		)
+	private getCardsWithLeader(player: ServerPlayerInGame): ServerCard[] {
+		return player.cardHand.allCards.concat(player.leader.features.includes(CardFeature.UNPLAYABLE) ? [] : player.leader)
+	}
+
+	private canPlayUnitCard(): boolean {
+		const cards = this.getCardsWithLeader(this)
+		return cards.filter((card) => card.targeting.getPlayTargets(this, { checkMana: true }).length > 0).length > 0
 	}
 }

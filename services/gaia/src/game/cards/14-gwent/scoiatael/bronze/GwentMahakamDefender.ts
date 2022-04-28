@@ -3,7 +3,6 @@ import CardFaction from '@shared/enums/CardFaction'
 import CardTribe from '@shared/enums/CardTribe'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import BotCardEvaluation from '@src/game/AI/BotCardEvaluation'
 
 import ServerCard from '../../../../models/ServerCard'
 import ServerGame from '../../../../models/ServerGame'
@@ -21,8 +20,6 @@ export default class GwentMahakamDefender extends ServerCard {
 			expansionSet: ExpansionSet.GWENT,
 		})
 
-		this.createPlayTargets().evaluate(({ targetRow }) => (targetRow.hasBoon ? 1 : 0))
-
 		this.createLocalization({
 			en: {
 				name: 'Mahakam Defender',
@@ -32,13 +29,6 @@ export default class GwentMahakamDefender extends ServerCard {
 		})
 
 		this.makeResilient()
-		this.botEvaluation = new CustomBotEvaluation(this)
-	}
-}
-
-class CustomBotEvaluation extends BotCardEvaluation {
-	get expectedValue(): number {
-		const bonusPower = this.game.roundIndex < 2 ? this.card.stats.basePower : 0
-		return this.card.stats.power + bonusPower
+		this.createBotEvaluation().evaluateScore(() => (game.roundIndex < 2 ? this.stats.basePower : 0))
 	}
 }

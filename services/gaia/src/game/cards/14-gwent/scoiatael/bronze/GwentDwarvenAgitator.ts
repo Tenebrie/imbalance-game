@@ -4,7 +4,6 @@ import CardTribe from '@shared/enums/CardTribe'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
-import BotCardEvaluation from '@src/game/AI/BotCardEvaluation'
 import Keywords from '@src/utils/Keywords'
 import { getRandomArrayValue } from '@src/utils/Utils'
 
@@ -32,8 +31,6 @@ export default class GwentDwarvenAgitator extends ServerCard {
 			},
 		})
 
-		this.createPlayTargets().evaluate(({ targetRow }) => (targetRow.hasBoon ? 1 : 0))
-
 		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(({ owner }) => {
 			const validCards = owner.cardDeck.allCards.filter(
 				(card) => card.tribes.includes(CardTribe.DWARF) && card.color === CardColor.BRONZE && card.class !== this.class
@@ -45,12 +42,6 @@ export default class GwentDwarvenAgitator extends ServerCard {
 			Keywords.createCard.for(owner).fromInstance(cardToPlay)
 		})
 
-		this.botEvaluation = new CustomBotEvaluation(this)
-	}
-}
-
-class CustomBotEvaluation extends BotCardEvaluation {
-	get expectedValue(): number {
-		return 94
+		this.createBotEvaluation().evaluateScore(() => 94)
 	}
 }

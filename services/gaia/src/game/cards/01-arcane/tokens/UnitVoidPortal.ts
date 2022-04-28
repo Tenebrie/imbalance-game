@@ -9,7 +9,6 @@ import ServerGame from '@src/game/models/ServerGame'
 import Keywords from '@src/utils/Keywords'
 import { asRecurringSummonCount } from '@src/utils/LeaderStats'
 
-import BotCardEvaluation from '../../../AI/BotCardEvaluation'
 import UnitShadow from './UnitShadow'
 
 export default class UnitVoidPortal extends ServerCard {
@@ -33,7 +32,6 @@ export default class UnitVoidPortal extends ServerCard {
 			extraShadows: () => this.shadowsSummoned(this) > 1,
 			shadowsSummoned: this.shadowsSummoned,
 		}
-		this.botEvaluation = new CustomBotEvaluation(this)
 
 		this.createLocalization({
 			en: {
@@ -60,11 +58,5 @@ export default class UnitVoidPortal extends ServerCard {
 			unitIndex: unit.unitIndex + 1,
 			count: this.shadowsSummoned,
 		})
-	}
-}
-
-class CustomBotEvaluation extends BotCardEvaluation {
-	get baseThreat(): number {
-		return 5
 	}
 }

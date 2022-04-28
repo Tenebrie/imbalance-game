@@ -9,7 +9,6 @@ import ServerCard from '@src/game/models/ServerCard'
 import ServerGame from '@src/game/models/ServerGame'
 import { asRecurringBuffPotency } from '@src/utils/LeaderStats'
 
-import BotCardEvaluation from '../../../AI/BotCardEvaluation'
 import BuffStrength from '../../../buffs/BuffStrength'
 import CardLibrary from '../../../libraries/CardLibrary'
 import UnitShadow from './UnitShadow'
@@ -33,7 +32,6 @@ export default class UnitAbyssPortal extends ServerCard {
 		this.dynamicTextVariables = {
 			powerPerCard: this.powerPerCard,
 		}
-		this.botEvaluation = new CustomBotEvaluation(this)
 
 		this.createLocalization({
 			en: {
@@ -61,11 +59,5 @@ export default class UnitAbyssPortal extends ServerCard {
 		}
 
 		voidspawn.buffs.addMultiple(BuffStrength, uniqueSpellsInDiscard.length, this, BuffDuration.INFINITY)
-	}
-}
-
-class CustomBotEvaluation extends BotCardEvaluation {
-	get baseThreat(): number {
-		return 5
 	}
 }

@@ -42,5 +42,7 @@ export default class GwentBrouverHoog extends ServerCard {
 			.perform(({ targetCard }) => {
 				Keywords.playCardFromDeck(targetCard)
 			})
+
+		this.createBotEvaluation().evaluateScore(() => 105)
 	}
 }

@@ -3,7 +3,6 @@ import CardFaction from '@shared/enums/CardFaction'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
-import BotCardEvaluation from '@src/game/AI/BotCardEvaluation'
 import BuffGwentRowFroth from '@src/game/buffs/14-gwent/BuffGwentRowFroth'
 import ServerCard from '@src/game/models/ServerCard'
 import ServerGame from '@src/game/models/ServerGame'
@@ -25,8 +24,6 @@ export default class GwentAleOfTheAncestors extends ServerCard {
 			targets: BuffGwentRowFroth.TARGETS,
 		}
 
-		this.createPlayTargets().evaluate(({ targetRow }) => (targetRow.hasHazard ? 1 : 0))
-
 		this.createLocalization({
 			en: {
 				name: `Ale of the Ancestors`,
@@ -35,16 +32,14 @@ export default class GwentAleOfTheAncestors extends ServerCard {
 			},
 		})
 
-		this.botEvaluation = new CustomBotEvaluation(this)
-
 		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(({ triggeringUnit }) => {
 			triggeringUnit.boardRow.buffs.add(BuffGwentRowFroth, this)
 		})
-	}
-}
 
-class CustomBotEvaluation extends BotCardEvaluation {
-	get expectedValue(): number {
-		return 10001
+		this.createBotEvaluation()
+			.evaluateScore(() => 10001)
+			.setMulliganPreference('prefer')
+			.setHazardsPreference('prefer')
+			.setBoonsPreference('avoid')
 	}
 }

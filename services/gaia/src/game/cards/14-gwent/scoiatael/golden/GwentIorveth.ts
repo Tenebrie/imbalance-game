@@ -39,7 +39,6 @@ export default class GwentIorveth extends ServerCard {
 				targetUnit.dealDamage(DamageInstance.fromCard(GwentIorveth.DAMAGE, this))
 
 				if (targetUnit.stats.power - GwentIorveth.DAMAGE <= 0) {
-					console.log(this.ownerPlayer.cardHand.allCards)
 					this.ownerPlayer.cardHand.allCards
 						.filter((card) => card.tribes.includes(CardTribe.ELF))
 						.forEach((card) => card.boostBy(GwentIorveth.BOOST, this))

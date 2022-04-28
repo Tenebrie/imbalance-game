@@ -44,7 +44,7 @@ export default class GwentDwarvenMercenary extends ServerCard {
 				if (targetRow.isFull()) {
 					return false
 				}
-				const targetDistance = game.board.getDistanceToFrontLegacy(targetUnit.owner, targetUnit.rowIndex)
+				const targetDistance = game.board.getDistanceToFront(targetUnit.rowIndex)
 
 				return thisUnitDistance !== targetDistance
 			})

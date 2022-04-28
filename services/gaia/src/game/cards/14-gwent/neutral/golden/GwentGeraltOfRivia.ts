@@ -3,7 +3,6 @@ import CardFaction from '@shared/enums/CardFaction'
 import CardTribe from '@shared/enums/CardTribe'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import BotCardEvaluation from '@src/game/AI/BotCardEvaluation'
 import ServerCard from '@src/game/models/ServerCard'
 import ServerGame from '@src/game/models/ServerGame'
 
@@ -21,8 +20,6 @@ export default class GwentGeraltOfRivia extends ServerCard {
 			expansionSet: ExpansionSet.GWENT,
 		})
 
-		this.createPlayTargets().evaluate(({ targetRow }) => (targetRow.hasBoon ? 1 : 0))
-
 		this.createLocalization({
 			en: {
 				name: `Geralt of Rivia`,
@@ -31,12 +28,6 @@ export default class GwentGeraltOfRivia extends ServerCard {
 			},
 		})
 
-		this.botEvaluation = new CustomBotEvaluation(this)
-	}
-}
-
-class CustomBotEvaluation extends BotCardEvaluation {
-	get expectedValue(): number {
-		return this.card.stats.power - 1
+		this.createBotEvaluation().evaluateScore(() => -1)
 	}
 }

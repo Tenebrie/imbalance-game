@@ -80,6 +80,21 @@ export const createRandomEditorDeckId = (): string => {
 	return `deck:${getRandomId()}`
 }
 
+export const getCardBaseExpectedValue = (card: ServerCard): number => {
+	switch (card.color) {
+		case CardColor.BRONZE:
+			return 11
+		case CardColor.SILVER:
+			return 13
+		case CardColor.GOLDEN:
+			return 15
+		case CardColor.LEADER:
+			return 15
+		case CardColor.TOKEN:
+			return 0
+	}
+}
+
 export const toRowIndex = (rowOrIndex: number | ServerBoardRow): number => {
 	return typeof rowOrIndex === 'number' ? rowOrIndex : rowOrIndex.index
 }

@@ -4,7 +4,6 @@ import CardTribe from '@shared/enums/CardTribe'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import TargetType from '@shared/enums/TargetType'
-import BotCardEvaluation from '@src/game/AI/BotCardEvaluation'
 import Keywords from '@src/utils/Keywords'
 
 import ServerCard from '../../../../models/ServerCard'
@@ -40,21 +39,13 @@ export default class GwentPaulieDahlberg extends ServerCard {
 				Keywords.playCardFromGraveyard(targetCard, player)
 			})
 
-		this.botEvaluation = new CustomBotEvaluation(this)
-	}
-}
-
-class CustomBotEvaluation extends BotCardEvaluation {
-	get expectedValue(): number {
-		const owner = this.card.ownerPlayerNullable
-		if (!owner) {
-			return this.card.stats.power
-		}
-		const bestDwarf = owner.cardGraveyard.allCards
-			.filter((card) => card.tribes.includes(CardTribe.DWARF) && !card.tribes.includes(CardTribe.SUPPORT))
-			.filter((card) => card.color === CardColor.BRONZE)
-			.map((card) => card.botEvaluation.expectedValue)
-			.sort((a, b) => b - a)
-		return this.card.stats.power + bestDwarf[0] || 0
+		this.createBotEvaluation().evaluateScore(() => {
+			const bestDwarf = this.ownerPlayer.cardGraveyard.allCards
+				.filter((card) => card.tribes.includes(CardTribe.DWARF) && !card.tribes.includes(CardTribe.SUPPORT))
+				.filter((card) => card.color === CardColor.BRONZE)
+				.map((card) => card.botMetadata.evaluateExpectedScore())
+				.sort((a, b) => b - a)
+			return bestDwarf[0] || 0
+		})
 	}
 }

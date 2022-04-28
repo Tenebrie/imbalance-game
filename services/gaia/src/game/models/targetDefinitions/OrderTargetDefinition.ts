@@ -60,7 +60,7 @@ export default class OrderTargetDefinition<EventArgs extends TargetValidatorArgu
 		})
 	}
 
-	public evaluate(args: EventArgs, defaultValue: number): number {
-		return this.__evaluator ? this.__evaluator(args) : defaultValue
+	public evaluate(args: EventArgs): number {
+		return this.__evaluator ? this.__evaluator(args) : 0
 	}
 }
