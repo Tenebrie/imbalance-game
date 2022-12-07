@@ -25,6 +25,7 @@ export default class RulesetEpicDummyFight extends ServerRuleset {
 				UNIT_HAND_SIZE_STARTING: 35,
 				ROUND_WINS_REQUIRED: 1,
 			},
+			hiddenFromMenu: true,
 		})
 
 		this.createSlots()

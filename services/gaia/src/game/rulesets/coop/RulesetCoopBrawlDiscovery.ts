@@ -20,6 +20,13 @@ export default class RulesetCoopBrawlDiscovery extends ServerRuleset {
 			gameMode: GameMode.COOP,
 			category: RulesetCategory.COOP,
 			sortPriority: 3,
+			locale: {
+				en: {
+					name: 'Target Dummy Discovery Coop',
+					label: '<b>AI Opponent:</b> Discovery Dummy',
+					description: 'Play against a simple opponent with random cards.',
+				},
+			},
 		})
 
 		const playerDeck = [

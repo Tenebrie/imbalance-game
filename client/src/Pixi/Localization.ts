@@ -3,6 +3,9 @@ import Buff from '@shared/models/Buff'
 import Card from '@shared/models/Card'
 import BuffMessage from '@shared/models/network/buffs/BuffMessage'
 import CardMessage from '@shared/models/network/card/CardMessage'
+import RulesetMessage from '@shared/models/ruleset/messages/RulesetMessage'
+import RulesetRefMessage from '@shared/models/ruleset/messages/RulesetRefMessage'
+import Ruleset from '@shared/models/ruleset/Ruleset'
 
 import en from '@/Pixi/locales/en.json'
 import ru from '@/Pixi/locales/ru.json'
@@ -66,6 +69,21 @@ class Localization {
 	public getBuffDescription(buff: Buff | BuffMessage): string {
 		const language = store.state.userPreferencesModule.userLanguage
 		return this.get(buff.localization[language].description, 'key')
+	}
+
+	public getRulesetName(ruleset: Ruleset | RulesetRefMessage | RulesetMessage): string {
+		const language = store.state.userPreferencesModule.userLanguage
+		return ruleset.locale[language]?.name || ruleset.locale[Language.English]?.name || `${ruleset.class}.name`
+	}
+
+	public getRulesetLabel(ruleset: Ruleset | RulesetRefMessage | RulesetMessage): string {
+		const language = store.state.userPreferencesModule.userLanguage
+		return ruleset.locale[language]?.label || ruleset.locale[Language.English]?.label || `${ruleset.class}.label`
+	}
+
+	public getRulesetDescription(ruleset: Ruleset | RulesetRefMessage | RulesetMessage): string {
+		const language = store.state.userPreferencesModule.userLanguage
+		return ruleset.locale[language]?.description || ruleset.locale[Language.English]?.description || `${ruleset.class}.description`
 	}
 
 	private static getValueOrNull(id: string): string | null {

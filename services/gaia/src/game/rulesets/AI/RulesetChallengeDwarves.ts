@@ -31,6 +31,13 @@ export default class RulesetChallengeDwarves extends ServerRuleset {
 			constants: {
 				UNIT_HAND_SIZE_PER_ROUND: 3,
 			},
+			locale: {
+				en: {
+					name: 'Dwarves and Beers!',
+					label: '<b>AI:</b> Dwarves and Beers!',
+					description: 'Challenging AI opponent that likes beers and beards.',
+				},
+			},
 		})
 
 		this.createSlots()

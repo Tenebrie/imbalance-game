@@ -32,6 +32,7 @@ export default class GwentRoach extends ServerCard {
 		})
 
 		this.createCallback(GameEventType.CARD_PLAYED, [CardLocation.DECK])
+			.requireImmediate(() => this.location === CardLocation.DECK)
 			.require(({ source }) => source === 'hand')
 			.require(({ owner }) => owner.group.owns(this))
 			.require(({ triggeringCard }) => triggeringCard.color === CardColor.GOLDEN)

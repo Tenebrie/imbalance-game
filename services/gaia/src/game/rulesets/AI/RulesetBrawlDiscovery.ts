@@ -25,6 +25,13 @@ export default class RulesetBrawlDiscovery extends ServerRuleset {
 			gameMode: GameMode.PVE,
 			category: RulesetCategory.PVE,
 			sortPriority: 1,
+			locale: {
+				en: {
+					name: 'Discovery League',
+					label: '<b>Special:</b> Discovery League',
+					description: 'Play random cards and see what happens',
+				},
+			},
 		})
 
 		this.createSlots()

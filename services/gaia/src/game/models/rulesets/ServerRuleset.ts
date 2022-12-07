@@ -6,6 +6,7 @@ import RulesetCategory from '@shared/enums/RulesetCategory'
 import RulesetFeature from '@shared/enums/RulesetFeature'
 import Ruleset from '@shared/models/ruleset/Ruleset'
 import { RulesetConstants } from '@shared/models/ruleset/RulesetConstants'
+import { MinimalRulesetLocalization, PartialRulesetLocalization } from '@shared/models/ruleset/RulesetLocalization'
 import { RulesetObjective } from '@shared/models/ruleset/RulesetObjectiveLocalization'
 import { enumToArray, forEachInEnum } from '@shared/Utils'
 import { CardConstructor } from '@src/game/libraries/CardLibrary'
@@ -59,6 +60,7 @@ export type RulesetDeckTemplate = (CardConstructor | { card: CardConstructor; co
 
 export type ServerRulesetProps = {
 	gameMode: GameMode
+	locale?: MinimalRulesetLocalization
 	category: RulesetCategory
 	features?: RulesetFeature[]
 	sortPriority?: number
@@ -70,6 +72,7 @@ export type ServerRulesetProps = {
 export abstract class ServerRuleset implements Ruleset {
 	public readonly game: ServerGame
 	public readonly class: string
+	public readonly locale: PartialRulesetLocalization
 	public readonly gameMode: GameMode
 	public readonly category: RulesetCategory
 	public readonly features: RulesetFeature[]
@@ -90,6 +93,7 @@ export abstract class ServerRuleset implements Ruleset {
 	protected constructor(game: ServerGame, props: ServerRulesetProps) {
 		this.game = game
 		this.class = getClassFromConstructor(this.constructor as RulesetConstructor)
+		this.locale = props.locale || {}
 		this.gameMode = props.gameMode
 		this.category = props.category
 		this.features = props.features || []

@@ -23,6 +23,13 @@ export default class RulesetCoopChallengeDummy extends ServerRuleset {
 				ROUND_WINS_REQUIRED: 2,
 				GAME_BOARD_ROW_COUNT: 6,
 			},
+			locale: {
+				en: {
+					name: 'Target Dummy Coop',
+					label: '<b>AI Opponent:</b> Target Dummy',
+					description: 'Play against a simple opponent with your cards.',
+				},
+			},
 		})
 
 		this.createSlots()

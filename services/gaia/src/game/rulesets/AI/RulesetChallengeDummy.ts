@@ -22,6 +22,13 @@ export default class RulesetChallengeDummy extends ServerRuleset {
 			constants: {
 				UNIT_HAND_SIZE_PER_ROUND: 3,
 			},
+			locale: {
+				en: {
+					name: 'Target Dummy',
+					label: '<b>AI:</b> Target Dummy',
+					description: 'Simple AI opponent that plays baseline power cards.',
+				},
+			},
 		})
 
 		this.createSlots()

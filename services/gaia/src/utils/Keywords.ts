@@ -214,17 +214,15 @@ const Keywords = {
 		card.game.cardPlay.playCardToResolutionStack(new ServerOwnedCard(card, cardOwner), 'hand')
 	},
 
-	/**
-	 * @deprecated Use `playCardFromDeck` or `playCardFromGraveyard` instead.
-	 */
 	playCardFromDeckOrGraveyard: (card: ServerCard): void => {
 		const cardOwner = card.ownerPlayer
 		if (cardOwner.cardDeck.allCards.includes(card)) {
 			cardOwner.cardDeck.removeCard(card)
+			card.game.cardPlay.playCardToResolutionStack(new ServerOwnedCard(card, cardOwner), 'deck')
 		} else if (cardOwner.cardGraveyard.allCards.includes(card)) {
 			cardOwner.cardGraveyard.removeCard(card)
+			card.game.cardPlay.playCardToResolutionStack(new ServerOwnedCard(card, cardOwner), 'graveyard')
 		}
-		card.game.cardPlay.playCardToResolutionStack(new ServerOwnedCard(card, cardOwner), 'deck')
 	},
 
 	playCardFromDeck: (card: ServerCard): void => {
@@ -330,6 +328,8 @@ const Keywords = {
 		if (location === CardLocation.HAND) {
 			owner.cardHand.removeCard(card)
 			owner.cardHand.addUnit(newCard)
+		} else if (location === CardLocation.BOARD) {
+			Keywords.transformUnit(card.unit, targetCard)
 		} else {
 			throw new Error(`Card transformation in ${location} is not implemented.`)
 		}

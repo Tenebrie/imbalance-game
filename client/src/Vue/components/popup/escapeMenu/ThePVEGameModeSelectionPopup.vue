@@ -2,13 +2,10 @@
 	<div class="the-challenge-ai-selection">
 		<div class="container" @click="onMenuClick">
 			<h2>Versus AI Game Modes</h2>
-			<button
-				v-for="ruleset in availableRulesets"
-				:key="ruleset.class"
-				class="primary game-button"
-				@click="() => onRulesetSelected(ruleset)"
-				v-html="$locale.get(`ruleset.${ruleset.class}.label`)"
-			/>
+			<div v-for="ruleset in availableRulesets" :key="ruleset.class" class="ruleset-container">
+				<button class="primary game-button" @click="() => onRulesetSelected(ruleset)" v-html="Localization.getRulesetLabel(ruleset)" />
+				<span class="action-explanation">{{ Localization.getRulesetDescription(ruleset) }}</span>
+			</div>
 		</div>
 	</div>
 </template>
@@ -19,6 +16,7 @@ import RulesetRefMessage from '@shared/models/ruleset/messages/RulesetRefMessage
 import axios from 'axios'
 import { computed, defineComponent } from 'vue'
 
+import Localization from '@/Pixi/Localization'
 import store from '@/Vue/store'
 
 import TheDeckSelectionPopup from './TheDeckSelectionPopup.vue'
@@ -54,6 +52,7 @@ export default defineComponent({
 			onMenuClick,
 			onRulesetSelected,
 			availableRulesets,
+			Localization,
 		}
 	},
 })
@@ -72,6 +71,7 @@ export default defineComponent({
 }
 
 .container {
+	gap: 8px;
 	border-radius: 16px;
 	width: 300px;
 	display: flex;
@@ -84,6 +84,17 @@ export default defineComponent({
 	button {
 		width: 100%;
 		margin: 8px;
+	}
+}
+
+.ruleset-container {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+
+	& > button {
+		margin-left: 0;
+		margin-right: 0;
 	}
 }
 

@@ -53,7 +53,7 @@
 		"*.(ts|vue|json)": "yarn eslint --fix"
 	},
 	"engines": {
-		"node": "14.x"
+		"node": "16.x"
 	},
 	"author": "Tenebrie",
 	"bugs": {
