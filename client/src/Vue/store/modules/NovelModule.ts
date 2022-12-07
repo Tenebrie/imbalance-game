@@ -53,6 +53,7 @@ const novelModule = defineModule({
 		},
 
 		clear(state): void {
+			state.isActive = false
 			state.cue = null
 			state.activeCharacter = null
 			state.responses = []
