@@ -57,7 +57,7 @@
 		"http-errors": "~1.8.0",
 		"jade": "~1.11.0",
 		"jest": "^27.0.6",
-		"jsonwebtoken": "^8.5.1",
+		"jsonwebtoken": "^9.0.0",
 		"lodash.isequal": "^4.5.0",
 		"lzutf8": "^0.6.0",
 		"mock-fs": "^5.1.2",
