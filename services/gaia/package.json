@@ -72,7 +72,7 @@
 		"pgmigrate": "^5.0.0",
 		"rgb-hex": "^3.0.0",
 		"seedrandom": "^3.0.5",
-		"sequelize": "^6.3.5",
+		"sequelize": "^6.28.2",
 		"sharp": "^0.29.0",
 		"source-map-support": "^0.5.19",
 		"ts-jest": "^27.0.3",
